@@ -71,6 +71,7 @@ const validateJWT = async function (request, response, next){
          * Data: 04/09/2023
          * Versão: 1.0
          *************************************************************************************/
+         //Get All (futuramente será um conjunto de GETs)
          app.get('/v1/ayan/pacientes', validateJWT, cors(), async (request, response) => {
                //Recebe os dados do controller
                let dadosPaciente = await controllerPaciente.getPacientes();
@@ -80,6 +81,7 @@ const validateJWT = async function (request, response, next){
                response.status(dadosPaciente.status)
          })
 
+         //Login Paciente
          app.get('/v1/ayan/paciente/autenticar', cors(), bodyParserJSON, async (request, response) => {
             let contentType = request.headers['content-type']
 
@@ -96,6 +98,7 @@ const validateJWT = async function (request, response, next){
             }
          })
 
+         //Get por ID
          app.get('/v1/ayan/paciente/:id', validateJWT, cors(), async (request, response) => {
             let idPaciente = request.params.id;
             
@@ -107,6 +110,7 @@ const validateJWT = async function (request, response, next){
             response.status(dadosPaciente.status)
          })
 
+         //Insert Paciente
          app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) => {
             let contentType = request.headers['content-type']
 
@@ -123,6 +127,7 @@ const validateJWT = async function (request, response, next){
             }
          })
 
+         //Update Paciente
          app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
             let contentType = request.headers['content-type']
 
@@ -144,6 +149,7 @@ const validateJWT = async function (request, response, next){
             }
          })
 
+         //Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
          app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
             let id = request.params.id;
         
@@ -166,6 +172,8 @@ const validateJWT = async function (request, response, next){
             * Data: 11/09/2023
             * Versão: 1.0
             *************************************************************************************/
+
+            //Insert Endereço do Paciente
             app.post('/v1/ayan/paciente/endereco', cors(), bodyParserJSON, async (request, response) => {
                let contentType = request.headers['content-type']
    
@@ -182,6 +190,7 @@ const validateJWT = async function (request, response, next){
                }
             })
 
+            //Get Endereço Paciente por ID
             app.get('/v1/ayan/paciente/endereco/:id',  validateJWT, cors(), async (request, response) => {
                let idEndereco = request.params.id;
                
@@ -192,7 +201,8 @@ const validateJWT = async function (request, response, next){
                response.json(dadosEndereco)
                response.status(dadosEndereco.status)
             })
-   
+
+            //Update Endereco Paciente
             app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request, response) => {
                let contentType = request.headers['content-type']
    
@@ -229,7 +239,8 @@ const validateJWT = async function (request, response, next){
                    * Data: 04/09/2023
                    * Versão: 1.0
                    *************************************************************************************/
-                   
+
+                   //Get All Gêneros 
                    app.get('/v1/ayan/generos', cors(), async (request, response) => {
                      //Recebe os dados do controller
                      let dadosGenero = await controllerGenero.getGeneros();
@@ -238,7 +249,8 @@ const validateJWT = async function (request, response, next){
                      response.json(dadosGenero)
                      response.status(dadosGenero.status)
                   })
-         
+
+                  //Get Genero por ID
                   app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
                      let idGenero = request.params.id;
                      
@@ -364,6 +376,7 @@ const validateJWT = async function (request, response, next){
                                                                      * Data: 04/09/2023
                                                                      * Versão: 1.0
                                                                      *************************************************************************************/
+                                                                      //Get All Cuidadores (Futuramente terá mais Gets)
                                                                       app.get('/v1/ayan/cuidadores', validateJWT, cors(), async (request, response) => {
                                                                            //Recebe os dados do controller
                                                                            let dadosCuidador = await controllerCuidador.getCuidadores();
@@ -373,6 +386,7 @@ const validateJWT = async function (request, response, next){
                                                                            response.status(dadosCuidador.status)
                                                                      })
 
+                                                                     //Login Cuidador
                                                                      app.get('/v1/ayan/cuidador/autenticar', cors(), bodyParserJSON, async (request, response) => {
                                                                         let contentType = request.headers['content-type']
                                                             
@@ -389,7 +403,7 @@ const validateJWT = async function (request, response, next){
                                                                         }
                                                                      })
                                                             
-                                                            
+                                                                     //Get Cuidador por ID
                                                                      app.get('/v1/ayan/cuidador/:id', validateJWT, cors(), async (request, response) => {
                                                                         let idCuidador = request.params.id;
                                                                         
@@ -400,7 +414,8 @@ const validateJWT = async function (request, response, next){
                                                                         response.json(dadosCuidador)
                                                                         response.status(dadosCuidador.status)
                                                                      })
-                                                            
+
+                                                                     //Insert Cuidador 
                                                                      app.post('/v1/ayan/cuidador', cors(), bodyParserJSON, async (request, response) => {
                                                                         let contentType = request.headers['content-type']
                                                             
@@ -416,7 +431,8 @@ const validateJWT = async function (request, response, next){
                                                                            response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
                                                                         }
                                                                      })
-                                                            
+
+                                                                     //Update Cuidador
                                                                      app.put('/v1/ayan/cuidador/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
                                                                         let contentType = request.headers['content-type']
                                                             
@@ -437,7 +453,8 @@ const validateJWT = async function (request, response, next){
                                                                            response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
                                                                         }
                                                                      })
-                                                            
+
+                                                                     //Delete Cuidador (Delete simples, pode haver erro caso ele se conecte a outra tabela, sujeito a mudanças)
                                                                      app.delete('/v1/ayan/cuidador/:id', validateJWT, cors(), async function (request, response) {
                                                                         let id = request.params.id;
                                                                     
