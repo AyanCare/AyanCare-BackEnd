@@ -47,6 +47,37 @@ const validateJWT = async function (request, response, next){
 }
 
 //CRUD (Create, Read, Update, Delete)
+
+         //Login Usuários 
+         app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
+            let contentType = request.headers['content-type']
+
+            //Validação para receber dados apenas no formato JSON
+            if (String(contentType).toLowerCase() == 'application/json') {
+               let dadosBody = request.body
+               let resultDadosPaciente = await controllerPaciente.getPacienteByEmailAndSenha(dadosBody)
+
+               if(resultDadosPaciente.status == 200)
+                  resultDadosPaciente.tipo = "Paciente"
+                   
+                  response.status(resultDadosPaciente.status)
+                  response.json(resultDadosPaciente)
+               } else {
+                  let resultDadosCuidador = await controllerCuidador.getCuidadorByEmailAndSenha(dadosBody)
+
+                  if(resultDadosCuidador.status == 200){
+                      resultDadosCuidador.tipo = "Cuidador"
+                  }
+                
+                  response.status(resultDadosPaciente.status)
+                  response.json(resultDadosPaciente)
+               }
+            } else {
+               response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+               response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+            }
+         })
+
 /*************************************************************************************
  * Objetibo: API de controle de Doenças Crônicas. 
  * Autor: Lohannes da Silva Costa
