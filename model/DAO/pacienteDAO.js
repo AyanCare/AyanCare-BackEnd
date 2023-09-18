@@ -68,8 +68,8 @@ const selectLastId = async function () {
     //retorna o ultimo id inserido no banco de dados
 }
 
-const selectPacienteByEmailAndSenha = async function (dadosPaciente){
-    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}'`
+const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
+    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}' and nome = '${dadosPaciente.nome}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
@@ -172,7 +172,7 @@ module.exports = {
     selectAllPacientes,
     selectLastId,
     selectPacienteById,
-    selectPacienteByEmailAndSenha,
+    selectPacienteByEmailAndSenhaAndNome,
     updatePaciente,
     updateSenhaPaciente,
     selectPacienteByEmail

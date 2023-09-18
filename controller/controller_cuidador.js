@@ -46,9 +46,10 @@ const getCuidadorByID = async function (id) {
     }
 }
 
-const getCuidadorByEmailAndSenha = async function (dadosCuidador) {
+const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
     if (dadosCuidador.email == '' || dadosCuidador.email == undefined ||
-        dadosCuidador.senha == '' || dadosCuidador.senha == undefined) {
+        dadosCuidador.senha == '' || dadosCuidador.senha == undefined ||
+        dadosCuidador.nome == '' || dadosCuidador.nome == undefined){
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
@@ -218,7 +219,7 @@ module.exports = {
     updateCuidador,
     deleteCuidador,
     getCuidadorByID,
-    getCuidadorByEmailAndSenha,
+    getCuidadorByEmailAndSenhaAndNome,
     getCuidadorByEmail,
     updateSenhaCuidador
 }

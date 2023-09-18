@@ -47,15 +47,16 @@ const getPacienteByID = async function (id) {
     }
 }
 
-const getPacienteByEmailAndSenha = async function (dadosPaciente) {
+const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
     if (dadosPaciente.email == '' || dadosPaciente.email == undefined ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined) {
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined ||
+        dadosPaciente.nome == '' || dadosPaciente.nome == undefined) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosPacienteJSON = {};
 
-        let rsPaciente = await pacienteDAO.selectPacienteByEmailAndSenha(dadosPaciente)
+        let rsPaciente = await pacienteDAO.selectPacienteByEmailAndSenhaAndNome(dadosPaciente)
 
         if (rsPaciente) {
             let tokenUser = await jwt.createJWT(rsPaciente[0].id)
@@ -230,7 +231,7 @@ module.exports = {
     updatePaciente,
     deletePaciente,
     getPacienteByID,
-    getPacienteByEmailAndSenha,
+    getPacienteByEmailAndSenhaAndNome,
     getPacienteByEmail,
     updateSenhaPaciente
 }
