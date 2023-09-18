@@ -72,13 +72,13 @@ const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
 }
 
 const getPacienteByEmail = async function (emailPaciente) {
-    if (dadosPaciente.email == '' || dadosPaciente.email == undefined) {
+    if (emailPaciente == '' || emailPaciente == undefined) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosPacienteJSON = {};
 
-        let rsPaciente = await pacienteDAO.selectPacienteByEmail(dadosPaciente)
+        let rsPaciente = await pacienteDAO.selectPacienteByEmail(emailPaciente)
 
         if (rsPaciente) {
             dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status

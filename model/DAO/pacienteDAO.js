@@ -43,7 +43,7 @@ const selectPacienteById = async function (idPaciente) {
 }
 
 const selectPacienteByEmail = async function (emailPaciente) {
-    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}'`
+    let sql = `select * from tbl_paciente where email = '${emailPaciente}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 

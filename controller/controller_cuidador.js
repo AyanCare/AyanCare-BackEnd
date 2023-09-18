@@ -55,7 +55,7 @@ const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
 
         let dadosCuidadorJSON = {};
 
-        let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenha(dadosCuidador)
+        let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenhaAndNome(dadosCuidador)
 
         if (rsCuidador) {
             let tokenUser = await jwt.createJWT(rsCuidador[0].id)

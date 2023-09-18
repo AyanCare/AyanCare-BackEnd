@@ -11,6 +11,7 @@ const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 
 const messages = require('./controller/modules/config.js')
+const jwt = require('./middleware/middlewareJWT.js')
 const controllerPaciente = require('./controller/controller_paciente.js');
 const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
@@ -34,8 +35,6 @@ app.use((request, response, next) => {
 const validateJWT = async function (request, response, next){
    let token = request.headers['x-access-token']
 
-   const jwt = require('./middleware/middlewareJWT.js')
-
    const autenticidadeToken = await jwt.validateJWT(token)
    console.log(autenticidadeToken);
 
@@ -46,31 +45,25 @@ const validateJWT = async function (request, response, next){
    }
 }
 
-const validateTokenPassRecovery = async function (token, request, response, next){
-   const jwt = require('./middleware/middlewareJWT.js')
-
-   const autenticidadeToken = await jwt.validateJWT(token)
-   console.log(autenticidadeToken);
-
-   if(autenticidadeToken){
-      next();
-   } else {
-      return response.status(messages.ERROR_UNAUTHORIZED_USER.status).end();
-   }
-}
-
+//validar token para relembrar a senha
 app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
    let token = request.query.token
 
-   const autenticarToken = await jwt.validateTokenPassRecovery(token)
+   const autenticarToken = await jwt.validateJWT(token)
 
    if(autenticarToken){
-      return response.json()
+      responseJSON.status = messages.SUCCESS_REQUEST.status
+      responseJSON.result = autenticidadeToken
+
+      response.status(autenticarToken.status)
+      response.json(autenticarToken)
+   } else {
+      response.status(messages.ERROR_INVALID_TOKEN.status)
+      response.json(messages.ERROR_INVALID_TOKEN)
    }
 })
 
 //CRUD (Create, Read, Update, Delete)
-
          //Login Usuários 
          app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
             let contentType = request.headers['content-type']
@@ -94,6 +87,40 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
                 
                   response.status(resultDadosPaciente.status)
                   response.json(resultDadosPaciente)
+               }
+            } else {
+               response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+               response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+            }
+         })
+
+         //Atualizar senha de Usuário
+         app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request, response) => {
+            let contentType = request.headers['content-type']
+
+            //Validação para receber dados apenas no formato JSON
+            if (String(contentType).toLowerCase() == 'application/json') {
+               let dadosBody = request.body
+
+               let resultDadosPaciente = await controllerPaciente.getPacienteByEmail(dadosBody.email)
+
+               if(resultDadosPaciente.status == 200){
+                  updatePaciente = await controllerPaciente.updateSenhaPaciente(dadosBody, resultDadosPaciente.paciente[0].id)
+                   
+                  response.status(updatePaciente.status)
+                  response.json(updatePaciente)
+               } else {
+                  let resultDadosCuidador = await controllerCuidador.getCuidadorByEmail(dadosBody.email)
+
+                  if(resultDadosCuidador.status == 200){
+                     updateCuidador = await controllerCuidador.updateSenhaCuidador(dadosBody, resultDadosCuidador.cuidador[0].id)
+                   
+                     response.status(updateCuidador.status)
+                     response.json(updateCuidador)
+                  } else {
+                     response.status(resultDadosCuidador.status)
+                     response.json(resultDadosCuidador)
+                  }
                }
             } else {
                response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
