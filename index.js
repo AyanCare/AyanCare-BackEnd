@@ -71,13 +71,20 @@ const validateJWT = async function (request, response, next){
          * Data: 04/09/2023
          * Versão: 1.0
          *************************************************************************************/
-         app.get('/v1/ayan/pacientes', validateJWT, cors(), async (request, response) => {
+         app.get('/v1/ayan/pacientes', cors(), bodyParserJSON, async (request, response) => {
+            let email = request.body;
+
+            if(email != undefined){
+               
+            } else {
                //Recebe os dados do controller
+               validateJWT()
                let dadosPaciente = await controllerPaciente.getPacientes();
 
                //Valida se existe registro
                response.json(dadosPaciente)
                response.status(dadosPaciente.status)
+            }
          })
 
          app.get('/v1/ayan/paciente/autenticar', cors(), bodyParserJSON, async (request, response) => {
@@ -130,7 +137,6 @@ const validateJWT = async function (request, response, next){
             if (String(contentType).toLowerCase() == 'application/json') {
                
                let id = request.params.id;
-
                
                let dadosBody = request.body
 

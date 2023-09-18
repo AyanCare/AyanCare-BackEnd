@@ -54,14 +54,33 @@ const getCuidadorByEmailAndSenha = async function (dadosCuidador) {
 
         let dadosCuidadorJSON = {};
 
-        let rsCuidador = await pacienteDAO.selectPacienteByEmailAndSenha(dadosCuidador)
+        let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenha(dadosCuidador)
 
         if (rsCuidador) {
             let tokenUser = await jwt.createJWT(rsCuidador[0].id)
 
             dadosCuidadorJSON.token = tokenUser
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
-            dadosCuidadorJSON.paciente = rsCuidador
+            dadosCuidadorJSON.cuidador = rsCuidador
+            return dadosCuidadorJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getCuidadorByEmail = async function (emailCuidador) {
+    if (dadosCuidador.email == '' || dadosCuidador.email == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+
+        let dadosCuidadorJSON = {};
+
+        let rsCuidador = await cuidadorDAO.selectCuidadorByEmail(dadosCuidador)
+
+        if (rsCuidador) {
+            dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
+            dadosCuidadorJSON.cuidador = rsCuidador
             return dadosCuidadorJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -138,6 +157,38 @@ const updateCuidador = async function (dadosCuidador, id) {
     }
 }
 
+const updateSenhaCuidador = async function (dadosCuidador, id) {
+    if (
+        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255
+    ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else if (id == null || id == undefined || isNaN(id)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        dadosCuidador.id = id
+
+        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(id)
+
+        if (atualizacaoCuidador) {
+            let resultDadosCuidador = await cuidadorDAO.updateSenhaCuidador(dadosCuidador)
+
+            if (resultDadosCuidador) {
+                let dadosCuidadorJSON = {}
+                dadosCuidadorJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                dadosCuidadorJSON.message = messages.SUCCESS_UPDATED_ITEM.message
+                dadosCuidadorJSON.cuidador = dadosCuidador
+
+                return dadosCuidadorJSON
+
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
+        } else {
+            return messages.ERROR_INVALID_ID
+        }
+    }
+}
+
 const deleteCuidador = async function (id) {
 
     if (id == null || id == undefined || id == '' || isNaN(id)) {
@@ -167,5 +218,7 @@ module.exports = {
     updateCuidador,
     deleteCuidador,
     getCuidadorByID,
-    getCuidadorByEmailAndSenha
+    getCuidadorByEmailAndSenha,
+    getCuidadorByEmail,
+    updateSenhaCuidador
 }
