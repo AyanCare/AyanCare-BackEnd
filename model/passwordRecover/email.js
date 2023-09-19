@@ -1,34 +1,37 @@
-import { Resend } from 'resend';
-const resend = new Resend('re_gYrdv39S_BjAJjxyyGiwxv5nWkDzU9us1');
+"use strict";
+const nodemailer = require("nodemailer");
+//import * as nodemailer from 'nodemailer'
 
-const sendEmailFinal = async function (token, email) {
-    try {
-      const data = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
-        to: [`${email}`],
-        subject: 'Teste',
-        html: `<strong>${token}</strong>`,
-      });
+const transporter = nodemailer.createTransport({
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
+  auth: {
+    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+    user: "resend",
+    pass: "re_gYrdv39S_BjAJjxyyGiwxv5nWkDzU9us1",
+  },
+});
 
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-  }
+// async..await is not allowed in global scope, must use a wrapper
+async function main() {
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: 'Acme <onboarding@resend.dev>', // sender address
+    to: "ayancarecorporation@gmail.com", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: "<b>Hello world?</b>", // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  //
+  // NOTE: You can go to https://forwardemail.net/my-account/emails to see your email delivery status and preview
+  //       Or you can use the "preview-email" npm package to preview emails locally in browsers and iOS Simulator
+  //       <https://github.com/forwardemail/preview-email>
+  //
 }
 
-const sendEmail = async function () {
-  try {
-    const data = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
-      to: ['ayancarecorporation@gmail.com'],
-      subject: 'Teste',
-      html: '<strong>é isso</strong>',
-    });
-
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-sendEmail()
+main().catch(console.error);
