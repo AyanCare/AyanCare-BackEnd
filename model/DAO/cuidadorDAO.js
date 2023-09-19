@@ -69,7 +69,7 @@ const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador){
 }
 
 const selectCuidadorByEmail = async function (emailCuidador){
-    let sql = `select * from tbl_cuidador where email = '${dadosCuidador.email}'`
+    let sql = `select * from tbl_cuidador where email = '${emailCuidador}'`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 

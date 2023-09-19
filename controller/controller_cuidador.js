@@ -71,13 +71,13 @@ const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
 }
 
 const getCuidadorByEmail = async function (emailCuidador) {
-    if (dadosCuidador.email == '' || dadosCuidador.email == undefined) {
+    if (emailCuidador == '' || emailCuidador == undefined) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosCuidadorJSON = {};
 
-        let rsCuidador = await cuidadorDAO.selectCuidadorByEmail(dadosCuidador)
+        let rsCuidador = await cuidadorDAO.selectCuidadorByEmail(emailCuidador)
 
         if (rsCuidador) {
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status

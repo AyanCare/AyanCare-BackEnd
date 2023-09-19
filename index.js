@@ -52,11 +52,13 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
    const autenticarToken = await jwt.validateJWT(token)
 
    if(autenticarToken){
-      responseJSON.status = messages.SUCCESS_REQUEST.status
-      responseJSON.result = autenticidadeToken
+      let responseJSON = {}
 
-      response.status(autenticarToken.status)
-      response.json(autenticarToken)
+      responseJSON.status = messages.SUCCESS_REQUEST.status
+      responseJSON.result = autenticarToken
+
+      response.status(responseJSON.status)
+      response.json(responseJSON)
    } else {
       response.status(messages.ERROR_INVALID_TOKEN.status)
       response.json(messages.ERROR_INVALID_TOKEN)

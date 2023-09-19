@@ -47,11 +47,11 @@ const getMedicamentoByID = async function (id) {
 }
 
 // '${dadosMedicamento.nome}'
-//         '${dadosMedicamento.quantidade}',
-//         '${dadosMedicamento.data_validade}',
-//         '${dadosMedicamento.estocado}',
-//         ${dadosMedicamento.id_paciente},
-//         ${dadosMedicamento.id_medida}
+// '${dadosMedicamento.quantidade}',
+// '${dadosMedicamento.data_validade}',
+// '${dadosMedicamento.estocado}',
+// ${dadosMedicamento.id_paciente},
+// ${dadosMedicamento.id_medida}
 
 const insertMedicamento = async function (dadosMedicamento) {
 
