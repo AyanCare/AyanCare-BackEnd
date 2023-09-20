@@ -8,9 +8,16 @@
 const jwt = require('jsonwebtoken');
 const SECRET = 'dQaWrEiusR';
 const EXPIRES = 600;
+const EXPIRES_RECOVER = 180;
 
 const createJWT = async function (payLoad){
     const token = jwt.sign({userID: payLoad}, SECRET, {expiresIn: EXPIRES})
+
+    return token;
+}
+
+const createJWTRecover = async function (payLoad){
+    const token = jwt.sign({userID: payLoad}, SECRET, {expiresIn: EXPIRES_RECOVER})
 
     return token;
 }
@@ -33,5 +40,6 @@ const validateJWT = async function (token){
 
 module.exports = {
     createJWT,
-    validateJWT
+    validateJWT,
+    createJWTRecover
 }
