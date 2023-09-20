@@ -13,7 +13,7 @@ var prisma = new PrismaClient()
 
 /************************** Selects ******************************/
 const selectAllHorarios = async function (){
-    let sql = `select * from tbl_horario`
+    let sql = `select tbl_horario.id ,time_format( tbl_Horario.hora, '%H:%i') as hora from tbl_horario`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -27,7 +27,7 @@ const selectAllHorarios = async function (){
 }
 
 const selectHorarioById = async function (idHorario){
-    let sql = `select * from tbl_horario where id = ${idHorario}`
+    let sql = `select tbl_horario.id ,time_format( tbl_Horario.hora, '%H:%i') as hora from tbl_horario where id = ${idHorario}`
 
     let rsHorario = await prisma.$queryRawUnsafe(sql)
 
@@ -40,7 +40,7 @@ const selectHorarioById = async function (idHorario){
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_horario order by id desc limit 1;'
+    let sql = `select tbl_horario.id ,time_format( tbl_Horario.hora, '%H:%i') as hora from tbl_horario order by id desc limit 1;`
 
     let rsHorario = await prisma.$queryRawUnsafe(sql)
 

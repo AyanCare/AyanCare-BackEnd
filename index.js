@@ -671,7 +671,7 @@ app.get('/v1/ayan/horario/:id', validateJWT, cors(), async (request, response) =
 })
 
 //Insert Paciente
-app.post('/v1/ayan/horario', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/horario', validateJWT, cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -714,7 +714,7 @@ app.delete('/v1/ayan/horario/:id', validateJWT, cors(), async function (request,
 
    let returnHorario = await controllerHorario.getHorarioByID(id)
 
-   if (returnPaciente.status == 404) {
+   if (returnHorario.status == 404) {
       response.status(returnHorario.status)
       response.json(returnHorario)
    } else {
