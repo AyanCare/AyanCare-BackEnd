@@ -16,7 +16,6 @@ const jwtRecover = require('./middleware/middlewareEmail.js')
 const controllerPaciente = require('./controller/controller_paciente.js');
 const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
-const controllerHorario = require('./controller/controller_horario.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const { request } = require('express');
@@ -650,80 +649,7 @@ app.put('/v1/ayan/cuidador/endereco/:id', validateJWT, cors(), bodyParserJSON, a
 * Data: 04/09/2023
 * Versão: 1.0
 *************************************************************************************/
-app.get('/v1/ayan/horarios', validateJWT, cors(), async (request, response) => {
-   let dadosHorario = await controllerHorario.getHorarios();
 
-   //Valida se existe registro
-   response.json(dadosHorario)
-   response.status(dadosHorario.status)
-})
-
-//Get por ID
-app.get('/v1/ayan/horario/:id', validateJWT, cors(), async (request, response) => {
-   let idHorario = request.params.id;
-
-   //Recebe os dados do controller
-   let dadosHorario = await controllerHorario.getHorarioByID(idHorario);
-
-   //Valida se existe registro
-   response.json(dadosHorario)
-   response.status(dadosHorario.status)
-})
-
-//Insert Paciente
-app.post('/v1/ayan/horario', validateJWT, cors(), bodyParserJSON, async (request, response) => {
-   let contentType = request.headers['content-type']
-
-   //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-      let dadosBody = request.body
-      let resultDadosHorario = await controllerHorario.insertHorario(dadosBody)
-
-      response.status(resultDadosHorario.status)
-      response.json(resultDadosHorario)
-   } else {
-      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
-      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
-   }
-})
-
-//Update Paciente
-app.put('/v1/ayan/horario/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
-   let contentType = request.headers['content-type']
-
-   //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-
-      let id = request.params.id;
-
-      let dadosBody = request.body
-
-      let resultDadosHorario = await controllerHorario.updateHorario(dadosBody, id)
-
-      response.status(resultDadosHorario.status)
-      response.json(resultDadosHorario)
-   } else {
-      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
-      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
-   }
-})
-
-//Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
-app.delete('/v1/ayan/horario/:id', validateJWT, cors(), async function (request, response) {
-   let id = request.params.id;
-
-   let returnHorario = await controllerHorario.getHorarioByID(id)
-
-   if (returnHorario.status == 404) {
-      response.status(returnHorario.status)
-      response.json(returnHorario)
-   } else {
-      let resultDadosHorario = await controllerHorario.deleteHorario(id)
-
-      response.status(resultDadosHorario.status)
-      response.json(resultDadosHorario)
-   }
-})
 
 
 /*************************************************************************************
