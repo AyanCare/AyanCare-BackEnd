@@ -54,7 +54,7 @@ const insertEndereco = async function (dadosEndereco) {
         cidade,
         estado
     ) values (
-        '${dadosEndereco.logradouro}'
+        '${dadosEndereco.logradouro}',
         '${dadosEndereco.bairro}',
         '${dadosEndereco.cep}',
         '${dadosEndereco.numero}',

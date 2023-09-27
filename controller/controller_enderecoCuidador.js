@@ -40,8 +40,8 @@ const insertEndereco = async function (dadosEndereco) {
     if (
         dadosEndereco.logradouro == '' || dadosEndereco.logradouro == undefined || dadosEndereco.logradouro > 80 ||
         dadosEndereco.bairro == '' || dadosEndereco.bairro == undefined || dadosEndereco.bairro > 80 ||
-        dadosEndereco.cep == '' || dadosEndereco.cep == undefined || dadosEndereco.cep > 10 ||
-        dadosEndereco.numero == '' || dadosEndereco.numero == undefined || NaN(dadosEndereco.numero) ||
+        dadosEndereco.cep == '' || dadosEndereco.cep == undefined || dadosEndereco.cep.length > 10 ||
+        dadosEndereco.numero == '' || dadosEndereco.numero == undefined || isNaN(dadosEndereco.numero) ||
         dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade > 80 ||
         dadosEndereco.estado == '' || dadosEndereco.estado == undefined || dadosEndereco.estado > 80
     ) {
