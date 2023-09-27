@@ -78,6 +78,24 @@ const insertComorbidade = async function (dadosComorbidade) {
     }
 }
 
+const insertComorbidadeIntoPaciente = async function (dadosComorbidade){
+    let sql = `insert into tbl_comorbidade_paciente(
+        id_comorbidade,
+        id_paciente
+    ) values (
+        ${dadosComorbidade.id_comorbidade},
+        ${dadosComorbidade.id_paciente}
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+}
+
 /************************** Updates ******************************/
 const updateComorbidade = async function (dadosComorbidade) {
     let sql = `update tbl_comorbidade set
@@ -106,11 +124,25 @@ const deleteComorbidade = async function (idComorbidade) {
     }
 }
 
+const deleteComorbidadeOfPaciente = async function (idComorbidade){
+    let sql = `delete from tbl_comorbidade_paciente where id_comorbidade = ${idComorbidade}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if(resultStatus){
+        return true
+    }else{
+        return false
+    }
+}
+
 module.exports = {
     deleteComorbidade,
     insertComorbidade,
     selectAllComorbidades,
     selectComorbidadeById,
     selectLastId,
-    updateComorbidade
+    updateComorbidade,
+    deleteComorbidadeOfPaciente,
+    insertComorbidadeIntoPaciente
 }

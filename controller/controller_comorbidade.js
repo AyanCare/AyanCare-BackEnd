@@ -49,21 +49,28 @@ const getComorbidadeByID = async function (id) {
 const insertComorbidade = async function (dadosComorbidade) {
 
     if (
-        dadosComorbidade.nome == '' || dadosComorbidade.nome == undefined || dadosComorbidade.nome > 80
+        dadosComorbidade.nome == '' || dadosComorbidade.nome == undefined || dadosComorbidade.nome > 80 ||
+        dadosComorbidade.id_paciente == '' || dadosComorbidade.id_paciente == undefined || isNaN(dadosComorbidade.id_paciente)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
         let resultDadosComorbidade = await comorbidadeDAO.insertComorbidade(dadosComorbidade)
 
         if (resultDadosComorbidade) {
-            let novoComorbidade = await comorbidadeDAO.selectLastId()
+            let resultDadosComorbidadePaciente = await comorbidadeDAO.insertComorbidadeIntoPaciente(dadosComorbidade)
 
-            let dadosComorbidadeJSON = {}
+            if (resultDadosComorbidadePaciente) {
+                let novoComorbidade = await comorbidadeDAO.selectLastId()
 
-            dadosComorbidadeJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosComorbidadeJSON.comorbidade = novoComorbidade
+                let dadosComorbidadeJSON = {}
 
-            return dadosComorbidadeJSON
+                dadosComorbidadeJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosComorbidadeJSON.comorbidade = novoComorbidade
+
+                return dadosComorbidadeJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
         } else {
             return messages.ERROR_INTERNAL_SERVER
         }
@@ -111,14 +118,20 @@ const deleteComorbidade = async function (id) {
         let searchIdComorbidade = await comorbidadeDAO.selectComorbidadeById(id)
 
         if (searchIdComorbidade) {
-            let dadosComorbidade = await comorbidadeDAO.deleteComorbidade(id)
+            let dadosComorbidadePaciente = await comorbidadeDAO.deleteComorbidadeOfPaciente(id)
 
-            if (dadosComorbidade) {
-                return messages.SUCCESS_DELETED_ITEM
+            if (dadosComorbidadePaciente) {
+                let dadosComorbidade = await comorbidadeDAO.deleteComorbidade(id)
+
+                if (dadosComorbidade) {
+                    return messages.SUCCESS_DELETED_ITEM
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
     }
