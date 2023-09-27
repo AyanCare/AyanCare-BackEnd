@@ -82,7 +82,7 @@ const insertDoenca = async function (dadosDoenca) {
 
 const insertDoencaIntoPaciente = async function (dadosDoenca){
 
-    let sql = `insert into tbl_comorbidade_paciente(
+    let sql = `insert into tbl_doenca_cronica_paciente(
         id_doenca_cronica,
         id_paciente
     ) values (
@@ -129,7 +129,7 @@ const deleteDoenca = async function (idDoenca) {
 }
 
 const deleteDoencaOfPaciente = async function (idDoenca){
-    let sql = `delete from tbl_doenca_paciente where id_doenca_cronica = ${idDoenca}`
+    let sql = `delete from tbl_doenca_cronica_paciente where id_doenca_cronica = ${idDoenca}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
