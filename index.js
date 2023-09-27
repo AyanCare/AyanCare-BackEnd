@@ -39,7 +39,6 @@ const validateJWT = async function (request, response, next) {
    let token = request.headers['x-access-token']
 
    const autenticidadeToken = await jwt.validateJWT(token)
-   console.log(autenticidadeToken);
 
    if (autenticidadeToken) {
       next();

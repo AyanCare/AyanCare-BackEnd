@@ -31,7 +31,19 @@ const selectAllPacientes = async function () {
 }
 
 const selectPacienteById = async function (idPaciente) {
-    let sql = `SELECT * FROM tbl_paciente where id = ${idPaciente}`
+    let sql = `select tbl_paciente.*, 
+    tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
+    tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade
+from tbl_paciente
+    inner join tbl_doenca_cronica_paciente
+ on tbl_doenca_cronica_paciente.id_paciente = tbl_paciente.id
+    inner join tbl_comorbidade_paciente
+ on tbl_comorbidade_paciente.id_paciente = tbl_paciente.id
+    inner join tbl_comorbidade
+ on tbl_comorbidade.id = tbl_comorbidade_paciente.id_comorbidade
+    inner join tbl_doenca_cronica
+ on tbl_doenca_cronica_paciente.id_doenca_cronica = tbl_doenca_cronica.id
+where tbl_paciente.id = ${idPaciente};`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
@@ -69,7 +81,10 @@ const selectLastId = async function () {
 }
 
 const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
-    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}' and nome = '${dadosPaciente.nome}'`
+    let sql = `select tbl_paciente.*, tbl_genero.* as genero 
+    from tbl_paciente
+        inner join tbl_genero on tbl_genero.id = tbl_paciente.id_genero
+    where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}' and nome = '${dadosPaciente.nome}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
