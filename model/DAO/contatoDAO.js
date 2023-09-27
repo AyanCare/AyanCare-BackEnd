@@ -27,6 +27,7 @@ const selectAllContatos = async function() {
     //Valida se o BD retornou algum registro
     if (rsContato.length > 0) {
         return rsContato
+
     } else {
         return false
     }
@@ -49,3 +50,92 @@ const selectContatoById = async function (idContato) {
 }
 
 
+const selectLastId = async function () {
+    let sql = 'select * from tbl_contato order by id desc limit 1;'
+
+    let rsContato = await prisma.$queryRawUnsafe(sql)
+
+    if (rsCuidador.length > 0) {
+        return rsContato
+    } else {
+        return false
+    }
+
+    //retorna o ultimo id inserido no banco de dados
+}
+
+
+/***********************Inserte***************************** */
+
+const insertContato = async function( dadosContato){
+
+    let sql = `insert into tbl_contato(
+        nome,
+        numero,
+        local,
+        id_paciente,
+        id_status_contato
+    ) values(
+        '${dadosContato.nome}',
+        '${dadosContato.numero}',
+        '${dadosContato.local}',
+        ${dadosContato.id_paciente},
+        ${dadosContato.id_status_contato},
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+
+
+}
+
+
+
+/****************** Updates  *********************************** */
+
+const updateContato = async function(dadosContato){
+
+    let sql = `update tbl_contato set 
+            nome   = '${dadosContato.nome}',
+            numero = '${dadosContato.numero}',
+            local  = '${dadosContato.local}'
+        where id = ${dadosContato.id} `
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+    
+    if (resultStatus){
+        return true
+    }else{
+        return false
+    }
+    
+}
+
+
+
+/************************** Deletes ******************************/
+const deleteContato = async function (idContato) {
+    let sql = `delete from tbl_contato where id = ${idContato}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+}
+
+
+module.exports = {
+    deleteContato,
+    updateContato,
+    insertContato,
+    selectAllContatos,
+    selectcontatoById,
+    selectLastId
+}
