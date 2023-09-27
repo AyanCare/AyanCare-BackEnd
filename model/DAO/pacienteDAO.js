@@ -42,6 +42,18 @@ const selectPacienteById = async function (idPaciente) {
     }
 }
 
+const selectPacienteByEmail = async function (emailPaciente) {
+    let sql = `select * from tbl_paciente where email = '${emailPaciente}'`
+
+    let rsPaciente = await prisma.$queryRawUnsafe(sql)
+
+    if (rsPaciente.length > 0) {
+        return rsPaciente
+    } else {
+        return false
+    }
+}
+
 const selectLastId = async function () {
     let sql = 'select * from tbl_paciente order by id desc limit 1;'
 
@@ -56,8 +68,8 @@ const selectLastId = async function () {
     //retorna o ultimo id inserido no banco de dados
 }
 
-const selectPacienteByEmailAndSenha = async function (dadosPaciente){
-    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}'`
+const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
+    let sql = `select * from tbl_paciente where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}' and nome = '${dadosPaciente.nome}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
@@ -127,6 +139,20 @@ const updatePaciente = async function (dadosPaciente) {
     }
 }
 
+const updateSenhaPaciente = async function (dadosPaciente) {
+    let sql = `update tbl_paciente set
+            senha = '${dadosPaciente.senha}'
+        where id = ${dadosPaciente.id}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 /************************** Deletes ******************************/
 const deletePaciente = async function (idPaciente) {
     let sql = `delete from tbl_paciente where id = ${idPaciente}`
@@ -146,6 +172,8 @@ module.exports = {
     selectAllPacientes,
     selectLastId,
     selectPacienteById,
-    selectPacienteByEmailAndSenha,
-    updatePaciente
+    selectPacienteByEmailAndSenhaAndNome,
+    updatePaciente,
+    updateSenhaPaciente,
+    selectPacienteByEmail
 }

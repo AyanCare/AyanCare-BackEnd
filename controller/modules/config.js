@@ -12,6 +12,7 @@ const ERROR_INVALID_ID = { status: 400, message: 'O ID informado não é válido
 const ERROR_UNAUTHORIZED_USER = { status: 401, message: 'Usuário não autorizado a fazer requisições.' }
 const ERROR_NOT_FOUND = { status: 404, message: 'O Item não foi encontrado.' }
 const ERROR_INVALID_CONTENT_TYPE = { status: 415, message: 'O tipo de mídia Content-Type da solicitação não é compatível com o servidor. Tipo Aceito: [application/json]' }
+const ERROR_INVALID_TOKEN = { status: 401, message: 'O token está errado ou expirou.' }
 
 /***************************************** MENSAGENS DE SUCESSO *****************************************/
 const SUCCESS_REQUEST = { status: 200, message: 'Requisição realizada com sucesso.' }
@@ -31,5 +32,6 @@ module.exports = {
     SUCCESS_ITEM_FOUND,
     SUCCESS_REQUEST,
     SUCCESS_UPDATED_ITEM,
-    ERROR_UNAUTHORIZED_USER
+    ERROR_UNAUTHORIZED_USER,
+    ERROR_INVALID_TOKEN
 }

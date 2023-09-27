@@ -1,6 +1,6 @@
 /**************************************************************************************
  * Objetivo: Responsável pela manipulação de dados dos MEDICAMENTO no Banco de Dados.
- * Data: 06/06/2023
+ * Data: 06/09/2023
  * Autor: Lohannes da Silva Costa
  * Versão: 1.0
  **************************************************************************************/

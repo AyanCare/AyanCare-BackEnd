@@ -47,20 +47,40 @@ const getPacienteByID = async function (id) {
     }
 }
 
-const getPacienteByEmailAndSenha = async function (dadosPaciente) {
+const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
     if (dadosPaciente.email == '' || dadosPaciente.email == undefined ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined) {
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined ||
+        dadosPaciente.nome == '' || dadosPaciente.nome == undefined) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosPacienteJSON = {};
 
-        let rsPaciente = await pacienteDAO.selectPacienteByEmailAndSenha(dadosPaciente)
+        let rsPaciente = await pacienteDAO.selectPacienteByEmailAndSenhaAndNome(dadosPaciente)
 
         if (rsPaciente) {
             let tokenUser = await jwt.createJWT(rsPaciente[0].id)
 
             dadosPacienteJSON.token = tokenUser
+            dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
+            dadosPacienteJSON.paciente = rsPaciente
+            return dadosPacienteJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getPacienteByEmail = async function (emailPaciente) {
+    if (emailPaciente == '' || emailPaciente == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+
+        let dadosPacienteJSON = {};
+
+        let rsPaciente = await pacienteDAO.selectPacienteByEmail(emailPaciente)
+
+        if (rsPaciente) {
             dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
             dadosPacienteJSON.paciente = rsPaciente
             return dadosPacienteJSON
@@ -148,6 +168,38 @@ const updatePaciente = async function (dadosPaciente, id) {
     }
 }
 
+const updateSenhaPaciente = async function (dadosPaciente, id) {
+    if (
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255
+    ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else if (id == null || id == undefined || isNaN(id)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        dadosPaciente.id = id
+
+        let atualizacaoPaciente = await pacienteDAO.selectPacienteById(id)
+
+        if (atualizacaoPaciente) {
+            let resultDadosPaciente = await pacienteDAO.updateSenhaPaciente(dadosPaciente)
+
+            if (resultDadosPaciente) {
+                let dadosPacienteJSON = {}
+                dadosPacienteJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                dadosPacienteJSON.message = messages.SUCCESS_UPDATED_ITEM.message
+                dadosPacienteJSON.paciente = dadosPaciente
+
+                return dadosPacienteJSON
+
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
+        } else {
+            return messages.ERROR_INVALID_ID
+        }
+    }
+}
+
 const deletePaciente = async function (id) {
 
     if (id == null || id == undefined || id == '' || isNaN(id)) {
@@ -179,5 +231,7 @@ module.exports = {
     updatePaciente,
     deletePaciente,
     getPacienteByID,
-    getPacienteByEmailAndSenha
+    getPacienteByEmailAndSenhaAndNome,
+    getPacienteByEmail,
+    updateSenhaPaciente
 }

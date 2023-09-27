@@ -1,5 +1,5 @@
 /**************************************************************************************
- * Objetivo: Responsável pela manipulação de dados dos contato no Banco de Dados.
+ * Objetivo: Responsável pela manipulação de dados dos Contatos no Banco de Dados.
  * Data: 26/09/2023
  * Autor: Gustavo Souza
  * Versão: 1.0
@@ -22,29 +22,28 @@ const selectAllContatos = async function() {
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
-    let rscontato = await prisma.$queryRawUnsafe(sql)
+    let rsContato = await prisma.$queryRawUnsafe(sql)
 
     //Valida se o BD retornou algum registro
-    if (rscontato.length > 0) {
-        return rscontato
+    if (rsContato.length > 0) {
+        return rsContato
+
     } else {
         return false
     }
-
-
 }
 
 
 
 /******************Select pelo ID************************ */
 
-const selectcontatoById = async function (idcontato) {
-    let sql = `SELECT * FROM tbl_contato where id = ${idcontato}`
+const selectContatoById = async function (idContato) {
+    let sql = `SELECT * FROM tbl_contato where id = ${idContato}`
 
-    let rscontato = await prisma.$queryRawUnsafe(sql)
+    let rsContato = await prisma.$queryRawUnsafe(sql)
 
-    if (rscontato.length > 0) {
-        return rscontato
+    if (rsContato.length > 0) {
+        return rsContato
     } else {
         return false
     }
