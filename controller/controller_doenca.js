@@ -50,7 +50,8 @@ const insertDoenca = async function (dadosDoenca) {
 
     if (
         dadosDoenca.nome == '' || dadosDoenca.nome == undefined || dadosDoenca.nome > 80 ||
-        dadosDoenca.grau == '' || dadosDoenca.grau == undefined || dadosDoenca.grau > 80
+        dadosDoenca.grau == '' || dadosDoenca.grau == undefined || dadosDoenca.grau > 80 ||
+        dadosDoenca.id_paciente == '' || dadosDoenca.id_paciente == undefined || isNaN(dadosDoenca.id_paciente)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -59,12 +60,20 @@ const insertDoenca = async function (dadosDoenca) {
         if (resultDadosDoenca) {
             let novoDoenca = await doencaDAO.selectLastId()
 
-            let dadosDoencaJSON = {}
+            dadosDoenca.id_doenca = novoDoenca[0].id
 
-            dadosDoencaJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosDoencaJSON.doenca = novoDoenca
+            let resultDadosDoencaPaciente = await doencaDAO.insertDoencaIntoPaciente(dadosDoenca)
 
-            return dadosDoencaJSON
+            if (resultDadosDoencaPaciente) {
+                let dadosDoencaJSON = {}
+
+                dadosDoencaJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosDoencaJSON.doenca = novoDoenca
+
+                return dadosDoencaJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
         } else {
             return messages.ERROR_INTERNAL_SERVER
         }
@@ -113,14 +122,21 @@ const deleteDoenca = async function (id) {
         let searchIdDoenca = await doencaDAO.selectDoencaById(id)
 
         if (searchIdDoenca) {
-            let dadosDoenca = await doencaDAO.deleteDoenca(id)
 
-            if (dadosDoenca) {
-                return messages.SUCCESS_DELETED_ITEM
+            let dadosDoencaPaciente = await doencaDAO.deleteDoencaOfPaciente(id)
+
+            if (dadosDoencaPaciente) {
+                let dadosDoenca = await doencaDAO.deleteDoenca(id)
+
+                if (dadosDoenca) {
+                    return messages.SUCCESS_DELETED_ITEM
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
     }

@@ -79,6 +79,7 @@ const insertComorbidade = async function (dadosComorbidade) {
 }
 
 const insertComorbidadeIntoPaciente = async function (dadosComorbidade){
+
     let sql = `insert into tbl_comorbidade_paciente(
         id_comorbidade,
         id_paciente

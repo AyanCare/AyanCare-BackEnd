@@ -80,6 +80,25 @@ const insertDoenca = async function (dadosDoenca) {
     }
 }
 
+const insertDoencaIntoPaciente = async function (dadosDoenca){
+
+    let sql = `insert into tbl_comorbidade_paciente(
+        id_doenca_cronica,
+        id_paciente
+    ) values (
+        ${dadosDoenca.id_doenca},
+        ${dadosDoenca.id_paciente}
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+}
+
 /************************** Updates ******************************/
 const updateDoenca = async function (dadosDoenca) {
     let sql = `update tbl_doenca_cronica set
@@ -109,11 +128,25 @@ const deleteDoenca = async function (idDoenca) {
     }
 }
 
+const deleteDoencaOfPaciente = async function (idDoenca){
+    let sql = `delete from tbl_doenca_paciente where id_doenca_cronica = ${idDoenca}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if(resultStatus){
+        return true
+    }else{
+        return false
+    }
+}
+
 module.exports = {
     deleteDoenca,
     insertDoenca,
     selectAllDoencas,
     selectDoencaById,
     selectLastId,
-    updateDoenca
+    updateDoenca,
+    deleteDoencaOfPaciente,
+    insertDoencaIntoPaciente
 }

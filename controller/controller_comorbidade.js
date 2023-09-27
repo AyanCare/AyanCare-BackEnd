@@ -57,11 +57,13 @@ const insertComorbidade = async function (dadosComorbidade) {
         let resultDadosComorbidade = await comorbidadeDAO.insertComorbidade(dadosComorbidade)
 
         if (resultDadosComorbidade) {
+            let novoComorbidade = await comorbidadeDAO.selectLastId()
+
+            dadosComorbidade.id_comorbidade = novoComorbidade[0].id
+
             let resultDadosComorbidadePaciente = await comorbidadeDAO.insertComorbidadeIntoPaciente(dadosComorbidade)
 
             if (resultDadosComorbidadePaciente) {
-                let novoComorbidade = await comorbidadeDAO.selectLastId()
-
                 let dadosComorbidadeJSON = {}
 
                 dadosComorbidadeJSON.status = messages.SUCCESS_CREATED_ITEM.status
