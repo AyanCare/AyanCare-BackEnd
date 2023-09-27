@@ -16,6 +16,7 @@ const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
+const controllerContato = require('./controller/controller_contato.js');
 const { request } = require('express');
 const { response } = require('express');
 
@@ -297,13 +298,86 @@ const validateJWT = async function (request, response, next){
 
                                           /*************************************************************************************
                                            * Objetibo: API de controle de Contato.
-                                           * Autor: Lohannes da Silva Costa
-                                           * Data: 04/09/2023
+                                           * Autor: Gustavo Souza Tenorio de Barros
+                                           * Data: 27/09/2023
                                            * Versão: 1.0
                                            *************************************************************************************/
+                                          
+                                          //Todos os Contatos
+                                          app.get('/v1/ayan/contatos',cors(), async (request, response) =>{
 
+                                             //Receber os dados do Controller
+                                             let dadosContato = await controllerContato.getContatos();
+                                              
+                                             //Valida se existe registro
+                                             response.json(dadosContato)
+                                             response.status(dadosContato.status)
+                                          })
+                                          
+                                          //Contato especifico   
+                                          app.get('/v1/ayan/contato/:id', cors(), async (request, response)=>{
 
+                                             let idContato=request.params,id;
 
+                                             let dadosContato = await controllerContato.getContatoByID(idContato);
+
+                                             response.json(dadosContato)
+                                             response.status(dadosContato.status)
+                                          })
+                                          
+                                          // Inserir Contato
+                                          app.post('/v1/ayan/contato/', cors(), bodyParserJSON,async (request, response) =>{
+                                             let contentType = request.headers['content-type']
+                                          
+                                             //Validação para receber dados apenas na formato JSON
+                                             if (String(contentType).toLowerCase() == 'application/json') {
+                                                let dadosBody = request.body
+                                                let resultDadosContato = await controllerContato.insertContato(dadosBody)
+                                 
+                                                response.status(resultDadosContato.status)
+                                                response.json(resultDadosContato)
+                                             } else {
+                                                response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+                                                response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+                                             }
+                                          })
+                                          
+                                          //Atualizar dados Contato
+                                          app.put('/v1/ayan/contato/', cors(), bodyParserJSON,async (request, response) =>{
+                                             let contentType = request.headers['content-type']
+                                          
+                                             //Validação para receber dados apenas na formato JSON
+                                             if (String(contentType).toLowerCase() == 'application/json') {
+                                                let id = request.params.id;
+
+                                                let dadosBody = request.body
+                                                
+                                                let resultDadosContato =  await controllerContato.updateContato(dadosBody, id)
+
+                                                response.status(resultDadosContato.status)
+                                                response.json(resultDadosContato)
+                                             } else {
+                                                response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+                                                response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+                                             }
+                                          })
+
+                                          //Deletar Contato
+                                          app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
+                                             let id = request.params.id;
+                                         
+                                             let returnContato = await controllerContato.getContatoByID(id)
+                                         
+                                             if (returnContato.status == 404) {
+                                                 response.status(returnContato.status)
+                                                 response.json(returnContato)
+                                             } else {
+                                                 let resultDadosContato = await controllerContato.deletarContato(id)
+                                         
+                                                 response.status(resultDadosContato.status)
+                                                 response.json(resultDadosContato)
+                                             }
+                                         })
                                              /*************************************************************************************
                                                 * Objetibo: API de controle de Responsável.
                                                 * Autor: Lohannes da Silva Costa
@@ -443,7 +517,7 @@ const validateJWT = async function (request, response, next){
                                                                     
                                                                         let returnCuidador = await controllerCuidador.getCuidadorByID(id)
                                                                     
-                                                                        if (returnPaciente.status == 404) {
+                                                                        if (returnCuidador.status == 404) {
                                                                             response.status(returnCuidador.status)
                                                                             response.json(returnCuidador)
                                                                         } else {
