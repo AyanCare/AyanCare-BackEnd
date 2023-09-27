@@ -14,7 +14,7 @@ var prisma = new PrismaClient()
 
 /********************Selects************************** */
 
-const selectAllContato = async function() {
+const selectAllContatos = async function() {
     
 
     //ScriptSQL para buscar todos os itens do BD
@@ -50,6 +50,20 @@ const selectcontatoById = async function (idcontato) {
     }
 }
 
+
+const selectLastId = async function () {
+    let sql = 'select * from tbl_contato order by id desc limit 1;'
+
+    let rsContato = await prisma.$queryRawUnsafe(sql)
+
+    if (rsCuidador.length > 0) {
+        return rsContato
+    } else {
+        return false
+    }
+
+    //retorna o ultimo id inserido no banco de dados
+}
 
 
 /***********************Inserte***************************** */
@@ -122,6 +136,7 @@ module.exports = {
     deleteContato,
     updateContato,
     insertContato,
-    selectAllContato,
-    selectcontatoById
+    selectAllContatos,
+    selectcontatoById,
+    selectLastId
 }

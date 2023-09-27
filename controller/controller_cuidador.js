@@ -19,7 +19,7 @@ const getCuidadores = async function () {
         //Criando um JSON com o atributo Alunos para encaminhar um Array de alunos
         dadosCuidadoresJSON.status = messages.SUCCESS_REQUEST.status
         dadosCuidadoresJSON.quantidade = dadosCuidadores.length
-        dadosCuidadoresJSON.cuidadors = dadosCuidadores
+        dadosCuidadoresJSON.cuidadores = dadosCuidadores
         return dadosCuidadoresJSON
     } else {
         return messages.ERROR_INTERNAL_SERVER
