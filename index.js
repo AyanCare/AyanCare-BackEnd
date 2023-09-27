@@ -16,6 +16,8 @@ const jwtRecover = require('./middleware/middlewareEmail.js')
 const controllerPaciente = require('./controller/controller_paciente.js');
 const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
+const controllerComorbidade = require('./controller/controller_comorbidade.js');
+const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const { request } = require('express');
@@ -166,12 +168,86 @@ app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request
 })
 
 /*************************************************************************************
- * Objetibo: API de controle de Doenças Crônicas. 
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
- * Versão: 1.0
- *************************************************************************************/
+* Objetibo: API de controle de Doenças Crônicas. 
+* Autor: Lohannes da Silva Costa
+* Data: 04/09/2023
+* Versão: 1.0
+*************************************************************************************/
+//Get All (futuramente será um conjunto de GETs)
+app.get('/v1/ayan/doencas', validateJWT, cors(), async (request, response) => {
+   let dadosDoenca = await controllerDoenca.getDoencas();
 
+   //Valida se existe registro
+   response.json(dadosDoenca)
+   response.status(dadosDoenca.status)
+})
+
+//Get por ID
+app.get('/v1/ayan/doenca/:id', validateJWT, cors(), async (request, response) => {
+   let idDoenca = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosDoenca = await controllerDoenca.getDoencaByID(idDoenca);
+
+   //Valida se existe registro
+   response.json(dadosDoenca)
+   response.status(dadosDoenca.status)
+})
+
+//Insert
+app.post('/v1/ayan/doenca', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosDoenca = await controllerDoenca.insertDoenca(dadosBody)
+
+      response.status(resultDadosDoenca.status)
+      response.json(resultDadosDoenca)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update
+app.put('/v1/ayan/doenca/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosDoenca = await controllerDoenca.updateDoenca(dadosBody, id)
+
+      response.status(resultDadosDoenca.status)
+      response.json(resultDadosDoenca)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Delete
+app.delete('/v1/ayan/doenca/:id', validateJWT, cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnDoenca = await controllerDoenca.getDoencaByID(id)
+
+   if (returnDoenca.status == 404) {
+      response.status(returnDoenca.status)
+      response.json(returnDoenca)
+   } else {
+      let resultDadosDoenca = await controllerDoenca.deleteDoenca(id)
+
+      response.status(resultDadosDoenca.status)
+      response.json(resultDadosDoenca)
+   }
+})
 
 
 /*************************************************************************************
@@ -180,7 +256,81 @@ app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+//Get All (futuramente será um conjunto de GETs)
+app.get('/v1/ayan/comorbidades', validateJWT, cors(), async (request, response) => {
+   let dadosComorbidade = await controllerComorbidade.getComorbidades();
 
+   //Valida se existe registro
+   response.json(dadosComorbidade)
+   response.status(dadosComorbidade.status)
+})
+
+//Get por ID
+app.get('/v1/ayan/comorbidade/:id', validateJWT, cors(), async (request, response) => {
+   let idComorbidade = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosComorbidade = await controllerComorbidade.getComorbidadeByID(idComorbidade);
+
+   //Valida se existe registro
+   response.json(dadosComorbidade)
+   response.status(dadosComorbidade.status)
+})
+
+//Insert Comorbidade
+app.post('/v1/ayan/comorbidade', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosComorbidade = await controllerComorbidade.insertComorbidade(dadosBody)
+
+      response.status(resultDadosComorbidade.status)
+      response.json(resultDadosComorbidade)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update Comorbidade
+app.put('/v1/ayan/comorbidade/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosComorbidade = await controllerComorbidade.updateComorbidade(dadosBody, id)
+
+      response.status(resultDadosComorbidade.status)
+      response.json(resultDadosComorbidade)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Delete Comorbidade
+app.delete('/v1/ayan/comorbidade/:id', validateJWT, cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnComorbidade = await controllerComorbidade.getComorbidadeByID(id)
+
+   if (returnComorbidade.status == 404) {
+      response.status(returnComorbidade.status)
+      response.json(returnComorbidade)
+   } else {
+      let resultDadosComorbidade = await controllerComorbidade.deleteComorbidade(id)
+
+      response.status(resultDadosComorbidade.status)
+      response.json(resultDadosComorbidade)
+   }
+})
 
 
 /*************************************************************************************
