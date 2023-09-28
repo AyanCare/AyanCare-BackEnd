@@ -54,7 +54,7 @@ where tbl_paciente.id = ${idPaciente};`
         let set = Array.from(new Set(rsPaciente))
 
         pacienteJSON.doenca_id = 0
-        pacienteJSON.comorbidade_id = 0
+        let arrayID = []
 
         set.forEach(paciente => {
             pacienteJSON.id = paciente.id
@@ -69,6 +69,7 @@ where tbl_paciente.id = ${idPaciente};`
             if(paciente.doenca_id != pacienteJSON.doenca_id){
                 let doenca = {}
 
+                pacienteJSON.doenca_id = paciente.doenca_id
                 doenca.id = paciente.doenca_id
                 doenca.nome = paciente.doenca
                 doenca.grau = paciente.doenca_grau
@@ -76,7 +77,19 @@ where tbl_paciente.id = ${idPaciente};`
                 doencas.push(doenca)
             }
 
+            if(!arrayID.includes(paciente.comorbidade_id)){
+                let comorbidade = {}
+
+                arrayID.push(paciente.comorbidade_id)
+                pacienteJSON.comorbidade_id = paciente.comorbidade_id
+                comorbidade.id = paciente.comorbidade_id
+                comorbidade.nome = paciente.comorbidade
+
+                comorbidades.push(comorbidade)
+            }
+
             pacienteJSON.doencas_cronicas = doencas
+            pacienteJSON.comorbidades = comorbidades
         })
 
         delete pacienteJSON.comorbidade_id
