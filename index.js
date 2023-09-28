@@ -20,6 +20,8 @@ const controllerComorbidade = require('./controller/controller_comorbidade.js');
 const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
+const controllerContato = require('./controller/controller_contato.js');
+const controllerStatus_Contato = require ('./controller/controller_statusContato.js')
 const { request } = require('express');
 const { response } = require('express');
 
@@ -497,7 +499,6 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
  *************************************************************************************/
 
 
-
 /*************************************************************************************
  * Objetibo: API de controle de Generos.
  * Autor: Lohannes da Silva Costa
@@ -505,7 +506,7 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
  * Versão: 1.0
  *************************************************************************************/
 
-//Get All Gêneros 
+//Get All Gêneros
 app.get('/v1/ayan/generos', cors(), async (request, response) => {
    //Recebe os dados do controller
    let dadosGenero = await controllerGenero.getGeneros();
@@ -556,10 +557,114 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
 
 /*************************************************************************************
  * Objetibo: API de controle de Contato.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
+ * Autor: Gustavo Souza Tenorio de Barros
+ * Data: 27/09/2023
  * Versão: 1.0
  *************************************************************************************/
+
+//Todos os Contatos
+app.get('/v1/ayan/contatos', cors(), async (request, response) => {
+
+   //Receber os dados do Controller
+   let dadosContato = await controllerContato.getContatos();
+
+   //Valida se existe registro
+   response.json(dadosContato)
+   response.status(dadosContato.status)
+})
+
+//Contato especifico   
+app.get('/v1/ayan/contato/:id', cors(), async (request, response) => {
+
+   let idContato = request.params, id;
+
+   let dadosContato = await controllerContato.getContatoByID(idContato);
+
+   response.json(dadosContato)
+   response.status(dadosContato.status)
+})
+
+// Inserir Contato
+app.post('/v1/ayan/contato/', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosContato = await controllerContato.insertContato(dadosBody)
+
+      response.status(resultDadosContato.status)
+      response.json(resultDadosContato)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Atualizar dados Contato
+app.put('/v1/ayan/contato/', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosContato = await controllerContato.updateContato(dadosBody, id)
+
+      response.status(resultDadosContato.status)
+      response.json(resultDadosContato)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Deletar Contato
+app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnContato = await controllerContato.getContatoByID(id)
+
+   if (returnContato.status == 404) {
+      response.status(returnContato.status)
+      response.json(returnContato)
+   } else {
+      let resultDadosContato = await controllerContato.deletarContato(id)
+
+      response.status(resultDadosContato.status)
+      response.json(resultDadosContato)
+   }
+})
+
+/*************************************************************************************
+ * Objetibo: API de controle de Status Contato.
+ * Autor: Gustavo Souza Tenorio de Barros
+ * Data: 27/09/2023
+ * Versão: 1.0
+ *************************************************************************************/
+//Get All Gêneros
+app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosStatusContato = await controllerStatus_Contato.getStatusContosByID(id)
+
+   //Valida se existe registro
+   response.json(dadosStatusContato)
+   response.status(dadosStatusContato.status)
+})
+
+//Get Genero por ID
+app.get('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
+   let idStatusContato = request.params.id;
+
+   //Recebe os dados do controller
+   let StatusContato = await idStatusContato(id);
+
+   //Valida se existe registro
+   response.json(StatusContato)
+   response.status(StatusContato.status)
+})
 
 
 
@@ -662,7 +767,7 @@ app.get('/v1/ayan/cuidador/:id', validateJWT, cors(), async (request, response) 
    response.status(dadosCuidador.status)
 })
 
-//Insert Cuidador 
+//Insert Cuidador
 app.post('/v1/ayan/cuidador', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
@@ -824,11 +929,7 @@ app.put('/v1/ayan/cuidador/endereco/:id', validateJWT, cors(), bodyParserJSON, a
    * Autor: Lohannes da Silva Costa
    * Data: 04/09/2023
    * Versão: 1.0
-   *************************************************************************************/
-
-
-
-
+ *************************************************************************************/
 
 
 app.listen(8080, function () {

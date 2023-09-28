@@ -92,7 +92,7 @@ const getCuidadorByEmail = async function (emailCuidador) {
 const insertCuidador = async function (dadosCuidador) {
 
     if (
-        dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 80 ||
+        dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
         dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined ||
         dadosCuidador.email == '' || dadosCuidador.email == undefined || dadosCuidador.email > 255 ||
         dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 ||
@@ -123,7 +123,7 @@ const insertCuidador = async function (dadosCuidador) {
 
 const updateCuidador = async function (dadosCuidador, id) {
     if (
-        dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 80 ||
+        dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
         dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined ||
         dadosCuidador.email == '' || dadosCuidador.email == undefined || dadosCuidador.email > 255 ||
         dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 ||
