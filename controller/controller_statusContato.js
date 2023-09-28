@@ -49,8 +49,35 @@ const getStatusContosByID = async function(id){
         }
     }
 }
+/******************Insert**************************************** */
+
+const insertStatusContato = async function(dadosStatusContato){
+
+
+    if (
+        dadosStatusContato.nome == ''|| dadosStatusContato == undefined|| dadosStatusContato > 45
+    ) {
+        let resultadoStatusContato = await status_contatoDAO.insertStatusContato(dadosStatusContato)
+        let dadosStatusContatoJSON = {}
+        
+        dadosStatusContatoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosStatusContatoJSON.status = dadosStatusContato
+            return dadosStatusContatoJSON
+    }else{
+        
+        return messages.ERROR_NOT_FOUND
+    }
+
+
+
+}
+
+
+
+
 
 module.exports={
     getStatusContosByID,
-    getStatusContos
+    getStatusContos,
+    insertStatusContato
 }

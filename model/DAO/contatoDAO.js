@@ -69,7 +69,7 @@ const selectLastId = async function () {
 
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
-    if (rsCuidador.length > 0) {
+    if (rsContato.length > 0) {
         return rsContato
     } else {
         return false
@@ -94,7 +94,7 @@ const insertContato = async function( dadosContato){
         '${dadosContato.numero}',
         '${dadosContato.local}',
         ${dadosContato.id_paciente},
-        ${dadosContato.id_status_contato},
+        ${dadosContato.id_status_contato}
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)

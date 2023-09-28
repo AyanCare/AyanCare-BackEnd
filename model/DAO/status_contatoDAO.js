@@ -56,7 +56,8 @@ const selectStatusContatoById = async function(){
  const insertStatusContato = async function(dadosStatusContato){
     
     let sql = `insert into tbl_status_contato(
-
+        nome
+        
     ) values (
         
         '${dadosStatusContato.nome}'
