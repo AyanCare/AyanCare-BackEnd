@@ -7,6 +7,7 @@
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
+const jwt = require('../middleware/middlewareJWT.js')
 
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
 

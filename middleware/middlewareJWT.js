@@ -7,7 +7,7 @@
 
 const jwt = require('jsonwebtoken');
 const SECRET = 'dQaWrEiusR';
-const EXPIRES = 600;
+const EXPIRES = 2308000;
 const EXPIRES_RECOVER = 180;
 
 const createJWT = async function (payLoad){
