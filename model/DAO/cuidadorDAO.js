@@ -95,6 +95,8 @@ const insertCuidador = async function (dadosCuidador) {
         data_nascimento,
         email,
         senha,
+        foto,
+        descricao_experiencia,
         id_endereco_cuidador,
         id_genero
     ) values (
