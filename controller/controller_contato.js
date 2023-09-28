@@ -38,31 +38,59 @@ const getContatos = async function (){
 
 const getContatoByID = async function (id){
 
+    console.log(id);
+
     if (id == '' || isNaN(id)|| id == undefined) {
         return message.ERROR_INVALID_ID
     }else{
-
-        let dadosContatoJSON = {};
-
-        let dadosContato = await contatoDAO.selectcontatoById(id)
-
+        let dadosContato = await contatoDAO.selectContatoById(id)
+        let dadosContatoJSON = {}
+        
         if (dadosContato) {
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
             dadosContatoJSON.contato = dadosContato
+
+            return dadosContatoJSON
         } else {
             return message.ERROR_NOT_FOUND
         }
     }
 }
 
+const getContatoByIDPaciente = async function(id_paciente){
+
+    if (id_paciente == ''|| id_paciente == undefined) {
+        return message.ERROR_REQUIRED_FIELDS
+    }else{
+        let resultDadosContatoPaciente = await contatoDAO.selectContatoByIdPaciente(id_paciente)
+        let dadosContatoJSON = {}
+        
+        if(resultDadosContatoPaciente){
+            dadosContatoJSON.status = message.SUCCESS_REQUEST.status
+            dadosContatoJSON.contatoPaciente = resultDadosContatoPaciente
+
+            return dadosContatoJSON
+        }else{
+            return message.ERROR_NOT_FOUND
+        }
+
+    }
+
+
+}
+
 /******************Insert**************************************** */
 const insertContato = async function (dadosContato){
 
+    console.log(dadosContato);
+    
+    console.log()
     if (
-        dadosContato.nome      == ''  || dadosContato.nome       ==   undefined || dadosContato.nome   > 200 || 
-        dadosContato.numero    == ''  || dadosContato.numero     ==   undefined || dadosContato.numero > 20  ||
-        dadosContato.local     == ''  || dadosContato.local      ==   undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status == ''  || dadosContato.id_status  ==   undefined  
+        dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 || 
+        dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero > 20  ||
+        dadosContato.local ==   undefined || dadosContato.local  > 255 ||
+        dadosContato.id_status == ''    || dadosContato.id_status  ==   undefined ||
+        dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
     }else{
@@ -73,9 +101,6 @@ const insertContato = async function (dadosContato){
 
             let dadosContatoJSON = {}
 
-            let tokenUser = await JsonWebTokenError.createJWT (novoContato[0].id)
-
-            dadosContatoJSON.token = tokenUser
             dadosContatoJSON.status = message.SUCCESS_CREATED_ITEM.status
             dadosContatoJSON.contato = novoContato
 
@@ -94,8 +119,9 @@ const updateContato = async function (dadosContato, id){
     if (
         dadosContato.nome      == ''  || dadosContato.nome          ==   undefined || dadosContato.nome   > 200 || 
         dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero > 20  ||
-        dadosContato.local     == ''  || dadosContato.local         ==   undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status == ''  || dadosContato.id_status     ==   undefined
+        dadosContato.local         ==  undefined || dadosContato.local  > 255 ||
+        dadosContato.id_status == ''  || dadosContato.id_status     ==   undefined ||
+        dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
     }else if (id == null || id == undefined || isNaN(id)){
@@ -103,7 +129,7 @@ const updateContato = async function (dadosContato, id){
     }else{
         dadosContato.id = id
 
-        let atualizacaoContato = await contatoDAO.selectcontatoById(id)
+        let atualizacaoContato = await contatoDAO.selectContatoById(id)
 
         if(atualizacaoContato){
             let resultDadosContato = await contatoDAO.updateContato(dadosContato)
@@ -150,6 +176,7 @@ const deletarContato = async function (id){
 module.exports = {
     getContatoByID,
     getContatos,
+    getContatoByIDPaciente,
     insertContato,
     updateContato,
     deletarContato

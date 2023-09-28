@@ -34,6 +34,20 @@ const selectAllContatos = async function() {
 }
 
 
+/******************Select pelo ID do paciente************************ */
+const selectContatoByIdPaciente = async function (idContato) {
+    let sql = `select tbl_contato.* from tbl_contato
+    inner join tbl_paciente on tbl_paciente.id = tbl_contato.id_paciente
+    where tbl_paciente.id = ${idContato};`
+
+    let rsContato = await prisma.$queryRawUnsafe(sql)
+
+    if (rsContato.length > 0) {
+        return rsContato
+    } else {
+        return false
+    }
+}
 
 /******************Select pelo ID************************ */
 
@@ -137,5 +151,6 @@ module.exports = {
     insertContato,
     selectAllContatos,
     selectContatoById,
-    selectLastId
+    selectLastId,
+    selectContatoByIdPaciente
 }

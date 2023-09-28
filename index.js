@@ -565,6 +565,8 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
 //Todos os Contatos
 app.get('/v1/ayan/contatos', cors(), async (request, response) => {
 
+
+
    //Receber os dados do Controller
    let dadosContato = await controllerContato.getContatos();
 
@@ -574,14 +576,29 @@ app.get('/v1/ayan/contatos', cors(), async (request, response) => {
 })
 
 //Contato especifico   
-app.get('/v1/ayan/contato/:id', cors(), async (request, response) => {
+app.get('/v1/ayan/contato', cors(), async (request, response) => {
 
-   let idContato = request.params, id;
+   let idContato = request.query.idContato;
+   let idContatoPaciente = request.query.idContatoPaciente;
 
-   let dadosContato = await controllerContato.getContatoByID(idContato);
+   console.log(idContato);
+   console.log(idContatoPaciente);
 
-   response.json(dadosContato)
-   response.status(dadosContato.status)
+
+   if (idContato != undefined) {
+      
+      let dadosContato = await controllerContato.getContatoByID(idContato)
+      
+      response.json(dadosContato)
+      response.status(dadosContato.status)
+
+   } else if (idContatoPaciente != undefined) {
+      
+      let dadosContatoPaciente = await controllerContato.getContatoByIDPaciente(idContatoPaciente)
+
+      response.json(dadosContatoPaciente)
+      response.status(dadosContatoPaciente.status)
+   }   
 })
 
 // Inserir Contato
@@ -644,7 +661,7 @@ app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
  * Data: 27/09/2023
  * Versão: 1.0
  *************************************************************************************/
-//Get All Gêneros
+//Get All Status contato
 app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
    //Recebe os dados do controller
    let dadosStatusContato = await controllerStatus_Contato.getStatusContosByID(id)
@@ -654,7 +671,7 @@ app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
    response.status(dadosStatusContato.status)
 })
 
-//Get Genero por ID
+//Get Status contato por ID
 app.get('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
    let idStatusContato = request.params.id;
 
