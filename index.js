@@ -21,6 +21,7 @@ const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerContato = require('./controller/controller_contato.js');
+const controllerStatus_Contato = require ('./controller/controller_statusContato.js')
 const { request } = require('express');
 const { response } = require('express');
 
@@ -636,6 +637,36 @@ app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
       response.json(resultDadosContato)
    }
 })
+
+/*************************************************************************************
+ * Objetibo: API de controle de Status Contato.
+ * Autor: Gustavo Souza Tenorio de Barros
+ * Data: 27/09/2023
+ * Versão: 1.0
+ *************************************************************************************/
+//Get All Gêneros
+app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosStatusContato = await controllerStatus_Contato.getStatusContosByID(id)
+
+   //Valida se existe registro
+   response.json(dadosStatusContato)
+   response.status(dadosStatusContato.status)
+})
+
+//Get Genero por ID
+app.get('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
+   let idStatusContato = request.params.id;
+
+   //Recebe os dados do controller
+   let StatusContato = await idStatusContato(id);
+
+   //Valida se existe registro
+   response.json(StatusContato)
+   response.status(StatusContato.status)
+})
+
+
 
 /*************************************************************************************
    * Objetibo: API de controle de Responsável.

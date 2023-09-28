@@ -1,7 +1,7 @@
 /**************************************************************************************
  * Objetivo: Responsável pela manipulação de dados dos Contatos no Banco de Dados.
  * Data: 26/09/2023
- * Autor: Gustavo Souza
+ * Autor: Gustavo Souza Tenorio  de Barros
  * Versão: 1.0
  **************************************************************************************/
 
