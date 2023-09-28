@@ -56,11 +56,12 @@ const selectLastId = async function () {
     //retorna o ultimo id inserido no banco de dados
 }
 
-const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador){
-    let sql = `select tbl_cuidador.*, tbl_genero.* as genero 
+const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
+    let sql = `select tbl_cuidador.nome as nome, tbl_cuidador.email as email, tbl_cuidador.data_nascimento as data_nascimento, tbl_cuidador.foto as foto, tbl_cuidador.descricao_experiencia as experiencia,
+	tbl_genero.nome as genero
     from tbl_cuidador 
         inner join tbl_genero on tbl_genero.id = tbl_cuidador.id_genero
-    where email = '${dadosCuidador.email}' and senha = '${dadosCuidador.senha}' and nome = '${dadosCuidador.nome}'`
+    where tbl_cuidador.email = '${dadosCuidador.email}' and tbl_cuidador.senha = '${dadosCuidador.senha}' and tbl_cuidador.nome = '${dadosCuidador.nome}'`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
@@ -71,7 +72,7 @@ const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador){
     }
 }
 
-const selectCuidadorByEmail = async function (emailCuidador){
+const selectCuidadorByEmail = async function (emailCuidador) {
     let sql = `select * from tbl_cuidador where email = '${emailCuidador}'`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
@@ -149,7 +150,7 @@ const updateSenhaCuidador = async function (dadosCuidador) {
     } else {
         return false
     }
-} 
+}
 
 /************************** Deletes ******************************/
 const deleteCuidador = async function (idCuidador) {

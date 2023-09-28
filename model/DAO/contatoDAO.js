@@ -136,6 +136,6 @@ module.exports = {
     updateContato,
     insertContato,
     selectAllContatos,
-    selectcontatoById,
+    selectContatoById,
     selectLastId
 }

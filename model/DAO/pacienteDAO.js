@@ -48,7 +48,41 @@ where tbl_paciente.id = ${idPaciente};`
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
     if (rsPaciente.length > 0) {
-        return rsPaciente
+        let pacienteJSON = {}
+        let doencas = []
+        let comorbidades = []
+        let set = Array.from(new Set(rsPaciente))
+
+        pacienteJSON.doenca_id = 0
+        pacienteJSON.comorbidade_id = 0
+
+        set.forEach(paciente => {
+            pacienteJSON.id = paciente.id
+            pacienteJSON.nome = paciente.nome
+            pacienteJSON.data_nascimento = paciente.data_nascimento
+            pacienteJSON.email = paciente.email
+            pacienteJSON.senha = paciente.senha
+            pacienteJSON.cpf = paciente.cpf
+            pacienteJSON.foto = paciente.foto
+            pacienteJSON.historico_medico = paciente.historico_medico
+
+            if(paciente.doenca_id != pacienteJSON.doenca_id){
+                let doenca = {}
+
+                doenca.id = paciente.doenca_id
+                doenca.nome = paciente.doenca
+                doenca.grau = paciente.doenca_grau
+
+                doencas.push(doenca)
+            }
+
+            pacienteJSON.doencas_cronicas = doencas
+        })
+
+        delete pacienteJSON.comorbidade_id
+        delete pacienteJSON.doenca_id
+
+        return pacienteJSON
     } else {
         return false
     }
@@ -81,10 +115,11 @@ const selectLastId = async function () {
 }
 
 const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
-    let sql = `select tbl_paciente.*, tbl_genero.* as genero 
+    let sql = `select tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.data_nascimento as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
+	tbl_genero.nome as genero
     from tbl_paciente
         inner join tbl_genero on tbl_genero.id = tbl_paciente.id_genero
-    where email = '${dadosPaciente.email}' and senha = '${dadosPaciente.senha}' and nome = '${dadosPaciente.nome}'`
+    where tbl_paciente.email = '${dadosPaciente.email}' and tbl_paciente.senha = '${dadosPaciente.senha}' and tbl_paciente.nome = '${dadosPaciente.nome}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
