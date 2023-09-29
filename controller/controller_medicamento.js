@@ -2,7 +2,8 @@
  * Objetivo: Responsável pela manipulação de dados dos MEDICAMENTOS no Banco de Dados.
  * Data: 06/09/2023
  * Autor: Lohannes da Silva Costa
- * Versão: 1.0
+ * Data Atualização mais Recente: 29/09/2023
+ * Versão: 2.0
  **************************************************************************************/
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
@@ -28,13 +29,31 @@ const getMedicamentos = async function () {
 }
 
 const getMedicamentoByID = async function (id) {
-    if (id == '' || isNaN(id) || id == undefined) {
+    if (id === '' || isNaN(id) || id === undefined) {
         return messages.ERROR_INVALID_ID
     } else {
 
         let dadosMedicamentoJSON = {};
 
         let dadosMedicamento = await medicamentoDAO.selectMedicamentoById(id)
+
+        if (dadosMedicamento) {
+            dadosMedicamentoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosMedicamentoJSON.medicamento = dadosMedicamento
+            return dadosMedicamentoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getMedicamentosByPaciente = async function (idPaciente){
+    if(idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)){
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosMedicamentoJSON = {};
+
+        let dadosMedicamento = await medicamentoDAO.selectAllMedicamentosByPaciente(idPaciente)
 
         if (dadosMedicamento) {
             dadosMedicamentoJSON.status = messages.SUCCESS_REQUEST.status
@@ -56,12 +75,12 @@ const getMedicamentoByID = async function (id) {
 const insertMedicamento = async function (dadosMedicamento) {
 
     if (
-        dadosMedicamento.nome == '' || dadosMedicamento.nome == undefined || dadosMedicamento.nome > 80 ||
-        dadosMedicamento.data_validade == '' || dadosMedicamento.data_validade == undefined ||
-        dadosMedicamento.estocado == '' || dadosMedicamento.estocado == undefined ||
-        dadosMedicamento.quantidade == '' || dadosMedicamento.quantidade == undefined || NaN(dadosMedicamento.quantidade) ||
-        dadosMedicamento.id_paciente == '' || dadosMedicamento.id_paciente == undefined ||
-        dadosMedicamento.id_medida == '' || dadosMedicamento.id_medida == undefined
+        dadosMedicamento.nome === '' || dadosMedicamento.nome === undefined || dadosMedicamento.nome > 80 ||
+        dadosMedicamento.data_validade === '' || dadosMedicamento.data_validade === undefined ||
+        dadosMedicamento.estocado === '' || dadosMedicamento.estocado === undefined || (dadosMedicamento.estocado != 0 && dadosMedicamento.estocado != 1) || isNaN(dadosMedicamento.estocado) ||
+        dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
+        dadosMedicamento.id_paciente === '' || dadosMedicamento.id_paciente === undefined || isNaN(dadosMedicamento.id_paciente) ||
+        dadosMedicamento.id_medida === '' || dadosMedicamento.id_medida === undefined || isNaN(dadosMedicamento.id_medida)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -83,15 +102,15 @@ const insertMedicamento = async function (dadosMedicamento) {
 
 const updateMedicamento = async function (dadosMedicamento, id) {
     if (
-        dadosMedicamento.nome == '' || dadosMedicamento.nome == undefined || dadosMedicamento.nome > 80 ||
-        dadosMedicamento.data_validade == '' || dadosMedicamento.data_validade == undefined ||
-        dadosMedicamento.estocado == '' || dadosMedicamento.estocado == undefined ||
-        dadosMedicamento.quantidade == '' || dadosMedicamento.quantidade == undefined || NaN(dadosMedicamento.quantidade) ||
-        dadosMedicamento.id_paciente == '' || dadosMedicamento.id_paciente == undefined ||
-        dadosMedicamento.id_medida == '' || dadosMedicamento.id_medida == undefined
+        dadosMedicamento.nome === '' || dadosMedicamento.nome === undefined || dadosMedicamento.nome > 80 ||
+        dadosMedicamento.data_validade === '' || dadosMedicamento.data_validade === undefined ||
+        dadosMedicamento.estocado === '' || dadosMedicamento.estocado === undefined || (dadosMedicamento.estocado != 0 && dadosMedicamento.estocado != 1) || isNaN(dadosMedicamento.estocado) ||
+        dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
+        dadosMedicamento.id_paciente === '' || dadosMedicamento.id_paciente === undefined || isNaN(dadosMedicamento.id_paciente) ||
+        dadosMedicamento.id_medida === '' || dadosMedicamento.id_medida === undefined || isNaN(dadosMedicamento.id_medida)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id == null || id == undefined || isNaN(id)) {
+    } else if (id === null || id === undefined || isNaN(id)) {
         return messages.ERROR_INVALID_ID
     } else {
         dadosMedicamento.id = id
@@ -120,7 +139,7 @@ const updateMedicamento = async function (dadosMedicamento, id) {
 
 const deleteMedicamento = async function (id) {
 
-    if (id == null || id == undefined || id == '' || isNaN(id)) {
+    if (id === null || id === undefined || id === '' || isNaN(id)) {
         return messages.ERROR_INVALID_ID
     } else {
 
@@ -148,5 +167,6 @@ module.exports = {
     insertMedicamento,
     updateMedicamento,
     deleteMedicamento,
-    getMedicamentoByID
+    getMedicamentoByID,
+    getMedicamentosByPaciente
 }

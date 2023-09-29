@@ -2,7 +2,8 @@
  * Objetivo: Responsável pela manipulação de dados dos MEDICAMENTO no Banco de Dados.
  * Data: 06/09/2023
  * Autor: Lohannes da Silva Costa
- * Versão: 1.0
+ * Data Atualização mais Recente: 29/09/2023
+ * Versão: 2.0
  **************************************************************************************/
 
 //Import da biblioteca do prisma client
@@ -56,6 +57,20 @@ const selectLastId = async function () {
     //retorna o ultimo id inserido no banco de dados
 }
 
+const selectAllMedicamentosByPaciente =  async function (idPaciente) {
+    let sql = `select tbl_medicamento.* from tbl_medicamento
+    inner join tbl_paciente on tbl_paciente.id = tbl_medicamento.id_paciente
+    where tbl_paciente.id = ${idPaciente} and tbl_medicamento.estocado = 1`
+
+    let rsMedicamento = await prisma.$queryRawUnsafe(sql)
+
+    if (rsMedicamento.length > 0) {
+        return rsMedicamento
+    } else {
+        return false
+    }
+}
+
 /************************** Inserts ******************************/
 
 /****************************************************************************************
@@ -70,7 +85,7 @@ const insertMedicamento = async function (dadosMedicamento) {
         id_paciente,
         id_medida
     ) values (
-        '${dadosMedicamento.nome}'
+        '${dadosMedicamento.nome}',
         '${dadosMedicamento.quantidade}',
         '${dadosMedicamento.data_validade}',
         '${dadosMedicamento.estocado}',
@@ -124,5 +139,7 @@ module.exports = {
     insertMedicamento,
     selectAllMedicamentos,
     selectLastId,
-    selectMedicamentoById
+    selectMedicamentoById,
+    selectAllMedicamentosByPaciente,
+    updateMedicamento
 }

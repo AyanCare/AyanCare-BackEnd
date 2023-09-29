@@ -125,11 +125,7 @@ const insertCuidador = async function (dadosCuidador) {
 const updateCuidador = async function (dadosCuidador, id) {
     if (
         dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
-        dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined ||
-        dadosCuidador.email == '' || dadosCuidador.email == undefined || dadosCuidador.email > 255 ||
-        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 ||
-        dadosCuidador.id_endereco_cuidador == '' || dadosCuidador.id_endereco_cuidador == undefined ||
-        dadosCuidador.id_genero == '' || dadosCuidador.id_genero == undefined
+        dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {

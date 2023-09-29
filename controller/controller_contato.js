@@ -87,9 +87,9 @@ const insertContato = async function (dadosContato){
     console.log()
     if (
         dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 || 
-        dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero > 20  ||
+        dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero.length > 20  ||
         dadosContato.local ==   undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status == ''    || dadosContato.id_status  ==   undefined ||
+        dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
@@ -118,9 +118,9 @@ const updateContato = async function (dadosContato, id){
 
     if (
         dadosContato.nome      == ''  || dadosContato.nome          ==   undefined || dadosContato.nome   > 200 || 
-        dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero > 20  ||
+        dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero.length > 20  ||
         dadosContato.local         ==  undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status == ''  || dadosContato.id_status     ==   undefined ||
+        dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS

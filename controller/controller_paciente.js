@@ -134,9 +134,7 @@ const updatePaciente = async function (dadosPaciente, id) {
     if (
         dadosPaciente.nome == '' || dadosPaciente.nome == undefined || dadosPaciente.nome > 80 ||
         dadosPaciente.data_nascimento == '' || dadosPaciente.data_nascimento == undefined ||
-        dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15 ||
-        dadosPaciente.id_endereco_paciente == '' || dadosPaciente.id_endereco_paciente == undefined ||
-        dadosPaciente.id_genero == '' || dadosPaciente.id_genero == undefined
+        dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {
