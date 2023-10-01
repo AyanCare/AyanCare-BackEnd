@@ -128,7 +128,7 @@ const selectLastId = async function () {
 }
 
 const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
-    let sql = `select tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.data_nascimento as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
+    let sql = `select tbl_paciente.nome as nome, tbl_paciente.email as email, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
 	tbl_genero.nome as genero
     from tbl_paciente
         inner join tbl_genero on tbl_genero.id = tbl_paciente.id_genero
