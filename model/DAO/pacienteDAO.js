@@ -132,7 +132,7 @@ const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
 	tbl_genero.nome as genero
     from tbl_paciente
         inner join tbl_genero on tbl_genero.id = tbl_paciente.id_genero
-    where tbl_paciente.email = '${dadosPaciente.email}' and tbl_paciente.senha = '${dadosPaciente.senha}' and tbl_paciente.nome = '${dadosPaciente.nome}'`
+    where tbl_paciente.email = '${dadosPaciente.email}' and tbl_paciente.senha = '${dadosPaciente.senha}'`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
