@@ -31,7 +31,7 @@ const selectAllPacientes = async function () {
 }
 
 const selectPacienteById = async function (idPaciente) {
-    let sql = `select tbl_paciente.*, 
+    let sql = `select tbl_paciente.*, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade
 from tbl_paciente
