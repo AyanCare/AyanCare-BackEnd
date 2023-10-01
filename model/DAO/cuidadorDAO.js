@@ -31,7 +31,7 @@ const selectAllCuidadores = async function () {
 }
 
 const selectCuidadorById = async function (idCuidador) {
-    let sql = `SELECT * FROM tbl_cuidador where id = ${idCuidador}`
+    let sql = `SELECT tbl_cuidador.*, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada FROM tbl_cuidador where id = ${idCuidador}`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
