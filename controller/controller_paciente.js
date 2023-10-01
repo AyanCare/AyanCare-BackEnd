@@ -49,8 +49,8 @@ const getPacienteByID = async function (id) {
 
 const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
     if (dadosPaciente.email == '' || dadosPaciente.email == undefined ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined ||
-        dadosPaciente.nome == '' || dadosPaciente.nome == undefined) {
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined 
+       ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
