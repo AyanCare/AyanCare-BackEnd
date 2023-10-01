@@ -107,7 +107,7 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
 
 //CRUD (Create, Read, Update, Delete)
 //Login Usuários 
-app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
