@@ -106,8 +106,8 @@ const insertCuidador = async function (dadosCuidador) {
         '${dadosCuidador.senha}',
         '${dadosCuidador.foto}',
         '${dadosCuidador.descricao_experiencia}',
-        ${dadosCuidador.id_endereco_cuidador},
-        ${dadosCuidador.id_genero}
+        1,
+        1
     )`
     //talvez ID de endereco e de genero mudem de nome
 

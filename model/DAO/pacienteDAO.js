@@ -52,7 +52,8 @@ const selectPacienteById = async function (idPaciente) {
     let sql = `select tbl_paciente.*, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade,
-    tbl_medicamento.id as medicamento_id, tbl_medicamento.nome as medicamento, concat(tbl_medicamento.quantidade, ' ',tbl_medida.sigla) as quantidade, DATE_FORMAT(tbl_medicamento.data_validade,'%d/%m/%Y') as validade, tbl_medicamento.estocado as estocado
+    tbl_medicamento.id as medicamento_id, tbl_medicamento.nome as medicamento, concat(tbl_medicamento.quantidade, ' ',tbl_medida.sigla) as quantidade, DATE_FORMAT(tbl_medicamento.data_validade,'%d/%m/%Y') as validade, tbl_medicamento.estocado as estocado,
+    tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.id_medicamento as id_medicamento_do_alarme, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_medicamento.horario, '%H:%i:%s') as horario
 from tbl_paciente
     left join tbl_doenca_cronica_paciente
  on tbl_doenca_cronica_paciente.id_paciente = tbl_paciente.id
@@ -131,7 +132,7 @@ where tbl_paciente.id = ${idPaciente};`
                 if(paciente.id_medicamento_do_alarme == medicamento.id){
                     let alarme = {}
 
-                    
+
                 }
 
                 medicamentos.push(medicamento)
@@ -223,8 +224,8 @@ const insertPaciente = async function (dadosPaciente) {
         '${dadosPaciente.cpf}',
         '${dadosPaciente.foto}',
         '${dadosPaciente.historico_medico}',
-        ${dadosPaciente.id_endereco_paciente},
-        ${dadosPaciente.id_genero}
+        1,
+        1
     )`
     //talvez ID de endereco e de genero mudem de nome
 
