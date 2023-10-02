@@ -101,7 +101,7 @@ const insertCuidador = async function (dadosCuidador) {
         id_genero
     ) values (
         '${dadosCuidador.nome}',
-        '${dadosCuidador.data_nascimento}',
+        '2005-01-21',
         '${dadosCuidador.email}',
         '${dadosCuidador.senha}',
         '${dadosCuidador.foto}',

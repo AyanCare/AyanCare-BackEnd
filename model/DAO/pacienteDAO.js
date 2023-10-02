@@ -80,9 +80,9 @@ where tbl_paciente.id = ${idPaciente};`
         let medicamentos = []
         let set = Array.from(new Set(rsPaciente))
 
-        pacienteJSON.doenca_id = 0
-        let arrayID = []
-        pacienteJSON.medicamento_id = 0
+        let arrayIDComorbidade = []
+        let arrayIDDoenca = []
+        let arrayIDMedicamento = []
 
         set.forEach(paciente => {
             pacienteJSON.id = paciente.id
@@ -94,9 +94,10 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.foto = paciente.foto
             pacienteJSON.historico_medico = paciente.historico_medico
 
-            if(paciente.doenca_id != pacienteJSON.doenca_id){
+            if(!arrayIDDoenca.includes(paciente.doenca_id)){
                 let doenca = {}
 
+                arrayIDDoenca.push(paciente.doenca_id)
                 pacienteJSON.doenca_id = paciente.doenca_id
                 doenca.id = paciente.doenca_id
                 doenca.nome = paciente.doenca
@@ -105,10 +106,10 @@ where tbl_paciente.id = ${idPaciente};`
                 doencas.push(doenca)
             }
 
-            if(!arrayID.includes(paciente.comorbidade_id)){
+            if(!arrayIDComorbidade.includes(paciente.comorbidade_id)){
                 let comorbidade = {}
 
-                arrayID.push(paciente.comorbidade_id)
+                arrayIDComorbidade.push(paciente.comorbidade_id)
                 pacienteJSON.comorbidade_id = paciente.comorbidade_id
                 comorbidade.id = paciente.comorbidade_id
                 comorbidade.nome = paciente.comorbidade
@@ -116,9 +117,10 @@ where tbl_paciente.id = ${idPaciente};`
                 comorbidades.push(comorbidade)
             }
 
-            if(paciente.medicamento_id != pacienteJSON.medicamento_id){
+            if(!arrayIDMedicamento.includes(paciente.medicamento_id)){
                 let medicamento = {}
 
+                arrayIDMedicamento.push(paciente.medicamento_id)
                 pacienteJSON.medicamento_id = paciente.medicamento_id
                 medicamento.id = paciente.medicamento_id
                 medicamento.nome = paciente.medicamento
@@ -149,6 +151,7 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.medicamentos = medicamentos
         })
 
+        delete pacienteJSON.comorbidade_id
         delete pacienteJSON.doenca_id
         delete pacienteJSON.medicamento_id
 
