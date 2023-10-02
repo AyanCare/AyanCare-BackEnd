@@ -67,6 +67,8 @@ from tbl_paciente
  on tbl_medicamento.id_paciente = tbl_paciente.id
     left join tbl_medida
  on tbl_medida.id = tbl_medicamento.id_medida
+    left join tbl_alarme_medicamento
+ on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
 where tbl_paciente.id = ${idPaciente};`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
@@ -132,7 +134,11 @@ where tbl_paciente.id = ${idPaciente};`
                 if(paciente.id_medicamento_do_alarme == medicamento.id){
                     let alarme = {}
 
+                    alarme.id = paciente.alarme_id
+                    alarme.intervaloTempo = conversaoDeMilissegundos(paciente.intervalo)
+                    alarme.horario = paciente.horario
 
+                    medicamento.alarme = alarme
                 }
 
                 medicamentos.push(medicamento)
@@ -218,7 +224,7 @@ const insertPaciente = async function (dadosPaciente) {
         id_genero
     ) values (
         '${dadosPaciente.nome}',
-        '${dadosPaciente.data_nascimento}',
+        '2005-01-21',
         '${dadosPaciente.email}',
         '${dadosPaciente.senha}',
         '${dadosPaciente.cpf}',
