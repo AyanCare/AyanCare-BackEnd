@@ -36,7 +36,7 @@ const selectCuidadorById = async function (idCuidador) {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -48,7 +48,7 @@ const selectLastId = async function () {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -66,7 +66,7 @@ const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -78,7 +78,7 @@ const selectCuidadorByEmail = async function (emailCuidador) {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }

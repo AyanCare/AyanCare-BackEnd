@@ -51,7 +51,7 @@ const getAlarmesByPaciente = async function (idPaciente){
     } else {
         let dadosAlarmeJSON = {};
 
-        let dadosAlarme = await alarmeDAO.selectAllAlarmesByPaciente(idPaciente)
+        let dadosAlarme = await alarmeDAO.selectAlarmeByPaciente(idPaciente)
 
         if (dadosAlarme) {
             dadosAlarmeJSON.status = messages.SUCCESS_REQUEST.status

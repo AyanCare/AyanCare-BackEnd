@@ -136,6 +136,7 @@ app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, 
    }
 })
 
+
 //Atualizar senha de Usuário
 app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
@@ -999,11 +1000,11 @@ app.get('/v1/ayan/alarmes', cors(), async (request, response) => {
 
    if (idPaciente != undefined) {
       //Receber os dados do Controller
-      let dadosAlarme = await controllerAlarme.getMedicamentosByPaciente(idPaciente);
+      let dadosAlarme = await controllerAlarme.getAlarmesByPaciente(idPaciente);
 
       //Valida se existe registro
-      response.json(dadosMedicamento)
-      response.status(dadosMedicamento.status)
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
    } else {
       //Receber os dados do Controller
       let dadosAlarme = await controllerAlarme.getAlarmes();

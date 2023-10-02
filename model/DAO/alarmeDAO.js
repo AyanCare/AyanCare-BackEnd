@@ -31,12 +31,15 @@ const selectAllAlarmes = async function () {
 }
 
 const selectAlarmeById = async function (idAlarme) {
-    let sql = `SELECT * FROM tbl_alarme_medicamento where id = ${idAlarme}`
+    let sql = `SELECT tbl_medicamento.nome as medicamento, tbl_paciente.nome as paciente, tbl_alarme_medicamento.* FROM tbl_alarme_medicamento
+         inner join tbl_medicamento on tbl_medicamento.id = tbl_alarme_medicamento.id_medicamento
+         inner join tbl_paciente on tbl_medicamento.id_paciente = tbl_paciente.id
+    where tbl_alarme_medicamento.id = ${idAlarme}`
 
     let rsAlarme = await prisma.$queryRawUnsafe(sql)
 
     if (rsAlarme.length > 0) {
-        return rsAlarme
+        return rsAlarme[0]
     } else {
         return false
     }
@@ -48,7 +51,7 @@ const selectLastId = async function () {
     let rsAlarme = await prisma.$queryRawUnsafe(sql)
 
     if (rsAlarme.length > 0) {
-        return rsAlarme
+        return rsAlarme[0]
     } else {
         return false
     }
@@ -56,7 +59,21 @@ const selectLastId = async function () {
     //retorna o ultimo id inserido no banco de dados
 }
 
+const selectAlarmeByPaciente = async function (idPaciente) {
+    let sql = `SELECT  tbl_paciente.nome as paciente, tbl_alarme_medicamento.*, tbl_medicamento.nome as medicamento
+    FROM tbl_paciente
+        left join tbl_medicamento on tbl_medicamento.id_paciente = tbl_paciente.id
+        left join tbl_alarme_medicamento on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+    where tbl_paciente.id = ${idPaciente};`
 
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
+
+    if (rsAlarme.length > 0) {
+        return rsAlarme
+    } else {
+        return false
+    }
+}
 
 /************************** Inserts ******************************/
 
@@ -123,5 +140,6 @@ module.exports = {
     selectAlarmeById,
     selectAllAlarmes,
     selectLastId,
-    updateAlarme
+    updateAlarme,
+    selectAlarmeByPaciente
 }

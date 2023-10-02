@@ -59,7 +59,7 @@ const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
         let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenhaAndNome(dadosCuidador)
 
         if (rsCuidador) {
-            let tokenUser = await jwt.createJWT(rsCuidador[0].id)
+            let tokenUser = await jwt.createJWT(rsCuidador.id)
 
             dadosCuidadorJSON.token = tokenUser
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
@@ -94,11 +94,8 @@ const insertCuidador = async function (dadosCuidador) {
 
     if (
         dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
-        dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined ||
         dadosCuidador.email == '' || dadosCuidador.email == undefined || dadosCuidador.email > 255 ||
-        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 ||
-        dadosCuidador.id_endereco_cuidador == '' || dadosCuidador.id_endereco_cuidador == undefined ||
-        dadosCuidador.id_genero == '' || dadosCuidador.id_genero == undefined
+        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -109,7 +106,7 @@ const insertCuidador = async function (dadosCuidador) {
 
             let dadosCuidadorJSON = {}
 
-            let tokenUser = await jwt.createJWT(novoCuidador[0].id)
+            let tokenUser = await jwt.createJWT(novoCuidador.id)
 
             dadosCuidadorJSON.token = tokenUser
             dadosCuidadorJSON.status = messages.SUCCESS_CREATED_ITEM.status
