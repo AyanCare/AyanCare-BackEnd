@@ -32,7 +32,7 @@ const selectLastId = async function () {
     let rsEndereco = await prisma.$queryRawUnsafe(sql)
 
     if (rsEndereco.length > 0) {
-        return rsEndereco
+        return rsEndereco[0]
     } else {
         return false
     }
