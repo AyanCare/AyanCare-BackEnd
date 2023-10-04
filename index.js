@@ -178,7 +178,7 @@ app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request
 * Versão: 1.0
 *************************************************************************************/
 //Get All (futuramente será um conjunto de GETs)
-app.get('/v1/ayan/doencas', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/doencas', cors(), async (request, response) => {
    let dadosDoenca = await controllerDoenca.getDoencas();
 
    //Valida se existe registro
@@ -199,7 +199,7 @@ app.get('/v1/ayan/doenca/:id', validateJWT, cors(), async (request, response) =>
 })
 
 //Insert
-app.post('/v1/ayan/doenca', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/doenca', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -282,7 +282,7 @@ app.get('/v1/ayan/comorbidade/:id', validateJWT, cors(), async (request, respons
 })
 
 //Insert Comorbidade
-app.post('/v1/ayan/comorbidade', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/comorbidade', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
