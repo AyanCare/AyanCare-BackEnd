@@ -44,7 +44,7 @@ const selectStatusContatoById = async function(id){
 
     //Valida se o BD retornou algum registro
     if (rsStatusContato.length > 0) {
-        return rsStatusContato
+        return rsStatusContato[0]
     } else {
         return false
     } 
