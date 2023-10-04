@@ -52,30 +52,8 @@ const selectStatusContatoById = async function(id){
 
 }
 
-/************************** Inserts ******************************/
- const insertStatusContato = async function(dadosStatusContato){
-    
-    let sql = `insert into tbl_status_contato(
-
-    ) values (
-        
-        '${dadosStatusContato.nome}'
-    )`
-
-    let resultStatus = await prisma.$executeRawUnsafe(sql)
-
-    if (resultStatus) {
-        return true
-    } else{
-        return false
-    }
-}
-
-
-
 
 module.exports = {
     selectAllStatusContato,
-    selectStatusContatoById,
-    insertStatusContato
+    selectStatusContatoById
 }

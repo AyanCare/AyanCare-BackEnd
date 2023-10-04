@@ -84,10 +84,8 @@ const getContatoByIDPaciente = async function(id_paciente){
 /******************Insert**************************************** */
 const insertContato = async function (dadosContato){
 
-    console.log(dadosContato);
-    
-    console.log()
     if (
+
         dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 || 
         dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero.length > 20  ||
         dadosContato.local ==   undefined || dadosContato.local  > 255 ||
@@ -119,6 +117,7 @@ const insertContato = async function (dadosContato){
 const updateContato = async function (dadosContato, id){
 
     if (
+
         dadosContato.nome      == ''  || dadosContato.nome          ==   undefined || dadosContato.nome   > 200 || 
         dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero.length > 20  ||
         dadosContato.local         ==  undefined || dadosContato.local  > 255 ||
@@ -158,9 +157,9 @@ const deletarContato = async function (id){
     if(id == null || id == undefined || id == ''|| isNaN(id)){
         return message.ERROR_INVALID_ID
     }else {
-        let searchIdContato = await contatoDAO.selectcontatoById(id)
+        let searchIdContato = await contatoDAO.selectContatoById(id)
 
-        if (searchIdCuidador) {
+        if (searchIdContato) {
             let dadosContato =await contatoDAO.deleteContato(id)
             if (dadosContato) {
                 return message.SUCCESS_DELETED_ITEM

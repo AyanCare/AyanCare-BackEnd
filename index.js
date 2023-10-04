@@ -631,7 +631,7 @@ app.post('/v1/ayan/contato/', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Atualizar dados Contato
-app.put('/v1/ayan/contato/', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/contato/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
@@ -674,7 +674,7 @@ app.delete('/v1/ayan/contato/:id', cors(), async function (request, response) {
  * Versão: 1.0
  *************************************************************************************/
 //Get All Status contato
-app.get('/v1/ayan/status-contato', cors(), async (request, response) => {
+app.get('/v1/ayan/status-contatos', cors(), async (request, response) => {
    //Recebe os dados do controller
    let dadosStatusContato = await controllerStatus_Contato.getStatusContatos()
 
@@ -693,6 +693,23 @@ app.get('/v1/ayan/status-contato/:id', cors(), async (request, response) => {
    //Valida se existe registro
    response.json(StatusContato)
    response.status(StatusContato.status)
+})
+
+//insert
+app.post('/v1/ayan/StatusContato/:id', cors(), async (request,response)=>{
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultadoStatusContato = await controllerStatus_Contato.insertStatusContato(dadosBody)
+      response.status(resultadoStatusContato.status)
+      response.json(resultadoStatusContato)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+
 })
 
 
