@@ -15,7 +15,7 @@ var prisma = new PrismaClient()
 const selectAllMedicamentos = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_Medicamento'
+    let sql = 'SELECT * FROM tbl_medicamento'
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -31,7 +31,7 @@ const selectAllMedicamentos = async function () {
 }
 
 const selectMedicamentoById = async function (idMedicamento) {
-    let sql = `SELECT * FROM tbl_Medicamento where id = ${idMedicamento}`
+    let sql = `SELECT * FROM tbl_medicamento where id = ${idMedicamento}`
 
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
@@ -43,7 +43,7 @@ const selectMedicamentoById = async function (idMedicamento) {
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_Medicamento order by id desc limit 1;'
+    let sql = 'select * from tbl_medicamento order by id desc limit 1;'
 
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
@@ -62,7 +62,7 @@ const selectLastId = async function () {
 VVVVV Depois fazer o tratamento para caso exista um Medicamento com dados parecidos!!! VVVVV
 ****************************************************************************************/
 const insertMedicamento = async function (dadosMedicamento) {
-    let sql = `insert into tbl_Medicamento(
+    let sql = `insert into tbl_medicamento(
         nome,
         quantidade,
         data_validade,
@@ -90,7 +90,7 @@ const insertMedicamento = async function (dadosMedicamento) {
 
 /************************** Updates ******************************/
 const updateMedicamento = async function (dadosMedicamento) {
-    let sql = `update tbl_Medicamento set
+    let sql = `update tbl_medicamento set
             nome = '${dadosMedicamento.nome}',
             quantidade = '${dadosMedicamento.quantidade}',
             data_validade = '${dadosMedicamento.data_validade}',
@@ -108,7 +108,7 @@ const updateMedicamento = async function (dadosMedicamento) {
 
 /************************** Deletes ******************************/
 const deleteMedicamento = async function (idMedicamento) {
-    let sql = `delete from tbl_Medicamento where id = ${idMedicamento}`
+    let sql = `delete from tbl_medicamento where id = ${idMedicamento}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 

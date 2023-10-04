@@ -55,7 +55,7 @@ const insertStatusContato = async function(dadosStatusContato){
 
 
     if (
-        dadosStatusContato.nome == ''|| dadosStatusContato == undefined|| dadosStatusContato > 45
+        dadosStatusContato.nome == ''|| dadosStatusContato.nome == undefined|| dadosStatusContato.nome > 45
     ) {
         let resultadoStatusContato = await status_contatoDAO.insertStatusContato(dadosStatusContato)
         let dadosStatusContatoJSON = {}
