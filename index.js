@@ -661,9 +661,9 @@ app.delete('/v1/ayan/contato/:id', cors(), async function (request, response) {
  * Versão: 1.0
  *************************************************************************************/
 //Get All Status contato
-app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
+app.get('/v1/ayan/status-contato', cors(), async (request, response) => {
    //Recebe os dados do controller
-   let dadosStatusContato = await controllerStatus_Contato.getStatusContosByID(id)
+   let dadosStatusContato = await controllerStatus_Contato.getStatusContatos()
 
    //Valida se existe registro
    response.json(dadosStatusContato)
@@ -671,11 +671,11 @@ app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
 })
 
 //Get Status contato por ID
-app.get('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
+app.get('/v1/ayan/status-contato/:id', cors(), async (request, response) => {
    let idStatusContato = request.params.id;
 
    //Recebe os dados do controller
-   let StatusContato = await controllerStatus_Contato.getStatusContosByID(id);
+   let StatusContato = await controllerStatus_Contato.getStatusContatosByID(idStatusContato);
 
    //Valida se existe registro
    response.json(StatusContato)

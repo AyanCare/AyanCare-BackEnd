@@ -11,7 +11,7 @@ const messages = require('./modules/config.js')
 const status_contatoDAO = require('../model/DAO/status_contatoDAO.js')
 
 
-const getStatusContos = async function(){
+const getStatusContatos = async function(){
 
     let dadosStatusContatoJSON = {}
 
@@ -29,7 +29,7 @@ const getStatusContos = async function(){
     }
 }
 
-const getStatusContosByID = async function(id){
+const getStatusContatosByID = async function(id){
 
     if (id == '' || isNaN(id)|| id == undefined){
         return messages.ERROR_INVALID_ID
@@ -51,6 +51,6 @@ const getStatusContosByID = async function(id){
 }
 
 module.exports={
-    getStatusContosByID,
-    getStatusContos
+    getStatusContatosByID,
+    getStatusContatos
 }
