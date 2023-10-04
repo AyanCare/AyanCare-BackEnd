@@ -256,5 +256,6 @@ module.exports = {
     getPacienteByID,
     getPacienteByEmailAndSenhaAndNome,
     getPacienteByEmail,
-    updateSenhaPaciente
+    updateSenhaPaciente,
+    connectCuidadorAndPaciente
 }
