@@ -568,22 +568,8 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
 //Todos os Contatos
 app.get('/v1/ayan/contatos', cors(), async (request, response) => {
 
-
-
-   //Receber os dados do Controller
-   let dadosContato = await controllerContato.getContatos();
-
-   //Valida se existe registro
-   response.json(dadosContato)
-   response.status(dadosContato.status)
-})
-
-//Contato especifico   
-app.get('/v1/ayan/contato', cors(), async (request, response) => {
-
    let idContato = request.query.idContato;
    let idContatoPaciente = request.query.idContatoPaciente;
-
 
    if (idContato != undefined) {
 
@@ -598,7 +584,20 @@ app.get('/v1/ayan/contato', cors(), async (request, response) => {
 
       response.json(dadosContatoPaciente)
       response.status(dadosContatoPaciente.status)
+   } else {
+      //Receber os dados do Controller
+      let dadosContato = await controllerContato.getContatos();
+
+      //Valida se existe registro
+      response.json(dadosContato)
+      response.status(dadosContato.status)
    }
+})
+
+//Contato especifico   
+app.get('/v1/ayan/contato/:idContato', cors(), async (request, response) => {
+
+
 })
 
 // Inserir Contato

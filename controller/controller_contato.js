@@ -48,6 +48,7 @@ const getContatoByID = async function (id){
         
         if (dadosContato) {
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
+            dadosContatoJSON.quantidade = dadosContato.length
             dadosContatoJSON.contato = dadosContato
 
             return dadosContatoJSON
@@ -67,7 +68,8 @@ const getContatoByIDPaciente = async function(id_paciente){
         
         if(resultDadosContatoPaciente){
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
-            dadosContatoJSON.contatoPaciente = resultDadosContatoPaciente
+            dadosContatoJSON.quantidade = resultDadosContatoPaciente.length
+            dadosContatoJSON.contatos = resultDadosContatoPaciente
 
             return dadosContatoJSON
         }else{
