@@ -595,9 +595,13 @@ app.get('/v1/ayan/contatos', cors(), async (request, response) => {
 })
 
 //Contato especifico   
-app.get('/v1/ayan/contato/:idContato', cors(), async (request, response) => {
+app.get('/v2/ayan/contato/:id', cors(), async (request, response) => {
+   let idContato = request.params.id
 
+   let dadosContato = await controllerContato.getContatoByID(idContato)
 
+   response.json(dadosContato)
+   response.status(dadosContato.status)
 })
 
 // Inserir Contato

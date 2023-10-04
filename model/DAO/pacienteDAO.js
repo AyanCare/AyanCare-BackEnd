@@ -251,6 +251,24 @@ const insertPaciente = async function (dadosPaciente) {
     }
 }
 
+const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
+    let sql = `insert into tbl_paciente_cuidador(
+        id_paciente,
+        id_cuidador
+    ) values (
+        ${idPaciente},
+        ${idCuidador}
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if(resultStatus){
+        return true
+    } else {
+        return false
+    }
+}
+
 /************************** Updates ******************************/
 const updatePaciente = async function (dadosPaciente) {
     let sql = `update tbl_paciente set
@@ -284,6 +302,20 @@ const updateSenhaPaciente = async function (dadosPaciente) {
     }
 } 
 
+const updateEnderecoPaciente = async function (idEndereco, idPaciente) {
+    let sql = `update tbl_paciente set
+            id_endereco_paciente = '${idEndereco}'
+        where id = ${idPaciente}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 /************************** Deletes ******************************/
 const deletePaciente = async function (idPaciente) {
     let sql = `delete from tbl_paciente where id = ${idPaciente}`
@@ -306,5 +338,7 @@ module.exports = {
     selectPacienteByEmailAndSenhaAndNome,
     updatePaciente,
     updateSenhaPaciente,
-    selectPacienteByEmail
+    selectPacienteByEmail,
+    connectCuidadorAndPaciente,
+    updateEnderecoPaciente
 }

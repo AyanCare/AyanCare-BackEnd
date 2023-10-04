@@ -9,6 +9,7 @@
 const messages = require('./modules/config.js')
 
 const pacienteDAO = require('../model/DAO/pacienteDAO.js')
+const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
 const jwt = require('../middleware/middlewareJWT.js')
 
 const getPacientes = async function () {
@@ -123,6 +124,18 @@ const insertPaciente = async function (dadosPaciente) {
         } else {
             return messages.ERROR_INTERNAL_SERVER
         }
+    }
+}
+
+const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
+    if(
+        idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)
+    ) {
+        return messages.ERROR_INVALID_PACIENTE
+    } else if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_CUIDADOR
+    } else {
+        let validatePaciente = await pacienteDAO.selectPacienteById(idPaciente)
     }
 }
 
