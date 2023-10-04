@@ -9,6 +9,7 @@
 const messages = require('./modules/config.js')
 
 const endereco_pacienteDAO = require('../model/DAO/endereco_pacienteDAO.js')
+const pacienteDAO = require('../model/DAO/pacienteDAO.js')
 
 const getEnderecoByID = async function (id) {
     if (id == '' || isNaN(id) || id == undefined) {
@@ -43,7 +44,8 @@ const insertEndereco = async function (dadosEndereco) {
         dadosEndereco.cep == '' || dadosEndereco.cep == undefined || dadosEndereco.cep.length > 10 ||
         dadosEndereco.numero == '' || dadosEndereco.numero == undefined || isNaN(dadosEndereco.numero) ||
         dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade > 80 ||
-        dadosEndereco.estado == '' || dadosEndereco.estado == undefined || dadosEndereco.estado > 80
+        dadosEndereco.estado == '' || dadosEndereco.estado == undefined || dadosEndereco.estado > 80 ||
+        dadosEndereco.idPaciente == '' || dadosEndereco.idPaciente == undefined || isNaN(dadosEndereco.idPaciente)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -51,6 +53,7 @@ const insertEndereco = async function (dadosEndereco) {
 
         if (resultDadosEndereco) {
             let novoEndereco = await endereco_pacienteDAO.selectLastId()
+            await pacienteDAO.updateEnderecoPaciente(novoEndereco.id, dadosEndereco.idPaciente)
 
             let dadosEnderecoJSON = {}
             dadosEnderecoJSON.status = messages.SUCCESS_CREATED_ITEM.status

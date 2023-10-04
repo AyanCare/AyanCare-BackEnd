@@ -152,6 +152,20 @@ const updateSenhaCuidador = async function (dadosCuidador) {
     }
 }
 
+const updateEnderecoCuidador = async function (idEndereco, idCuidador) {
+    let sql = `update tbl_cuidador set
+            id_endereco_cuidador = '${idEndereco}'
+        where id = ${idCuidador}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 /************************** Deletes ******************************/
 const deleteCuidador = async function (idCuidador) {
     let sql = `delete from tbl_cuidador where id = ${idCuidador}`
@@ -174,5 +188,6 @@ module.exports = {
     selectCuidadorByEmailAndSenhaAndNome,
     updateCuidador,
     updateSenhaCuidador,
-    selectCuidadorByEmail
+    selectCuidadorByEmail,
+    updateEnderecoCuidador
 }

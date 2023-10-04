@@ -49,12 +49,13 @@ const selectAllPacientes = async function () {
 //tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.intervalo as intervalo
 
 const selectPacienteById = async function (idPaciente) {
-    let sql = `select tbl_paciente.*, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada,
+    let sql = `select tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.senha as senha, tbl_paciente.cpf as cpf, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
     tbl_genero.nome as genero,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade,
     tbl_medicamento.id as medicamento_id, tbl_medicamento.nome as medicamento, concat(tbl_medicamento.quantidade, ' ',tbl_medida.sigla) as quantidade, DATE_FORMAT(tbl_medicamento.data_validade,'%d/%m/%Y') as validade, tbl_medicamento.estocado as estocado,
-    tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.id_medicamento as id_medicamento_do_alarme, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_medicamento.horario, '%H:%i:%s') as horario
+    tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.id_medicamento as id_medicamento_do_alarme, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_medicamento.horario, '%H:%i:%s') as horario,
+    tbl_endereco_paciente.id as endereco_id, tbl_endereco_paciente.logradouro as logradouro, tbl_endereco_paciente.bairro as bairro, tbl_endereco_paciente.numero as numero, tbl_endereco_paciente.cep as cep, tbl_endereco_paciente.cidade as cidade, tbl_endereco_paciente.estado as estado
 from tbl_paciente
     inner join tbl_genero
  on tbl_genero.id = tbl_paciente.id_genero
@@ -72,6 +73,8 @@ from tbl_paciente
  on tbl_medida.id = tbl_medicamento.id_medida
     left join tbl_alarme_medicamento
  on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+    left join tbl_endereco_paciente
+ on tbl_endereco_paciente.id = tbl_paciente.id_endereco_paciente
 where tbl_paciente.id = ${idPaciente};`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
@@ -91,12 +94,19 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.id = paciente.id
             pacienteJSON.nome = paciente.nome
             pacienteJSON.data_nascimento = paciente.data_nascimento
-	    pacienteJSON.genero = paciente.genero
+	        pacienteJSON.genero = paciente.genero
             pacienteJSON.email = paciente.email
             pacienteJSON.senha = paciente.senha
             pacienteJSON.cpf = paciente.cpf
             pacienteJSON.foto = paciente.foto
             pacienteJSON.historico_medico = paciente.historico_medico
+            pacienteJSON.endereco_id = paciente.endereco_id
+            pacienteJSON.logradouro = paciente.logradouro
+            pacienteJSON.bairro = paciente.bairro
+            pacienteJSON.numero = paciente.numero
+            pacienteJSON.cep = paciente.cep
+            pacienteJSON.cidade = paciente.cidade
+            pacienteJSON.estado = paciente.estado
 
             if(!arrayIDDoenca.includes(paciente.doenca_id)){
                 let doenca = {}
@@ -251,6 +261,24 @@ const insertPaciente = async function (dadosPaciente) {
     }
 }
 
+const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
+    let sql = `insert into tbl_paciente_cuidador(
+        id_paciente,
+        id_cuidador
+    ) values (
+        ${idPaciente},
+        ${idCuidador}
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if(resultStatus){
+        return true
+    } else {
+        return false
+    }
+}
+
 /************************** Updates ******************************/
 const updatePaciente = async function (dadosPaciente) {
     let sql = `update tbl_paciente set
@@ -284,6 +312,20 @@ const updateSenhaPaciente = async function (dadosPaciente) {
     }
 } 
 
+const updateEnderecoPaciente = async function (idEndereco, idPaciente) {
+    let sql = `update tbl_paciente set
+            id_endereco_paciente = '${idEndereco}'
+        where id = ${idPaciente}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 /************************** Deletes ******************************/
 const deletePaciente = async function (idPaciente) {
     let sql = `delete from tbl_paciente where id = ${idPaciente}`
@@ -306,5 +348,7 @@ module.exports = {
     selectPacienteByEmailAndSenhaAndNome,
     updatePaciente,
     updateSenhaPaciente,
-    selectPacienteByEmail
+    selectPacienteByEmail,
+    connectCuidadorAndPaciente,
+    updateEnderecoPaciente
 }
