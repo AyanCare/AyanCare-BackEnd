@@ -49,7 +49,7 @@ const selectAllPacientes = async function () {
 //tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.intervalo as intervalo
 
 const selectPacienteById = async function (idPaciente) {
-    let sql = `select tbl_paciente.*, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada,
+    let sql = `select tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.senha as senha, tbl_paciente.cpf as cpf, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
     tbl_genero.nome as genero,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade,
@@ -91,7 +91,7 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.id = paciente.id
             pacienteJSON.nome = paciente.nome
             pacienteJSON.data_nascimento = paciente.data_nascimento
-	    pacienteJSON.genero = paciente.genero
+	        pacienteJSON.genero = paciente.genero
             pacienteJSON.email = paciente.email
             pacienteJSON.senha = paciente.senha
             pacienteJSON.cpf = paciente.cpf

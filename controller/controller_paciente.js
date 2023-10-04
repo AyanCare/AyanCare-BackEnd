@@ -136,6 +136,24 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
         return messages.ERROR_INVALID_CUIDADOR
     } else {
         let validatePaciente = await pacienteDAO.selectPacienteById(idPaciente)
+
+        if(validatePaciente){
+            let validateCuidador = await cuidadorDAO.selectCuidadorById(idCuidador)
+
+            if (validateCuidador) {
+                let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
+
+                if (connectionResult){
+                    return messages.SUCCESS_USERS_CONNECTED
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
+            } else {
+                return messages.ERROR_INVALID_CUIDADOR
+            }
+        } else {
+            return messages.ERROR_INVALID_PACIENTE
+        }
     }
 }
 

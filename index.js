@@ -480,8 +480,6 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
    if (String(contentType).toLowerCase() == 'application/json') {
 
       let id = request.params.id;
-
-
       let dadosBody = request.body
 
       let resultDadosEndereco = await controllerEndereco_Paciente.updateEndereco(dadosBody, id)

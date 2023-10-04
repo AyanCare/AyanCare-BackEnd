@@ -22,6 +22,7 @@ const SUCCESS_CREATED_ITEM = { status: 201, message: 'Item criado com sucesso.' 
 const SUCCESS_UPDATED_ITEM = { status: 200, message: 'Item atualizado com sucesso.' }
 const SUCCESS_DELETED_ITEM = { status: 200, message: 'Item deletado com sucesso.' }
 const SUCCESS_ITEM_FOUND = { status: 200, message: 'Item encontrado sucesso.' }
+const SUCCESS_USERS_CONNECTED = { status: 200, message: 'Cuidador e Paciente conectado com sucesso.' }
 
 module.exports = {
     ERROR_INTERNAL_SERVER,
@@ -37,5 +38,6 @@ module.exports = {
     ERROR_UNAUTHORIZED_USER,
     ERROR_INVALID_TOKEN,
     ERROR_INVALID_PACIENTE,
-    ERROR_INVALID_CUIDADOR
+    ERROR_INVALID_CUIDADOR,
+    SUCCESS_USERS_CONNECTED
 }
