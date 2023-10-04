@@ -64,8 +64,7 @@ const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
 
             dadosPacienteJSON.token = tokenUser
             dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
-            dadosPacienteJSON.nome = rsPaciente.nome
-            dadosPacienteJSON.email = rsPaciente.email
+            dadosPacienteJSON.paciente = rsPaciente
             return dadosPacienteJSON
         } else {
             return messages.ERROR_NOT_FOUND
