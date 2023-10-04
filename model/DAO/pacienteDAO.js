@@ -50,11 +50,14 @@ const selectAllPacientes = async function () {
 
 const selectPacienteById = async function (idPaciente) {
     let sql = `select tbl_paciente.*, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada,
+    tbl_genero.nome as genero,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade,
     tbl_medicamento.id as medicamento_id, tbl_medicamento.nome as medicamento, concat(tbl_medicamento.quantidade, ' ',tbl_medida.sigla) as quantidade, DATE_FORMAT(tbl_medicamento.data_validade,'%d/%m/%Y') as validade, tbl_medicamento.estocado as estocado,
     tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.id_medicamento as id_medicamento_do_alarme, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_medicamento.horario, '%H:%i:%s') as horario
 from tbl_paciente
+    inner join tbl_genero
+ on tbl_genero.id = tbl_paciente.id_genero
     left join tbl_doenca_cronica_paciente
  on tbl_doenca_cronica_paciente.id_paciente = tbl_paciente.id
     left join tbl_comorbidade_paciente
@@ -88,6 +91,7 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.id = paciente.id
             pacienteJSON.nome = paciente.nome
             pacienteJSON.data_nascimento = paciente.data_nascimento
+	    pacienteJSON.genero = paciente.genero
             pacienteJSON.email = paciente.email
             pacienteJSON.senha = paciente.senha
             pacienteJSON.cpf = paciente.cpf
