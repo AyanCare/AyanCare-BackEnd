@@ -49,8 +49,8 @@ const getPacienteByID = async function (id) {
 
 const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
     if (dadosPaciente.email == '' || dadosPaciente.email == undefined ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined ||
-        dadosPaciente.nome == '' || dadosPaciente.nome == undefined) {
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined 
+       ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
@@ -59,7 +59,7 @@ const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
         let rsPaciente = await pacienteDAO.selectPacienteByEmailAndSenhaAndNome(dadosPaciente)
 
         if (rsPaciente) {
-            let tokenUser = await jwt.createJWT(rsPaciente[0].id)
+            let tokenUser = await jwt.createJWT(rsPaciente.id)
 
             dadosPacienteJSON.token = tokenUser
             dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
@@ -102,12 +102,8 @@ const insertPaciente = async function (dadosPaciente) {
 
     if (
         dadosPaciente.nome == '' || dadosPaciente.nome == undefined || dadosPaciente.nome > 80 ||
-        dadosPaciente.data_nascimento == '' || dadosPaciente.data_nascimento == undefined ||
         dadosPaciente.email == '' || dadosPaciente.email == undefined || dadosPaciente.email > 255 ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255 ||
-        dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15 ||
-        dadosPaciente.id_endereco_paciente == '' || dadosPaciente.id_endereco_paciente == undefined ||
-        dadosPaciente.id_genero == '' || dadosPaciente.id_genero == undefined
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -117,7 +113,7 @@ const insertPaciente = async function (dadosPaciente) {
             let novoPaciente = await pacienteDAO.selectLastId()
 
             let dadosPacienteJSON = {}
-            let tokenUser = await jwt.createJWT(novoPaciente[0].id)
+            let tokenUser = await jwt.createJWT(novoPaciente.id)
 
             dadosPacienteJSON.token = tokenUser
             dadosPacienteJSON.status = messages.SUCCESS_CREATED_ITEM.status
@@ -134,11 +130,7 @@ const updatePaciente = async function (dadosPaciente, id) {
     if (
         dadosPaciente.nome == '' || dadosPaciente.nome == undefined || dadosPaciente.nome > 80 ||
         dadosPaciente.data_nascimento == '' || dadosPaciente.data_nascimento == undefined ||
-        dadosPaciente.email == '' || dadosPaciente.email == undefined || dadosPaciente.email > 255 ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255 ||
-        dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15 ||
-        dadosPaciente.id_endereco_paciente == '' || dadosPaciente.id_endereco_paciente == undefined ||
-        dadosPaciente.id_genero == '' || dadosPaciente.id_genero == undefined
+        dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {

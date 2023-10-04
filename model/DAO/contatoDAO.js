@@ -18,7 +18,11 @@ const selectAllContatos = async function() {
     
 
     //ScriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_contato'
+    let sql = `SELECT * tbl_contato.* tbl_status.nome as statusTodosContato
+    FROM tbl_contato
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_contato.id_paciente
+        where tbl_paciente.id= ${idContato};`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -36,8 +40,13 @@ const selectAllContatos = async function() {
 
 /******************Select pelo ID do paciente************************ */
 const selectContatoByIdPaciente = async function (idContato) {
-    let sql = `select tbl_contato.* from tbl_contato
-    inner join tbl_paciente on tbl_paciente.id = tbl_contato.id_paciente
+    let sql = `select tbl_contato.*, tbl_status_contato.nome as status
+    FROM tbl_contato
+        inner join tbl_paciente 
+    on tbl_paciente.id = tbl_contato.id_paciente
+        inner join tbl_status_contato
+    on 
+        tbl_contato.id_status_contato = tbl_status_contato.id
     where tbl_paciente.id = ${idContato};`
 
     let rsContato = await prisma.$queryRawUnsafe(sql)
@@ -52,7 +61,11 @@ const selectContatoByIdPaciente = async function (idContato) {
 /******************Select pelo ID************************ */
 
 const selectContatoById = async function (idContato) {
-    let sql = `SELECT * FROM tbl_contato where id = ${idContato}`
+    let sql = `SELECT tbl_contato.*, tbl_status_contato.nome as status
+     FROM tbl_contato 
+        inner join tbl_status_contato
+    on tbl_status_contato.id = tbl_contato.id_status_contato
+        where id = ${idContato}`
 
     let rsContato = await prisma.$queryRawUnsafe(sql)
 

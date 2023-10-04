@@ -18,10 +18,12 @@ const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
 const controllerComorbidade = require('./controller/controller_comorbidade.js');
 const controllerDoenca = require('./controller/controller_doenca.js');
+const controllerMedicamento = require('./controller/controller_medicamento.js');
+const controllerAlarme = require('./controller/controller_alarme.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerContato = require('./controller/controller_contato.js');
-const controllerStatus_Contato = require ('./controller/controller_statusContato.js')
+const controllerStatus_Contato = require('./controller/controller_statusContato.js')
 const { request } = require('express');
 const { response } = require('express');
 
@@ -105,7 +107,7 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
 
 //CRUD (Create, Read, Update, Delete)
 //Login Usuários 
-app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -133,6 +135,7 @@ app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, r
       response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
    }
 })
+
 
 //Atualizar senha de Usuário
 app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request, response) => {
@@ -175,7 +178,7 @@ app.put('/v1/ayan/usuario/esqueciasenha', cors(), bodyParserJSON, async (request
 * Versão: 1.0
 *************************************************************************************/
 //Get All (futuramente será um conjunto de GETs)
-app.get('/v1/ayan/doencas', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/doencas', cors(), async (request, response) => {
    let dadosDoenca = await controllerDoenca.getDoencas();
 
    //Valida se existe registro
@@ -196,7 +199,7 @@ app.get('/v1/ayan/doenca/:id', validateJWT, cors(), async (request, response) =>
 })
 
 //Insert
-app.post('/v1/ayan/doenca', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/doenca', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -279,7 +282,7 @@ app.get('/v1/ayan/comorbidade/:id', validateJWT, cors(), async (request, respons
 })
 
 //Insert Comorbidade
-app.post('/v1/ayan/comorbidade', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/comorbidade', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -341,7 +344,7 @@ app.delete('/v1/ayan/comorbidade/:id', validateJWT, cors(), async function (requ
  * Versão: 1.0
  *************************************************************************************/
 //Get All (futuramente será um conjunto de GETs)
-app.get('/v1/ayan/pacientes', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/pacientes', cors(), async (request, response) => {
    let dadosPaciente = await controllerPaciente.getPacientes();
 
    //Valida se existe registro
@@ -367,7 +370,7 @@ app.get('/v1/ayan/paciente/autenticar', cors(), bodyParserJSON, async (request, 
 })
 
 //Get por ID
-app.get('/v1/ayan/paciente/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/paciente/:id', cors(), async (request, response) => {
    let idPaciente = request.params.id;
 
    //Recebe os dados do controller
@@ -565,40 +568,36 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
 //Todos os Contatos
 app.get('/v1/ayan/contatos', cors(), async (request, response) => {
 
-
-
-   //Receber os dados do Controller
-   let dadosContato = await controllerContato.getContatos();
-
-   //Valida se existe registro
-   response.json(dadosContato)
-   response.status(dadosContato.status)
-})
-
-//Contato especifico   
-app.get('/v1/ayan/contato', cors(), async (request, response) => {
-
    let idContato = request.query.idContato;
    let idContatoPaciente = request.query.idContatoPaciente;
 
-   console.log(idContato);
-   console.log(idContatoPaciente);
-
-
    if (idContato != undefined) {
-      
+
       let dadosContato = await controllerContato.getContatoByID(idContato)
-      
+
       response.json(dadosContato)
       response.status(dadosContato.status)
 
    } else if (idContatoPaciente != undefined) {
-      
+
       let dadosContatoPaciente = await controllerContato.getContatoByIDPaciente(idContatoPaciente)
 
       response.json(dadosContatoPaciente)
       response.status(dadosContatoPaciente.status)
-   }   
+   } else {
+      //Receber os dados do Controller
+      let dadosContato = await controllerContato.getContatos();
+
+      //Valida se existe registro
+      response.json(dadosContato)
+      response.status(dadosContato.status)
+   }
+})
+
+//Contato especifico   
+app.get('/v1/ayan/contato/:idContato', cors(), async (request, response) => {
+
+
 })
 
 // Inserir Contato
@@ -639,7 +638,7 @@ app.put('/v1/ayan/contato/:id', cors(), bodyParserJSON, async (request, response
 })
 
 //Deletar Contato
-app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
+app.delete('/v1/ayan/contato/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnContato = await controllerContato.getContatoByID(id)
@@ -662,9 +661,9 @@ app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
  * Versão: 1.0
  *************************************************************************************/
 //Get All Status contato
-app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
+app.get('/v1/ayan/status-contatos', cors(), async (request, response) => {
    //Recebe os dados do controller
-   let dadosStatusContato = await controllerStatus_Contato.getStatusContosByID(id)
+   let dadosStatusContato = await controllerStatus_Contato.getStatusContatos()
 
    //Valida se existe registro
    response.json(dadosStatusContato)
@@ -672,11 +671,11 @@ app.get('/v1/ayan/StatusContato', cors(), async (request, response) => {
 })
 
 //Get Status contato por ID
-app.get('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
+app.get('/v1/ayan/status-contato/:id', cors(), async (request, response) => {
    let idStatusContato = request.params.id;
 
    //Recebe os dados do controller
-   let StatusContato = await idStatusContato(id);
+   let StatusContato = await controllerStatus_Contato.getStatusContatosByID(idStatusContato);
 
    //Valida se existe registro
    response.json(StatusContato)
@@ -730,13 +729,96 @@ app.post('/v1/ayan/StatusContato/:id', cors(), async (request,response)=>{
 
 
 /*************************************************************************************
-   * Objetibo: API de controle de Medicamentos.
-   * Autor: Lohannes da Silva Costa
-   * Data: 04/09/2023
-   * Versão: 1.0
-   *************************************************************************************/
+* Objetibo: API de controle de Medicamentos.
+* Autor: Lohannes da Silva Costa
+* Data: 04/09/2023
+* Versão: 1.0
+*************************************************************************************/
 
+//Todos os Medicamentos e todos os medicamentos de um paciente em específico
+app.get('/v1/ayan/medicamentos', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
 
+   if (idPaciente != undefined) {
+      //Receber os dados do Controller
+      let dadosMedicamento = await controllerMedicamento.getMedicamentosByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosMedicamento)
+      response.status(dadosMedicamento.status)
+   } else {
+      //Receber os dados do Controller
+      let dadosMedicamento = await controllerMedicamento.getMedicamentos();
+
+      //Valida se existe registro
+      response.json(dadosMedicamento)
+      response.status(dadosMedicamento.status)
+   }
+})
+
+//Medicamento específico
+app.get('/v1/ayan/medicamento/:id', cors(), async (request, response) => {
+   let id = request.params.id;
+
+   let dadosMedicamento = await controllerMedicamento.getMedicamentoByID(id)
+
+   response.json(dadosMedicamento)
+   response.status(dadosMedicamento.status)
+})
+
+// Inserir
+app.post('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosMedicamento = await controllerMedicamento.insertMedicamento(dadosBody)
+
+      response.status(resultDadosMedicamento.status)
+      response.json(resultDadosMedicamento)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Atualizar
+app.put('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosMedicamento = await controllerMedicamento.updateMedicamento(dadosBody, id)
+
+      response.status(resultDadosMedicamento.status)
+      response.json(resultDadosMedicamento)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Deletar 
+app.delete('/v1/ayan/medicamento/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnMedicamento = await controllerMedicamento.getMedicamentoByID(id)
+
+   if (returnMedicamento.status == 404) {
+      response.status(returnMedicamento.status)
+      response.json(returnMedicamento)
+   } else {
+      let resultDadosMedicamento = await controllerMedicamento.deleteMedicamento(id)
+
+      response.status(resultDadosMedicamento.status)
+      response.json(resultDadosMedicamento)
+   }
+})
 
 /*************************************************************************************
  * Objetibo: API de controle de Tipos de Eventos.
@@ -923,21 +1005,95 @@ app.put('/v1/ayan/cuidador/endereco/:id', validateJWT, cors(), bodyParserJSON, a
 
 
 /*************************************************************************************
- * Objetibo: API de controle de Dias.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
- * Versão: 1.0
- *************************************************************************************/
-
-
-
-/*************************************************************************************
-* Objetibo: API de controle de Horas.
+* Objetibo: API de controle de Alarmes.
 * Autor: Lohannes da Silva Costa
 * Data: 04/09/2023
 * Versão: 1.0
 *************************************************************************************/
+//Todos os Alarmes e todos os Alarmes de um paciente em específico
+app.get('/v1/ayan/alarmes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
 
+   if (idPaciente != undefined) {
+      //Receber os dados do Controller
+      let dadosAlarme = await controllerAlarme.getAlarmesByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
+   } else {
+      //Receber os dados do Controller
+      let dadosAlarme = await controllerAlarme.getAlarmes();
+
+      //Valida se existe registro
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
+   }
+})
+
+//Alarme específico
+app.get('/v1/ayan/alarme/:id', cors(), async (request, response) => {
+   let id = request.params.id;
+
+   let dadosAlarme = await controllerAlarme.getAlarmeByID(id)
+
+   response.json(dadosAlarme)
+   response.status(dadosAlarme.status)
+})
+
+// Inserir
+app.post('/v1/ayan/alarme', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosAlarme = await controllerAlarme.insertAlarme(dadosBody)
+
+      response.status(resultDadosAlarme.status)
+      response.json(resultDadosAlarme)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Atualizar
+app.put('/v1/ayan/alarme', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas na formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosAlarme = await controllerAlarme.updateAlarme(dadosBody, id)
+
+      response.status(resultDadosAlarme.status)
+      response.json(resultDadosAlarme)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Deletar 
+app.delete('/v1/ayan/alarme/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnAlarme = await controllerAlarme.getAlarmeByID(id)
+
+   if (returnAlarme.status == 404) {
+      response.status(returnAlarme.status)
+      response.json(returnAlarme)
+   } else {
+      let resultDadosAlarme = await controllerAlarme.deleteAlarme(id)
+
+      response.status(resultDadosAlarme.status)
+      response.json(resultDadosAlarme)
+   }
+})
 
 
 /*************************************************************************************

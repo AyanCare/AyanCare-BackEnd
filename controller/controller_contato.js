@@ -48,6 +48,7 @@ const getContatoByID = async function (id){
         
         if (dadosContato) {
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
+            dadosContatoJSON.quantidade = dadosContato.length
             dadosContatoJSON.contato = dadosContato
 
             return dadosContatoJSON
@@ -67,7 +68,8 @@ const getContatoByIDPaciente = async function(id_paciente){
         
         if(resultDadosContatoPaciente){
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
-            dadosContatoJSON.contatoPaciente = resultDadosContatoPaciente
+            dadosContatoJSON.quantidade = resultDadosContatoPaciente.length
+            dadosContatoJSON.contatos = resultDadosContatoPaciente
 
             return dadosContatoJSON
         }else{
@@ -83,9 +85,10 @@ const getContatoByIDPaciente = async function(id_paciente){
 const insertContato = async function (dadosContato){
 
     if (
-        dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 ||
+
+        dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 || 
         dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero.length > 20  ||
-        dadosContato.local ==   '' ||dadosContato.local ==   undefined || dadosContato.local  > 255 ||
+        dadosContato.local ==   undefined || dadosContato.local  > 255 ||
         dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
@@ -114,9 +117,10 @@ const insertContato = async function (dadosContato){
 const updateContato = async function (dadosContato, id){
 
     if (
-        dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 ||
-        dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero.length > 20  ||
-        dadosContato.local ==   '' ||dadosContato.local ==   undefined || dadosContato.local  > 255 ||
+
+        dadosContato.nome      == ''  || dadosContato.nome          ==   undefined || dadosContato.nome   > 200 || 
+        dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero.length > 20  ||
+        dadosContato.local         ==  undefined || dadosContato.local  > 255 ||
         dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {

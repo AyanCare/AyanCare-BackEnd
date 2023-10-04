@@ -31,12 +31,12 @@ const selectAllCuidadores = async function () {
 }
 
 const selectCuidadorById = async function (idCuidador) {
-    let sql = `SELECT * FROM tbl_cuidador where id = ${idCuidador}`
+    let sql = `SELECT tbl_cuidador.*, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada FROM tbl_cuidador where id = ${idCuidador}`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -48,7 +48,7 @@ const selectLastId = async function () {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -57,7 +57,7 @@ const selectLastId = async function () {
 }
 
 const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
-    let sql = `select tbl_cuidador.nome as nome, tbl_cuidador.email as email, tbl_cuidador.data_nascimento as data_nascimento, tbl_cuidador.foto as foto, tbl_cuidador.descricao_experiencia as experiencia,
+    let sql = `select tbl_cuidador.nome as nome, tbl_cuidador.email as email, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.foto as foto, tbl_cuidador.descricao_experiencia as experiencia,
 	tbl_genero.nome as genero
     from tbl_cuidador 
         inner join tbl_genero on tbl_genero.id = tbl_cuidador.id_genero
@@ -66,7 +66,7 @@ const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -78,7 +78,7 @@ const selectCuidadorByEmail = async function (emailCuidador) {
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
     if (rsCuidador.length > 0) {
-        return rsCuidador
+        return rsCuidador[0]
     } else {
         return false
     }
@@ -101,13 +101,13 @@ const insertCuidador = async function (dadosCuidador) {
         id_genero
     ) values (
         '${dadosCuidador.nome}',
-        '${dadosCuidador.data_nascimento}',
+        '2005-01-21',
         '${dadosCuidador.email}',
         '${dadosCuidador.senha}',
         '${dadosCuidador.foto}',
         '${dadosCuidador.descricao_experiencia}',
-        ${dadosCuidador.id_endereco_cuidador},
-        ${dadosCuidador.id_genero}
+        1,
+        1
     )`
     //talvez ID de endereco e de genero mudem de nome
 
@@ -125,8 +125,6 @@ const updateCuidador = async function (dadosCuidador) {
     let sql = `update tbl_cuidador set
             nome = '${dadosCuidador.nome}',
             data_nascimento = '${dadosCuidador.data_nascimento}',
-            email = '${dadosCuidador.email}',
-            senha = '${dadosCuidador.senha}',
             foto = '${dadosCuidador.foto}',
             descricao_experiencia = '${dadosCuidador.descricao_experiencia}'
         where id = ${dadosCuidador.id}`
