@@ -37,7 +37,7 @@ const selectMedicamentoById = async function (idMedicamento) {
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
     if (rsMedicamento.length > 0) {
-        return rsMedicamento
+        return rsMedicamento[0]
     } else {
         return false
     }
@@ -49,7 +49,7 @@ const selectLastId = async function () {
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
     if (rsMedicamento.length > 0) {
-        return rsMedicamento
+        return rsMedicamento[0]
     } else {
         return false
     }

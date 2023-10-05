@@ -36,7 +36,7 @@ const selectComorbidadeById = async function (idComorbidade) {
     let rsComorbidade = await prisma.$queryRawUnsafe(sql)
 
     if (rsComorbidade.length > 0) {
-        return rsComorbidade
+        return rsComorbidade[0]
     } else {
         return false
     }
@@ -48,7 +48,7 @@ const selectLastId = async function () {
     let rsComorbidade = await prisma.$queryRawUnsafe(sql)
 
     if (rsComorbidade.length > 0) {
-        return rsComorbidade
+        return rsComorbidade[0]
     } else {
         return false
     }

@@ -36,7 +36,7 @@ const selectGeneroById = async function (idGenero) {
     let rsGenero = await prisma.$queryRawUnsafe(sql)
 
     if (rsGenero.length > 0) {
-        return rsGenero
+        return rsGenero[0]
     } else {
         return false
     }

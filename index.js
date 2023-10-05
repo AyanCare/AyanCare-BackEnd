@@ -398,6 +398,17 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
    }
 })
 
+//Conectar
+app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
+      let idPaciente = request.query.idPaciente
+      let idCuidador = request.query.idCuidador
+
+      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
+
+      response.status(resultDadosPaciente.status)
+      response.json(resultDadosPaciente)
+})
+
 //Update Paciente
 app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']

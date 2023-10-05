@@ -70,7 +70,7 @@ const selectContatoById = async function (idContato) {
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
     if (rsContato.length > 0) {
-        return rsContato
+        return rsContato[0]
     } else {
         return false
     }
@@ -83,7 +83,7 @@ const selectLastId = async function () {
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
     if (rsContato.length > 0) {
-        return rsContato
+        return rsContato[0]
     } else {
         return false
     }

@@ -36,7 +36,7 @@ const selectDoencaById = async function (idDoenca) {
     let rsDoenca = await prisma.$queryRawUnsafe(sql)
 
     if (rsDoenca.length > 0) {
-        return rsDoenca
+        return rsDoenca[0]
     } else {
         return false
     }
@@ -48,7 +48,7 @@ const selectLastId = async function () {
     let rsDoenca = await prisma.$queryRawUnsafe(sql)
 
     if (rsDoenca.length > 0) {
-        return rsDoenca
+        return rsDoenca[0]
     } else {
         return false
     }
