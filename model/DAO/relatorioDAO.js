@@ -1,5 +1,5 @@
 /**************************************************************************************
- * Objetivo: Responsável pela manipulação de dados dos  Status Contatos no Banco de Dados.
+ * Objetivo: Responsável pela manipulação de dados dos Relatorio no Banco de Dados.
  * Data: 04/10/2023
  * Autor: Gustavo Souza Tenorio  de Barros
  * Versão: 1.0
