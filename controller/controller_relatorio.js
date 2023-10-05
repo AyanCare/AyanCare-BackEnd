@@ -20,8 +20,7 @@ const getRelatorios = async function(){
 
     let dadosRelatorioJSON = {}
 
-
-    let dadosRelatorios = await relatorioDAO.selectAllRelatorio()
+    let dadosRelatorios = await relatorioDAO.selectAllRelatorios()
         
     if (dadosRelatorios) {
         

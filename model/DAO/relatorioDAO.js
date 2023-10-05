@@ -17,9 +17,9 @@ var prisma = new PrismaClient()
 
 
 /********************Retorna Todos os relatorios************************** */
-const selectAllRelatorio = async function(){
+const selectAllRelatorios = async function(){
 
-    let sql = 'SELECT * tbl_relatorio'
+    let sql = 'SELECT * from tbl_relatorio'
     
     let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
@@ -175,7 +175,7 @@ const deleteRelatorio = async function (idRelatorio) {
 
 
 module.exports = {
-    selectAllRelatorio,
+    selectAllRelatorios,
     selectByIDRelatorio,
     selectLastId,
     selectByIDCuidador,
