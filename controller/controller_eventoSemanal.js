@@ -52,27 +52,12 @@ const getEventoByID = async function (id) {
 
 const insertEvento = async function (dadosEvento) {
 
-    console.log(dadosEvento);
-
-    console.log(dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ,
-    dadosEvento.descricao == '' || dadosEvento.descricao == undefined ,
-    dadosEvento.local == '' || dadosEvento.senha == undefined || dadosEvento.senha > 255 ,
-    dadosEvento.hora == '' || dadosEvento.hora == undefined ,
-    dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(id_paciente_cuidador) ,
-    dadosEvento.domingo == '' || dadosEvento.domingo == undefined ,
-    dadosEvento.segunda == '' || dadosEvento.segunda == undefined ,
-    dadosEvento.terca == '' || dadosEvento.terca == undefined ,
-    dadosEvento.quarta == '' || dadosEvento.quarta == undefined ,
-    dadosEvento.quinta == '' || dadosEvento.quinta == undefined ,
-    dadosEvento.sexta == '' || dadosEvento.sexta == undefined , 
-    dadosEvento.sabado == '' || dadosEvento.sabado == undefined );
-
     if (
         dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ||
         dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
-        dadosEvento.local == '' || dadosEvento.senha == undefined || dadosEvento.senha > 255 ||
+        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(id_paciente_cuidador) ||
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
         dadosEvento.domingo == '' || dadosEvento.domingo == undefined || 
         dadosEvento.segunda == '' || dadosEvento.segunda == undefined || 
         dadosEvento.terca == '' || dadosEvento.terca == undefined || 
@@ -103,9 +88,9 @@ const updateEvento = async function (dadosEvento, id) {
     if (
         dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ||
         dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
-        dadosEvento.local == '' || dadosEvento.senha == undefined || dadosEvento.senha > 255 ||
+        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(id_paciente_cuidador) ||
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
         dadosEvento.domingo == '' || dadosEvento.domingo == undefined || 
         dadosEvento.segunda == '' || dadosEvento.segunda == undefined || 
         dadosEvento.terca == '' || dadosEvento.terca == undefined || 

@@ -14,34 +14,36 @@ var prisma = new PrismaClient()
 /************************** Selects ******************************/
 
 const selectEventoById = async function (idEvento) {
-    let sql = `SELECT tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
-        tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
-        tbl_dia_semana_evento.horario as horario, tbl_dia_semana_evento.status as status, 
-        tbl_dia_semana.dia as dia
-    FROM tbl_dia_semana_evento
-        inner join tbl_nome_descricao_local_evento
-    on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
-        inner join tbl_dia_semana
-    on tbl_dia_semana.id = tbl_dia_semana_evento.id_dia_semana
-        inner join tbl_paciente_cuidador
-    on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
-        inner join tbl_paciente
-    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
-        inner join tbl_cuidador
-    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
+    tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
+    tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
+    tbl_dia_semana_evento.horario as horario, tbl_dia_semana_evento.status as status, 
+    tbl_dia_semana.dia as dia
+FROM tbl_dia_semana_evento
+    inner join tbl_nome_descricao_local_evento
+on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
+    inner join tbl_dia_semana
+on tbl_dia_semana.id = tbl_dia_semana_evento.id_dia_semana
+    inner join tbl_paciente_cuidador
+on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
+    inner join tbl_paciente
+on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+    inner join tbl_cuidador
+on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     WHERE tbl_nome_descricao_local_evento.id = ${idEvento}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
 
     if (rsEvento.length > 0) {
-        return rsEvento[0]
+        return rsEvento
     } else {
         return false
     }
 }
 
 const selectLastId = async function () {
-    let sql = `SELECT tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
+    let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
+    tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     tbl_dia_semana_evento.horario as horario, tbl_dia_semana_evento.status as status, 
     tbl_dia_semana.dia as dia
@@ -61,7 +63,7 @@ order by tbl_nome_descricao_local_evento.id desc limit 1`
     let rsEvento = await prisma.$queryRawUnsafe(sql)
 
     if (rsEvento.length > 0) {
-        return rsEvento[0]
+        return rsEvento
     } else {
         return false
     }
