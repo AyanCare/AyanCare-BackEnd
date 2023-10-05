@@ -17,19 +17,12 @@ var prisma = new PrismaClient()
 
 
 /********************Retorna Todos os relatorios************************** */
-<<<<<<< HEAD
 const selectAllRelatorios = async function(){
 
     let sql = 'SELECT * from tbl_relatorio'
     
     let rsRelatorio= await prisma.$queryRawUnsafe(sql)
-=======
-const selectAllRelatorio = async function () {
 
-    let sql = 'SELECT * tbl_relatorio'
->>>>>>> 547c5d958360c7af440a4a88e3a1b9a270a3bf11
-
-    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
 
