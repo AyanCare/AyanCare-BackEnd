@@ -12,23 +12,6 @@ var { PrismaClient } = require('@prisma/client');
 var prisma = new PrismaClient()
 
 /************************** Selects ******************************/
-const selectAllCuidadores = async function () {
-
-    //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_cuidador'
-
-    //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
-    //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
-    let rsCuidador = await prisma.$queryRawUnsafe(sql)
-
-    //Valida se o BD retornou algum registro
-    if (rsCuidador.length > 0) {
-        return rsCuidador
-    } else {
-        return false
-    }
-
-}
 
 const selectEventoById = async function (idEvento) {
     let sql = `SELECT tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
@@ -73,12 +56,12 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
 on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-order by id desc limit 1`
+order by tbl_nome_descricao_local_evento.id desc limit 1`
 
-    let rsCuidador = await prisma.$queryRawUnsafe(sql)
+    let rsEvento = await prisma.$queryRawUnsafe(sql)
 
-    if (rsCuidador.length > 0) {
-        return rsCuidador[0]
+    if (rsEvento.length > 0) {
+        return rsEvento[0]
     } else {
         return false
     }
@@ -164,7 +147,7 @@ const updateEvento = async function (dadosEvento) {
 } 
 
 /************************** Deletes ******************************/
-const deleteCuidador = async function (idCuidador) {
+const deleteEvento = async function (idCuidador) {
     let sql = `delete from tbl_cuidador where id = ${idCuidador}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
@@ -177,14 +160,9 @@ const deleteCuidador = async function (idCuidador) {
 }
 
 module.exports = {
-    deleteCuidador,
-    insertCuidador,
-    selectAllCuidadores,
+    deleteEvento,
+    insertEvento,
+    selectEventoById,
     selectLastId,
-    selectCuidadorById,
-    selectCuidadorByEmailAndSenhaAndNome,
-    updateCuidador,
-    updateSenhaCuidador,
-    selectCuidadorByEmail,
-    updateEnderecoCuidador
+    updateEvento
 }
