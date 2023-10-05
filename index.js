@@ -344,7 +344,7 @@ app.delete('/v1/ayan/comorbidade/:id', validateJWT, cors(), async function (requ
  * Versão: 1.0
  *************************************************************************************/
 //Get All (futuramente será um conjunto de GETs)
-app.get('/v1/ayan/pacientes', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/pacientes', cors(), async (request, response) => {
    let dadosPaciente = await controllerPaciente.getPacientes();
 
    //Valida se existe registro
@@ -370,7 +370,7 @@ app.get('/v1/ayan/paciente/autenticar', cors(), bodyParserJSON, async (request, 
 })
 
 //Get por ID
-app.get('/v1/ayan/paciente/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/paciente/:id', cors(), async (request, response) => {
    let idPaciente = request.params.id;
 
    //Recebe os dados do controller
