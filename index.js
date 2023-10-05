@@ -400,7 +400,7 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Conectar
-app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (request, response) => {
       let idPaciente = request.query.idPaciente
       let idCuidador = request.query.idCuidador
 
@@ -473,7 +473,7 @@ app.post('/v1/ayan/paciente/endereco', cors(), bodyParserJSON, async (request, r
 })
 
 //Get Endereço Paciente por ID
-app.get('/v1/ayan/paciente/endereco/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/paciente/endereco/:id', cors(), async (request, response) => {
    let idEndereco = request.params.id;
 
    //Recebe os dados do controller
@@ -859,7 +859,7 @@ app.delete('/v1/ayan/medicamento/:id', cors(), async function (request, response
 * Versão: 1.0
 *************************************************************************************/
 //Get All Cuidadores (Futuramente terá mais Gets)
-app.get('/v1/ayan/cuidadores', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/cuidadores', cors(), async (request, response) => {
    //Recebe os dados do controller
    let dadosCuidador = await controllerCuidador.getCuidadores();
 
@@ -886,7 +886,7 @@ app.get('/v1/ayan/cuidador/autenticar', cors(), bodyParserJSON, async (request, 
 })
 
 //Get Cuidador por ID
-app.get('/v1/ayan/cuidador/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/cuidador/:id', cors(), async (request, response) => {
    let idCuidador = request.params.id;
 
    //Recebe os dados do controller
