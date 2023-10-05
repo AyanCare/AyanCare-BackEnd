@@ -17,78 +17,75 @@ var prisma = new PrismaClient()
 
 
 /********************Retorna Todos os relatorios************************** */
-const selectAllRelatorio = async function(){
+const selectAllRelatorio = async function () {
 
     let sql = 'SELECT * tbl_relatorio'
-    
-    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-    if(rsRelatorio.length > 0){
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
 
         return rsRelatorio
 
-    }else{
+    } else {
         return false
     }
 
 }
 
 /********************Select Pelo ID************************** */
-const selectByID = async function(idRelatorio){
+const selectByID = async function (idRelatorio) {
 
     let sql = `SELECT * FROM tbl_relatorio id = ${idRelatorio}`
-    
-    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-    if(rsRelatorio.length > 0){
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
 
         return rsRelatorio
 
-    }else{
+    } else {
         return false
     }
 
 }
 
-
 /********************Select Pelo ID do paciente************************** */
-const selectByIDPaciente = async function(idPaciente){
+const selectByIDPaciente = async function (idPaciente) {
 
     let sql = `SELECT * FROM tbl_relatorio 
         inner join tbl_paciente 
     on tbl_relatorio.paciente_id = tbl_paciente.id
         where tbl_paciente.id = ${idPaciente}`
-    
-    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-    if(rsRelatorio.length > 0){
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
 
         return rsRelatorio
 
-    }else{
+    } else {
         return false
     }
 
 }
 
-
-
 /********************Select Pelo ID do Cuidador************************** */
 
-const selectByIDCuidador = async function(idCuidador){
+const selectByIDCuidador = async function (idCuidador) {
 
     let sql = `SELECT * FROM tbl_relatorio 
         inner join tbl_cuidador 
     on tbl_relatorio.cuidador_id = tbl_cuidador.id
         where tbl_cuidador.id = ${idCuidador}`
-    
-    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-    if(rsRelatorio.length > 0){
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
 
         return rsRelatorio
 
-    }else{
+    } else {
         return false
     }
 
@@ -111,7 +108,7 @@ const selectLastId = async function () {
 /************************** Inserts ******************************/
 
 
-const insertRelatorio = async function(dadosRelatorio){
+const insertRelatorio = async function (dadosRelatorio) {
     let sql = `insert into tbl_relatorio(
         data,
         horario,
@@ -132,15 +129,14 @@ const insertRelatorio = async function(dadosRelatorio){
 
     if (resultRelatorio) {
         return true
-    }else{
+    } else {
         return false
     }
 }
 
-
 /************************** Updates ******************************/
 
-const updateRelatorio = async function(dadosRelatorio){
+const updateRelatorio = async function (dadosRelatorio) {
 
     let sql = `update tbl_relatorio set 
         descricao = ${dadosRelatorio.descricao} where id = ${dadosRelatorio.id}
@@ -148,16 +144,12 @@ const updateRelatorio = async function(dadosRelatorio){
 
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
 
-    if(resultRelatorio){
+    if (resultRelatorio) {
         return true
-    }else{
+    } else {
         return false
     }
-
-
 }
-
-
 
 /************************** Deletes ******************************/
 const deleteRelatorio = async function (idRelatorio) {
