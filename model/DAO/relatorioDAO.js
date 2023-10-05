@@ -36,7 +36,7 @@ const selectAllRelatorio = async function(){
 /********************Select Pelo ID************************** */
 const selectByID = async function(idRelatorio){
 
-    let sql = `SELECT * tbl_relatorio FROM tbl_relatorio id = ${idRelatorio}`
+    let sql = `SELECT * FROM tbl_relatorio id = ${idRelatorio}`
     
     let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
@@ -112,19 +112,20 @@ const selectLastId = async function () {
 
 
 const insertRelatorio = async function(dadosRelatorio){
-    let sql = `insert into tbl_Relatorio(
+    let sql = `insert into tbl_relatorio(
         data,
         horario,
         descricao,
         validacao,
         id_paciente,
-        id_Relatorio
+        id_cuidador 
     ) values (
         CURDATE(),
         ${dadosRelatorio.horario},
         ${dadosRelatorio.descricao},
         ${dadosRelatorio.validacao},
-
+        ${dadosRelatorio.id_paciente},
+        ${dadosRelatorio.id_cuidador}
     )`
 
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
@@ -149,9 +150,7 @@ const updateRelatorio = async function(dadosRelatorio){
 
     if(resultRelatorio){
         return true
-
     }else{
-    
         return false
     }
 
@@ -162,7 +161,7 @@ const updateRelatorio = async function(dadosRelatorio){
 
 /************************** Deletes ******************************/
 const deleteRelatorio = async function (idRelatorio) {
-    let sql = `delete from tbl_Relatorio where id = ${idRelatorio}`
+    let sql = `delete from tbl_relatorio where id = ${idRelatorio}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
