@@ -34,7 +34,7 @@ const selectAllRelatorio = async function(){
 }
 
 /********************Select Pelo ID************************** */
-const selectByID = async function(idRelatorio){
+const selectByIDRelatorio = async function(idRelatorio){
 
     let sql = `SELECT * tbl_relatorio FROM tbl_relatorio id = ${idRelatorio}`
     
@@ -42,7 +42,7 @@ const selectByID = async function(idRelatorio){
 
     if(rsRelatorio.length > 0){
 
-        return rsRelatorio
+        return rsRelatorio[0]
 
     }else{
         return false
@@ -176,7 +176,7 @@ const deleteRelatorio = async function (idRelatorio) {
 
 module.exports = {
     selectAllRelatorio,
-    selectByID,
+    selectByIDRelatorio,
     selectLastId,
     selectByIDCuidador,
     selectByIDPaciente,
