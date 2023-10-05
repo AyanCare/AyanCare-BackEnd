@@ -147,8 +147,8 @@ const updateEvento = async function (dadosEvento) {
 } 
 
 /************************** Deletes ******************************/
-const deleteEvento = async function (idCuidador) {
-    let sql = `delete from tbl_cuidador where id = ${idCuidador}`
+const deleteEvento = async function (idEvento) {
+    let sql = `delete from id_nome_descricao_local_evento where id = ${idEvento};`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 

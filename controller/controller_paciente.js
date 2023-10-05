@@ -39,7 +39,6 @@ const getPacienteByID = async function (id) {
         let dadosPaciente = await pacienteDAO.selectPacienteById(id)
 
         if (dadosPaciente) {
-            dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
             dadosPacienteJSON.paciente = dadosPaciente
             return dadosPacienteJSON
         } else {

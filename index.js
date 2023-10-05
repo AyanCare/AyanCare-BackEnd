@@ -22,6 +22,7 @@ const controllerMedicamento = require('./controller/controller_medicamento.js');
 const controllerAlarme = require('./controller/controller_alarme.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
+const controllerEvento_Semanal = require('./controller/controller_eventoSemanal.js');
 const controllerContato = require('./controller/controller_contato.js');
 const controllerStatus_Contato = require('./controller/controller_statusContato.js')
 const { request } = require('express');
@@ -834,11 +835,78 @@ app.delete('/v1/ayan/medicamento/:id', cors(), async function (request, response
 })
 
 /*************************************************************************************
- * Objetibo: API de controle de Tipos de Eventos.
+ * Objetibo: API de controle de Eventos Semanais.
  * Autor: Lohannes da Silva Costa
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+
+//Get por ID
+app.get('/v1/ayan/evento/semanal/:id', cors(), async (request, response) => {
+   let idEvento = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosEvento = await controllerEvento_Semanal.getEventoByID(idEvento);
+
+   //Valida se existe registro
+   response.json(dadosEvento)
+   response.status(dadosEvento.status)
+})
+
+//Insert Paciente
+app.post('/v1/ayan/evento/semanal', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosEvento = await controllerEvento_Semanal.insertEvento(dadosBody)
+
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update Paciente
+app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody, id)
+
+      response.status(resultDadosPaciente.status)
+      response.json(resultDadosPaciente)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
+app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnPaciente = await controllerPaciente.getPacienteByID(id)
+
+   if (returnPaciente.status == 404) {
+      response.status(returnPaciente.status)
+      response.json(returnPaciente)
+   } else {
+      let resultDadosPaciente = await controllerPaciente.deletePaciente(id)
+
+      response.status(resultDadosPaciente.status)
+      response.json(resultDadosPaciente)
+   }
+})
 
 
 

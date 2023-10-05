@@ -73,7 +73,10 @@ const getContatoByIDPaciente = async function(id_paciente){
 
             return dadosContatoJSON
         }else{
-            return message.ERROR_NOT_FOUND
+            let erro = message.ERROR_NOT_FOUND
+            erro.contato = []
+
+            return erro
         }
 
     }

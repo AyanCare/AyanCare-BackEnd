@@ -59,7 +59,7 @@ const insertComorbidade = async function (dadosComorbidade) {
         if (resultDadosComorbidade) {
             let novoComorbidade = await comorbidadeDAO.selectLastId()
 
-            dadosComorbidade.id_comorbidade = novoComorbidade[0].id
+            dadosComorbidade.id_comorbidade = novoComorbidade.id
 
             let resultDadosComorbidadePaciente = await comorbidadeDAO.insertComorbidadeIntoPaciente(dadosComorbidade)
 
