@@ -60,7 +60,7 @@ const insertDoenca = async function (dadosDoenca) {
         if (resultDadosDoenca) {
             let novoDoenca = await doencaDAO.selectLastId()
 
-            dadosDoenca.id_doenca = novoDoenca[0].id
+            dadosDoenca.id_doenca = novoDoenca.id
 
             let resultDadosDoencaPaciente = await doencaDAO.insertDoencaIntoPaciente(dadosDoenca)
 
