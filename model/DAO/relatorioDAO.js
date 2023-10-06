@@ -17,11 +17,12 @@ var prisma = new PrismaClient()
 
 
 /********************Retorna Todos os relatorios************************** */
-const selectAllRelatorio = async function () {
+const selectAllRelatorios = async function(){
 
-    let sql = 'SELECT * tbl_relatorio'
+    let sql = 'SELECT * from tbl_relatorio'
+    
+    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
 
@@ -34,7 +35,7 @@ const selectAllRelatorio = async function () {
 }
 
 /********************Select Pelo ID************************** */
-const selectByID = async function (idRelatorio) {
+const selectByIDRelatorio = async function(idRelatorio){
 
     let sql = `SELECT * FROM tbl_relatorio id = ${idRelatorio}`
 
@@ -42,7 +43,7 @@ const selectByID = async function (idRelatorio) {
 
     if (rsRelatorio.length > 0) {
 
-        return rsRelatorio
+        return rsRelatorio[0]
 
     } else {
         return false
@@ -166,8 +167,8 @@ const deleteRelatorio = async function (idRelatorio) {
 
 
 module.exports = {
-    selectAllRelatorio,
-    selectByID,
+    selectAllRelatorios,
+    selectByIDRelatorio,
     selectLastId,
     selectByIDCuidador,
     selectByIDPaciente,

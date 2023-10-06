@@ -24,7 +24,8 @@ const controllerEndereco_Paciente = require('./controller/controller_enderecoPac
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerEvento_Semanal = require('./controller/controller_eventoSemanal.js');
 const controllerContato = require('./controller/controller_contato.js');
-const controllerStatus_Contato = require('./controller/controller_statusContato.js')
+const controllerStatus_Contato = require('./controller/controller_statusContato.js');
+const controllerRelatorio = require('./controller/controller_relatorio.js');
 const { request } = require('express');
 const { response } = require('express');
 
@@ -1179,10 +1180,30 @@ app.delete('/v1/ayan/alarme/:id', cors(), async function (request, response) {
 
 /*************************************************************************************
  * Objetibo: API de controle de Relatórios.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
+ * Autor: Gustavo Souza Tenorio de Barros
+ * Data: 05/10/2023
  * Versão: 1.0
  *************************************************************************************/
+
+//Get all Relatório 
+
+
+app.get('/v1/ayan/relatorios', cors(), async (request, response)=>{
+
+   let dadosRelatorio = await controllerRelatorio.getRelatorios();
+
+   response.json(dadosRelatorio)
+   response.status(dadosRelatorio.status)
+
+
+})
+
+
+
+
+
+
+
 
 
 
