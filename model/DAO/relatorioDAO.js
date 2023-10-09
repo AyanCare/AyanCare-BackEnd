@@ -37,7 +37,7 @@ const selectAllRelatorios = async function(){
 /********************Select Pelo ID************************** */
 const selectByIDRelatorio = async function(idRelatorio){
 
-    let sql = `SELECT * FROM tbl_relatorio id = ${idRelatorio}`
+    let sql = `SELECT * FROM tbl_relatorio where id = ${idRelatorio}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
@@ -56,7 +56,7 @@ const selectByIDPaciente = async function (idPaciente) {
 
     let sql = `SELECT * FROM tbl_relatorio 
         inner join tbl_paciente 
-    on tbl_relatorio.paciente_id = tbl_paciente.id
+    on tbl_paciente.id = tbl_relatorio.id_paciente
         where tbl_paciente.id = ${idPaciente}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
@@ -77,7 +77,7 @@ const selectByIDCuidador = async function (idCuidador) {
 
     let sql = `SELECT * FROM tbl_relatorio 
         inner join tbl_cuidador 
-    on tbl_relatorio.cuidador_id = tbl_cuidador.id
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
         where tbl_cuidador.id = ${idCuidador}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
@@ -113,20 +113,23 @@ const insertRelatorio = async function (dadosRelatorio) {
     let sql = `insert into tbl_relatorio(
         data,
         horario,
-        descricao,
+        texto_relatorio,
         validacao,
         id_paciente,
         id_cuidador 
     ) values (
         CURDATE(),
-        ${dadosRelatorio.horario},
-        ${dadosRelatorio.descricao},
+        CURTIME(),
+        '${dadosRelatorio.texto_relatorio}',
         ${dadosRelatorio.validacao},
-        ${dadosRelatorio.id_paciente},
-        ${dadosRelatorio.id_cuidador}
+        2,
+        4
     )`
 
+    console.log(sql);
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
+
+    
 
     if (resultRelatorio) {
         return true
@@ -140,7 +143,8 @@ const insertRelatorio = async function (dadosRelatorio) {
 const updateRelatorio = async function (dadosRelatorio) {
 
     let sql = `update tbl_relatorio set 
-        descricao = ${dadosRelatorio.descricao} where id = ${dadosRelatorio.id}
+        texto_relatorio = '${dadosRelatorio.texto_relatorio}' 
+        where id = ${dadosRelatorio.id}
     `
 
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)

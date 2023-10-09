@@ -401,13 +401,13 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 
 //Conectar
 app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (request, response) => {
-      let idPaciente = request.query.idPaciente
-      let idCuidador = request.query.idCuidador
+   let idPaciente = request.query.idPaciente
+   let idCuidador = request.query.idCuidador
 
-      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
+   let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
 
-      response.status(resultDadosPaciente.status)
-      response.json(resultDadosPaciente)
+   response.status(resultDadosPaciente.status)
+   response.json(resultDadosPaciente)
 })
 
 //Update Paciente
@@ -697,7 +697,7 @@ app.get('/v1/ayan/status-contato/:id', cors(), async (request, response) => {
 })
 
 //insert
-app.post('/v1/ayan/StatusContato/:id', cors(), async (request,response)=>{
+app.post('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
@@ -798,7 +798,7 @@ app.post('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, respons
 })
 
 //Atualizar
-app.put('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/medicamento/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
@@ -818,7 +818,7 @@ app.put('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, response
 })
 
 //Deletar 
-app.delete('/v1/ayan/medicamento/:id', cors(), async function (request, response) {
+app.delete('/v1/ayan/medicamento/:id', cors(), async (request, response) => {
    let id = request.params.id;
 
    let returnMedicamento = await controllerMedicamento.getMedicamentoByID(id)
@@ -1073,7 +1073,7 @@ app.post('/v1/ayan/alarme', cors(), bodyParserJSON, async (request, response) =>
 })
 
 //Atualizar
-app.put('/v1/ayan/alarme', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/alarme/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
@@ -1093,7 +1093,7 @@ app.put('/v1/ayan/alarme', cors(), bodyParserJSON, async (request, response) => 
 })
 
 //Deletar 
-app.delete('/v1/ayan/alarme/:id', cors(), async function (request, response) {
+app.delete('/v1/ayan/alarme/:id', cors(), async (request, response) => {
    let id = request.params.id;
 
    let returnAlarme = await controllerAlarme.getAlarmeByID(id)
@@ -1117,10 +1117,10 @@ app.delete('/v1/ayan/alarme/:id', cors(), async function (request, response) {
  * Versão: 1.0
  *************************************************************************************/
 
+
+/********************GET************************** */
 //Get all Relatório 
-
-
-app.get('/v1/ayan/relatorios', cors(), async (request, response)=>{
+app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
 
    let dadosRelatorio = await controllerRelatorio.getRelatorios();
 
@@ -1130,12 +1130,104 @@ app.get('/v1/ayan/relatorios', cors(), async (request, response)=>{
 
 })
 
+//Get id Relatorio 
+app.get('/v1/ayan/relatorio/:id', cors(), async (request, response) => {
+   let idRelatorio = request.params.id;
+
+
+   let dadosRelatorio = await controllerRelatorio.getRelatorioByID(idRelatorio);
+
+   response.json(dadosRelatorio)
+   response.status(dadosRelatorio.status)
+})
 
 
 
+//Get Relatorio By ID paciente
+app.get('/v1/ayan/relatorio/paciente/:id', cors(), async (request, response) => {
+   let idPaciente = request.params.id;
 
 
+   let dadosRelatorio = await controllerRelatorio.getRelatorioByIDPaciente(idPaciente);
 
+   response.json(dadosRelatorio)
+   response.status(dadosRelatorio.status)
+})
+
+
+//Get Relatorio By ID Cuidador
+app.get('/v1/ayan/relatorio/cuidador/:id', cors(), async (request, response) => {
+   let idCuidador = request.params.id;
+
+
+   let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidador(idCuidador);
+
+   response.json(dadosRelatorio)
+   response.status(dadosRelatorio.status)
+})
+
+/********************POST************************** */
+
+app.post('/v1/ayan/relatorio', cors(), bodyParserJSON, async (request, response) => {
+
+   let contentType = request.headers['content-type']
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let dadosBody = request.body
+      let resultDadosRelatorio = await controllerRelatorio.insertRelatorio(dadosBody)
+
+      console.log();
+
+      response.status(resultDadosRelatorio.status)
+      response.json(resultDadosRelatorio)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+
+})
+
+/********************PUT************************** */
+app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, response) => {
+
+   let contentType = request.headers['content-type']
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosRelatorio = await controllerRelatorio.updateRelatorio(dadosBody, id)
+
+      response.status(resultDadosRelatorio.status)
+      response.json(resultDadosRelatorio)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+   /************************** Delete ******************************/
+   app.delete('/v1/ayan/relatorio/:id', cors(), async function (request, response) {
+
+      console.log('oi');
+
+      let id = request.params.id;
+
+      let resultRelatorio = await controllerRelatorio.getRelatorioByID(id)
+
+      if (resultRelatorio.status == 400) {
+         response.status(resultRelatorio.status)
+         response.json(resultRelatorio)
+      } else {
+         let resultDadosRelatorio = await controllerRelatorio.deleteRelatorio(id)
+
+         response.status(resultDadosRelatorio.status)
+         response.json(resultDadosRelatorio)
+      }
+
+   })
 
 
 
