@@ -11,6 +11,20 @@ const jwt = require('../middleware/middlewareJWT.js')
 
 const evento_semanalDAO = require('../model/DAO/evento_semanalDAO.js')
 
+const getAllEventos = async function(){
+    let dadosEventoJSON = {};
+
+        let dadosEvento = await evento_semanalDAO.selectAllEventos()
+
+        if (dadosEvento) {
+            dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEventoJSON.evento = dadosEvento
+            return dadosEventoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+}
+
 const getEventoByID = async function (id) {
     if (id == '' || isNaN(id) || id == undefined) {
         return messages.ERROR_INVALID_ID
@@ -19,6 +33,44 @@ const getEventoByID = async function (id) {
         let dadosEventoJSON = {};
 
         let dadosEvento = await evento_semanalDAO.selectEventoById(id)
+
+        if (dadosEvento) {
+            dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEventoJSON.evento = dadosEvento
+            return dadosEventoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getEventoByPaciente = async function (idPaciente) {
+    if (idPaciente == '' || isNaN(idPaciente) || idPaciente == undefined) {
+        return messages.ERROR_INVALID_ID
+    } else {
+
+        let dadosEventoJSON = {};
+
+        let dadosEvento = await evento_semanalDAO.selectEventoByPaciente(idPaciente)
+
+        if (dadosEvento) {
+            dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEventoJSON.evento = dadosEvento
+            return dadosEventoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getEventoByCuidador = async function (idCuidador) {
+    if (idCuidador == '' || isNaN(idCuidador) || idCuidador == undefined) {
+        return messages.ERROR_INVALID_ID
+    } else {
+
+        let dadosEventoJSON = {};
+
+        let dadosEvento = await evento_semanalDAO.selectEventoByCuidador(idCuidador)
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
@@ -154,5 +206,8 @@ module.exports = {
     deleteEvento,
     getEventoByID,
     insertEvento,
-    updateEvento
+    updateEvento,
+    getAllEventos,
+    getEventoByCuidador,
+    getEventoByPaciente
 }

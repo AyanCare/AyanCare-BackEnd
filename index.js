@@ -842,6 +842,29 @@ app.delete('/v1/ayan/medicamento/:id', cors(), async function (request, response
  * Versão: 1.0
  *************************************************************************************/
 
+//Get ALL
+app.get('/v1/ayan/eventos/semanal', cors(), async (request, response) => {
+   let idCuidador = request.query.idCuidador
+   let idPaciente = request.query.idPaciente
+
+   if(idCuidador != undefined){
+      let dadosEvento = await controllerEvento_Semanal.getEventoByCuidador(idCuidador)
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   } else if(idPaciente != undefined){
+      let dadosEvento = await controllerEvento_Semanal.getEventoByPaciente(idPaciente)
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   } else {
+      let dadosEvento = await controllerEvento_Semanal.getAllEventos()
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   }
+})
+
 //Get por ID
 app.get('/v1/ayan/evento/semanal/:id', cors(), async (request, response) => {
    let idEvento = request.params.id;
