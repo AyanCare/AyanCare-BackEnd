@@ -872,7 +872,7 @@ app.post('/v1/ayan/evento/semanal', cors(), bodyParserJSON, async (request, resp
 })
 
 //Update Paciente
-app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/evento/semanal/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -882,10 +882,10 @@ app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (req
 
       let dadosBody = request.body
 
-      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody, id)
+      let resultDadosEvento = await controllerEvento_Semanal.updateEvento(dadosBody, id)
 
-      response.status(resultDadosPaciente.status)
-      response.json(resultDadosPaciente)
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
    } else {
       response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
       response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
@@ -893,19 +893,19 @@ app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (req
 })
 
 //Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
-app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/evento/semanal/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
-   let returnPaciente = await controllerPaciente.getPacienteByID(id)
+   let returnEvento = await controllerEvento_Semanal.getEventoByID(id)
 
-   if (returnPaciente.status == 404) {
-      response.status(returnPaciente.status)
-      response.json(returnPaciente)
+   if (returnEvento.status == 404) {
+      response.status(returnEvento.status)
+      response.json(returnEvento)
    } else {
-      let resultDadosPaciente = await controllerPaciente.deletePaciente(id)
+      let resultDadosEvento = await controllerEvento_Semanal.deleteEvento(id)
 
-      response.status(resultDadosPaciente.status)
-      response.json(resultDadosPaciente)
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
    }
 })
 

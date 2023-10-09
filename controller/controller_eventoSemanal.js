@@ -58,13 +58,13 @@ const insertEvento = async function (dadosEvento) {
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
         dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
-        dadosEvento.domingo == '' || dadosEvento.domingo == undefined || 
-        dadosEvento.segunda == '' || dadosEvento.segunda == undefined || 
-        dadosEvento.terca == '' || dadosEvento.terca == undefined || 
-        dadosEvento.quarta == '' || dadosEvento.quarta == undefined || 
-        dadosEvento.quinta == '' || dadosEvento.quinta == undefined || 
-        dadosEvento.sexta == '' || dadosEvento.sexta == undefined || 
-        dadosEvento.sabado == '' || dadosEvento.sabado == undefined 
+        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
+        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
+        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
+        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
+        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
+        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
+        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -91,13 +91,13 @@ const updateEvento = async function (dadosEvento, id) {
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
         dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
-        dadosEvento.domingo == '' || dadosEvento.domingo == undefined || 
-        dadosEvento.segunda == '' || dadosEvento.segunda == undefined || 
-        dadosEvento.terca == '' || dadosEvento.terca == undefined || 
-        dadosEvento.quarta == '' || dadosEvento.quarta == undefined || 
-        dadosEvento.quinta == '' || dadosEvento.quinta == undefined || 
-        dadosEvento.sexta == '' || dadosEvento.sexta == undefined || 
-        dadosEvento.sabado == '' || dadosEvento.sabado == undefined 
+        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
+        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
+        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
+        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
+        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
+        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
+        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {
@@ -114,7 +114,7 @@ const updateEvento = async function (dadosEvento, id) {
                 let dadosEventoJSON = {}
                 dadosEventoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
                 dadosEventoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
-                dadosEventoJSON.cuidador = dadosEvento
+                dadosEventoJSON.evento = dadosEvento
 
                 return dadosEventoJSON
 
