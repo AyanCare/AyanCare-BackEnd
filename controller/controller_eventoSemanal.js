@@ -11,61 +11,18 @@ const jwt = require('../middleware/middlewareJWT.js')
 
 const evento_semanalDAO = require('../model/DAO/evento_semanalDAO.js')
 
-const getCuidadorByID = async function (id) {
+const getEventoByID = async function (id) {
     if (id == '' || isNaN(id) || id == undefined) {
         return messages.ERROR_INVALID_ID
     } else {
 
         let dadosEventoJSON = {};
 
-        let dadosEvento = await cuidadorDAO.selectCuidadorById(id)
+        let dadosEvento = await evento_semanalDAO.selectEventoById(id)
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosEventoJSON.cuidador = dadosEvento
-            return dadosEventoJSON
-        } else {
-            return messages.ERROR_NOT_FOUND
-        }
-    }
-}
-
-const getCuidadorByEmailAndSenhaAndNome = async function (dadosEvento) {
-    if (dadosEvento.email == '' || dadosEvento.email == undefined ||
-        dadosEvento.senha == '' || dadosEvento.senha == undefined ||
-        dadosEvento.nome == '' || dadosEvento.nome == undefined){
-        return messages.ERROR_REQUIRED_FIELDS
-    } else {
-
-        let dadosEventoJSON = {};
-
-        let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenhaAndNome(dadosEvento)
-
-        if (rsCuidador) {
-            let tokenUser = await jwt.createJWT(rsCuidador.id)
-
-            dadosEventoJSON.token = tokenUser
-            dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosEventoJSON.cuidador = rsCuidador
-            return dadosEventoJSON
-        } else {
-            return messages.ERROR_NOT_FOUND
-        }
-    }
-}
-
-const getCuidadorByEmail = async function (emailCuidador) {
-    if (emailCuidador == '' || emailCuidador == undefined) {
-        return messages.ERROR_REQUIRED_FIELDS
-    } else {
-
-        let dadosEventoJSON = {};
-
-        let rsCuidador = await cuidadorDAO.selectCuidadorByEmail(emailCuidador)
-
-        if (rsCuidador) {
-            dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosEventoJSON.cuidador = rsCuidador
+            dadosEventoJSON.evento = dadosEvento
             return dadosEventoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -97,23 +54,28 @@ const insertEvento = async function (dadosEvento) {
 
     if (
         dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ||
-        dadosEvento.email == '' || dadosEvento.email == undefined || dadosEvento.email > 255 ||
-        dadosEvento.senha == '' || dadosEvento.senha == undefined || dadosEvento.senha > 255 
+        dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
+        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
+        dadosEvento.hora == '' || dadosEvento.hora == undefined ||
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
+        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
+        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
+        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
+        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
+        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
+        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
+        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosEvento = await cuidadorDAO.insertCuidador(dadosEvento)
+        let resultDadosEvento = await evento_semanalDAO.insertEvento(dadosEvento)
 
         if (resultDadosEvento) {
-            let novoCuidador = await cuidadorDAO.selectLastId()
+            let novoEvento = await evento_semanalDAO.selectLastId()
 
             let dadosEventoJSON = {}
-
-            let tokenUser = await jwt.createJWT(novoCuidador.id)
-
-            dadosEventoJSON.token = tokenUser
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosEventoJSON.cuidador = novoCuidador
+            dadosEventoJSON.evento = novoEvento
 
             return dadosEventoJSON
         } else {
@@ -122,10 +84,20 @@ const insertEvento = async function (dadosEvento) {
     }
 }
 
-const updateCuidador = async function (dadosEvento, id) {
+const updateEvento = async function (dadosEvento, id) {
     if (
         dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ||
-        dadosEvento.data_nascimento == '' || dadosEvento.data_nascimento == undefined 
+        dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
+        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
+        dadosEvento.hora == '' || dadosEvento.hora == undefined ||
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
+        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
+        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
+        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
+        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
+        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
+        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
+        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {
@@ -133,16 +105,16 @@ const updateCuidador = async function (dadosEvento, id) {
     } else {
         dadosEvento.id = id
 
-        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(id)
+        let atualizacaoEvento = await evento_semanalDAO.selectEventoById(id)
 
-        if (atualizacaoCuidador) {
-            let resultDadosEvento = await cuidadorDAO.updateCuidador(dadosEvento)
+        if (atualizacaoEvento) {
+            let resultDadosEvento = await evento_semanalDAO.updateEvento(dadosEvento)
 
             if (resultDadosEvento) {
                 let dadosEventoJSON = {}
                 dadosEventoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
                 dadosEventoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
-                dadosEventoJSON.cuidador = dadosEvento
+                dadosEventoJSON.evento = dadosEvento
 
                 return dadosEventoJSON
 
@@ -155,55 +127,23 @@ const updateCuidador = async function (dadosEvento, id) {
     }
 }
 
-const updateSenhaCuidador = async function (dadosEvento, id) {
-    if (
-        dadosEvento.senha == '' || dadosEvento.senha == undefined || dadosEvento.senha > 255
-    ) {
-        return messages.ERROR_REQUIRED_FIELDS
-    } else if (id == null || id == undefined || isNaN(id)) {
-        return messages.ERROR_INVALID_ID
-    } else {
-        dadosEvento.id = id
-
-        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(id)
-
-        if (atualizacaoCuidador) {
-            let resultDadosEvento = await cuidadorDAO.updateSenhaCuidador(dadosEvento)
-
-            if (resultDadosEvento) {
-                let dadosEventoJSON = {}
-                dadosEventoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
-                dadosEventoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
-                dadosEventoJSON.cuidador = dadosEvento
-
-                return dadosEventoJSON
-
-            } else {
-                return messages.ERROR_INTERNAL_SERVER
-            }
-        } else {
-            return messages.ERROR_INVALID_ID
-        }
-    }
-}
-
-const deleteCuidador = async function (id) {
+const deleteEvento = async function (id) {
 
     if (id == null || id == undefined || id == '' || isNaN(id)) {
         return messages.ERROR_INVALID_ID
     } else {
 
-        let searchIdCuidador = await cuidadorDAO.selectCuidadorById(id)
+        let searchIdEvento = await evento_semanalDAO.selectEventoById(id)
 
-        if (searchIdCuidador) {
-            let dadosEvento = await cuidadorDAO.deleteCuidador(id)
+        if (searchIdEvento) {
+            let dadosEvento = await evento_semanalDAO.deleteEvento(id)
 
             if (dadosEvento) {
                 return messages.SUCCESS_DELETED_ITEM
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
     }
@@ -211,12 +151,8 @@ const deleteCuidador = async function (id) {
 }
 
 module.exports = {
-    getCuidadores,
-    insertCuidador,
-    updateCuidador,
-    deleteCuidador,
-    getCuidadorByID,
-    getCuidadorByEmailAndSenhaAndNome,
-    getCuidadorByEmail,
-    updateSenhaCuidador
+    deleteEvento,
+    getEventoByID,
+    insertEvento,
+    updateEvento
 }
