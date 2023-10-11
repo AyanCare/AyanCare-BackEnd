@@ -23,10 +23,11 @@ const controllerAlarme = require('./controller/controller_alarme.js');
 const controllerEvento = require('./controller/controller_evento.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
-const controllerEvento_Semanal = require('./controller/controller_eventoSemanal.js');
 const controllerContato = require('./controller/controller_contato.js');
 const controllerStatus_Contato = require('./controller/controller_statusContato.js');
 const controllerRelatorio = require('./controller/controller_relatorio.js');
+const controllerPergunta_Relatorio= require('./controller/controller_perguntaRelatorio.js')
+const controllerQuestionario_Relatorio = require('./controller/controller_questionarioRelatorio.js')
 const { request } = require('express');
 const { response } = require('express');
 
@@ -837,101 +838,11 @@ app.delete('/v1/ayan/medicamento/:id', cors(), async (request, response) => {
 })
 
 /*************************************************************************************
- * Objetibo: API de controle de Eventos Semanais.
+ * Objetibo: API de controle de Tipos de Eventos.
  * Autor: Lohannes da Silva Costa
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
-
-//Get ALL
-app.get('/v1/ayan/eventos/semanal', cors(), async (request, response) => {
-   let idCuidador = request.query.idCuidador
-   let idPaciente = request.query.idPaciente
-
-   if(idCuidador != undefined){
-      let dadosEvento = await controllerEvento_Semanal.getEventoByCuidador(idCuidador)
-
-      response.json(dadosEvento)
-      response.status(dadosEvento.status)
-   } else if(idPaciente != undefined){
-      let dadosEvento = await controllerEvento_Semanal.getEventoByPaciente(idPaciente)
-
-      response.json(dadosEvento)
-      response.status(dadosEvento.status)
-   } else {
-      let dadosEvento = await controllerEvento_Semanal.getAllEventos()
-
-      response.json(dadosEvento)
-      response.status(dadosEvento.status)
-   }
-})
-
-//Get por ID
-app.get('/v1/ayan/evento/semanal/:id', cors(), async (request, response) => {
-   let idEvento = request.params.id;
-
-   //Recebe os dados do controller
-   let dadosEvento = await controllerEvento_Semanal.getEventoByID(idEvento);
-
-   //Valida se existe registro
-   response.json(dadosEvento)
-   response.status(dadosEvento.status)
-})
-
-//Insert Paciente
-app.post('/v1/ayan/evento/semanal', cors(), bodyParserJSON, async (request, response) => {
-   let contentType = request.headers['content-type']
-
-   //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-      let dadosBody = request.body
-      let resultDadosEvento = await controllerEvento_Semanal.insertEvento(dadosBody)
-
-      response.status(resultDadosEvento.status)
-      response.json(resultDadosEvento)
-   } else {
-      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
-      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
-   }
-})
-
-//Update Paciente
-app.put('/v1/ayan/evento/semanal/:id', cors(), bodyParserJSON, async (request, response) => {
-   let contentType = request.headers['content-type']
-
-   //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-
-      let id = request.params.id;
-
-      let dadosBody = request.body
-
-      let resultDadosEvento = await controllerEvento_Semanal.updateEvento(dadosBody, id)
-
-      response.status(resultDadosEvento.status)
-      response.json(resultDadosEvento)
-   } else {
-      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
-      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
-   }
-})
-
-//Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
-app.delete('/v1/ayan/evento/semanal/:id', cors(), async function (request, response) {
-   let id = request.params.id;
-
-   let returnEvento = await controllerEvento_Semanal.getEventoByID(id)
-
-   if (returnEvento.status == 404) {
-      response.status(returnEvento.status)
-      response.json(returnEvento)
-   } else {
-      let resultDadosEvento = await controllerEvento_Semanal.deleteEvento(id)
-
-      response.status(resultDadosEvento.status)
-      response.json(resultDadosEvento)
-   }
-})
 
 
 
@@ -1391,7 +1302,6 @@ app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, respon
    /************************** Delete ******************************/
    app.delete('/v1/ayan/relatorio/:id', cors(), async function (request, response) {
 
-      console.log('oi');
 
       let id = request.params.id;
 
@@ -1412,20 +1322,115 @@ app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, respon
 
 
 /*************************************************************************************
- * Objetibo: API de controle de Respostas do Relatório.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
+ * Objetibo: API de controle de Questionario do Relatório.
+ * Autor: Gustavo Souza Tenorio De Barros
+ * Data: 11/10/2023
  * Versão: 1.0
  *************************************************************************************/
 
+/********************GET************************** */
+//Get all  Questionario
+app.get('/v1/ayan/questionarios', cors(), async (request, response) => {
+
+   let dadosQuestionario = await  controllerQuestionario_Relatorio.getAllQuestionarios()
+
+   response.json(dadosQuestionario)
+   response.status(dadosQuestionario.status)
+})
+
+//Get by id questionario
+app.get('/v1/ayan/questionario/:id', cors(), async (request, response) => {
+   let idQuestionario = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosQuestionario = await controllerQuestionario_Relatorio.getQuestionarioByID(idQuestionario)
+   //Valida se existe registro
+   response.json(dadosQuestionario)
+   response.status(dadosQuestionario.status)
+})
+
+/********************POST************************** */
+
+app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, response) => {
+
+   let contentType = request.headers['content-type']
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let dadosBody = request.body
+      let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario()
+
+      console.log();
+
+      response.status(resultDadosQuestionario.status)
+      response.json(resultDadosQuestionario)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+
+})
 
 
 /*************************************************************************************
    * Objetibo: API de controle de Perguntas do Relatório.
-   * Autor: Lohannes da Silva Costa
-   * Data: 04/09/2023
+   * Autor: Gustavo Souza Tenorio de Barros
+   * Data: 01/10/2023
    * Versão: 1.0
  *************************************************************************************/
+
+/********************GET************************** */
+//Get all Perguntas 
+app.get('/v1/ayan/perguntas', cors(), async (request, response) => {
+
+   let dadosPerguntas = await controllerPergunta_Relatorio.getAllPerguntas()
+
+   response.json(dadosPerguntas)
+   response.status(dadosPerguntas.status)
+})
+
+//Get by ID Pergunta
+app.get('/v1/ayan/pergunta/:id', cors(), async (request, response) => {
+   let idPergunta = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosPergunta = await controllerPergunta_Relatorio.getPerguntaByID(idPergunta)
+
+   //Valida se existe registro
+   response.json(dadosPergunta)
+   response.status(dadosPergunta.status)
+})
+
+/********************POST************************** */
+app.post('/v1/ayan/Pergunta', cors(), bodyParserJSON, async (request, response) => {
+
+   let contentType = request.headers['content-type']
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let dadosBody = request.body
+      let resultDadosPergunta = await controllerPergunta_Relatorio.insertPergunta(dadosBody)
+
+
+      response.status(resultDadosPergunta.status)
+      response.json(resultDadosPergunta)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+
+})
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(8080, function () {
