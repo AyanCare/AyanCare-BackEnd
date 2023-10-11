@@ -17,7 +17,7 @@ const selectAllEventos = async function () {
     let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
-    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, 
+    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
     tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
@@ -36,13 +36,12 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
     if (rsEvento.length > 0) {
         let dias = []
         let eventos = []
-        let eventosJSON = {}
-        let set = Array.from(new Set(rsEvento))
 
         let arrayIDDia = []
         let arrayIDEvento = []
+        let arrayIDStatus = []
 
-        set.forEach(evento => {
+        rsEvento.forEach(evento => {
             if (!arrayIDEvento.includes(evento.id)) {
                 let eventoJSON = {}
 
@@ -55,13 +54,15 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
 
-                set.forEach(repeticao => {
-                    if (!arrayIDDia.includes(repeticao.dia_id)) {
+                rsEvento.forEach(repeticao => {
+                    if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
                         let dia = {}
 
                         arrayIDDia.push(repeticao.dia_id)
+                        arrayIDStatus.push(repeticao.id_status)
                         dia.id = repeticao.dia_id
                         dia.dia = repeticao.dia
+                        dia.status_id = repeticao.id_status
 
                         if (repeticao.status === 1) {
                             dia.status = true
@@ -74,14 +75,14 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
                 })
 
                 eventoJSON.dias = dias
-
                 eventos.push(eventoJSON)
             }
 
-            eventosJSON.eventos = eventos
+            arrayIDDia = []
+            dias = []
         });
 
-        return eventosJSON
+        return eventos
     } else {
         return false
     }
@@ -111,11 +112,11 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     if (rsEvento.length > 0) {
         let dias = []
         let eventoJSON = {}
-        let set = Array.from(new Set(rsEvento))
+        
 
         let arrayIDDia = []
 
-        set.forEach(evento => {
+        rsEvento.forEach(evento => {
             eventoJSON.id = evento.id
             eventoJSON.paciente = evento.paciente
             eventoJSON.cuidador = evento.cuidador
@@ -153,7 +154,7 @@ const selectEventoByCuidador = async function (idCuidador) {
     let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
-    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, 
+    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
     tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
@@ -173,13 +174,12 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     if (rsEvento.length > 0) {
         let dias = []
         let eventos = []
-        let eventosJSON = {}
-        let set = Array.from(new Set(rsEvento))
 
         let arrayIDDia = []
         let arrayIDEvento = []
+        let arrayIDStatus = []
 
-        set.forEach(evento => {
+        rsEvento.forEach(evento => {
             if (!arrayIDEvento.includes(evento.id)) {
                 let eventoJSON = {}
 
@@ -192,13 +192,15 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
 
-                set.forEach(repeticao => {
-                    if (!arrayIDDia.includes(repeticao.dia_id)) {
+                rsEvento.forEach(repeticao => {
+                    if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
                         let dia = {}
 
                         arrayIDDia.push(repeticao.dia_id)
+                        arrayIDStatus.push(repeticao.id_status)
                         dia.id = repeticao.dia_id
                         dia.dia = repeticao.dia
+                        dia.status_id = repeticao.id_status
 
                         if (repeticao.status === 1) {
                             dia.status = true
@@ -211,14 +213,14 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                 })
 
                 eventoJSON.dias = dias
-
                 eventos.push(eventoJSON)
             }
 
-            eventosJSON.eventos = eventos
+            arrayIDDia = []
+            dias = []
         });
 
-        return eventosJSON
+        return eventos
     } else {
         return false
     }
@@ -246,16 +248,14 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     let rsEvento = await prisma.$queryRawUnsafe(sql)
 
     if (rsEvento.length > 0) {
-        let eventosJSON = {}
         let eventos = []
         let dias = []
-        let set = Array.from(new Set(rsEvento))
 
         let arrayIDDia = []
         let arrayIDEvento = []
         let arrayIDStatus = []
 
-        set.forEach(evento => {
+        rsEvento.forEach(evento => {
             if (!arrayIDEvento.includes(evento.id)) {
                 let eventoJSON = {}
 
@@ -268,37 +268,35 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
 
-                set.forEach(repeticao => {
-                    if (repeticao.id == eventoJSON.id) {
-                        if (!arrayIDStatus.includes(repeticao.id_status)) {
-                            if (!arrayIDDia.includes(repeticao.dia_id)) {
-                                let dia = {}
+                rsEvento.forEach(repeticao => {
+                    if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
+                        let dia = {}
 
-                                arrayIDDia.push(repeticao.dia_id)
-                                dia.id = repeticao.dia_id
-                                dia.dia = repeticao.dia
+                        arrayIDDia.push(repeticao.dia_id)
+                        arrayIDStatus.push(repeticao.id_status)
+                        dia.id = repeticao.dia_id
+                        dia.dia = repeticao.dia
+                        dia.status_id = repeticao.id_status
 
-                                if (repeticao.status === 1) {
-                                    dia.status = true
-                                } else {
-                                    dia.status = false
-                                }
-
-                                dias.push(dia)
-                            }
+                        if (repeticao.status === 1) {
+                            dia.status = true
+                        } else {
+                            dia.status = false
                         }
+
+                        dias.push(dia)
                     }
                 })
 
                 eventoJSON.dias = dias
-
                 eventos.push(eventoJSON)
             }
+
+            arrayIDDia = []
+            dias = []
         });
 
-        eventosJSON.eventos = eventos
-
-        return eventosJSON
+        return eventos
     } else {
         return false
     }
@@ -328,11 +326,10 @@ order by tbl_nome_descricao_local_evento.id desc limit 7`
     if (rsEvento.length > 0) {
         let dias = []
         let eventoJSON = {}
-        let set = Array.from(new Set(rsEvento))
 
         let arrayIDDia = []
 
-        set.forEach(evento => {
+        rsEvento.forEach(evento => {
             eventoJSON.id = evento.id
             eventoJSON.paciente = evento.paciente
             eventoJSON.cuidador = evento.cuidador
@@ -422,25 +419,25 @@ const updateEvento = async function (dadosEvento) {
         '${dadosEvento.local}', 
         '${dadosEvento.hora}', 
         ${dadosEvento.id_paciente_cuidador}, 
-        15, 
+        ${dadosEvento.sabado_id}, 
         1, 
         ${dadosEvento.sabado}, 
-        16, 
+        ${dadosEvento.segunda_id}, 
         2, 
         ${dadosEvento.segunda}, 
-        17, 
+        ${dadosEvento.terca_id}, 
         3, 
         ${dadosEvento.terca}, 
-        18, 
+        ${dadosEvento.quarta_id}, 
         4, 
         ${dadosEvento.quarta}, 
-        19, 
+        ${dadosEvento.quinta_id}, 
         5, 
         ${dadosEvento.quinta}, 
-        20, 
+        ${dadosEvento.sexta_id}, 
         6, 
         ${dadosEvento.sexta}, 
-        21, 
+        ${dadosEvento.domingo_id}, 
         7, 
         ${dadosEvento.domingo}
     );`

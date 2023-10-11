@@ -20,6 +20,7 @@ const controllerComorbidade = require('./controller/controller_comorbidade.js');
 const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerMedicamento = require('./controller/controller_medicamento.js');
 const controllerAlarme = require('./controller/controller_alarme.js');
+const controllerEvento = require('./controller/controller_evento.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerEvento_Semanal = require('./controller/controller_eventoSemanal.js');
@@ -940,7 +941,95 @@ app.delete('/v1/ayan/evento/semanal/:id', cors(), async function (request, respo
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+//Get ALL
+app.get('/v1/ayan/eventos', cors(), async (request, response) => {
+   let idCuidador = request.query.idCuidador
+   let idPaciente = request.query.idPaciente
 
+   if(idCuidador != undefined){
+      let dadosEvento = await controllerEvento.getEventoByCuidador(idCuidador)
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   } else if(idPaciente != undefined){
+      let dadosEvento = await controllerEvento.getEventoByPaciente(idPaciente)
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   } else {
+      let dadosEvento = await controllerEvento.getAllEventos()
+
+      response.json(dadosEvento)
+      response.status(dadosEvento.status)
+   }
+})
+
+//Get por ID
+app.get('/v1/ayan/evento/:id', cors(), async (request, response) => {
+   let idEvento = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosEvento = await controllerEvento.getEventoByID(idEvento);
+
+   //Valida se existe registro
+   response.json(dadosEvento)
+   response.status(dadosEvento.status)
+})
+
+//Insert Paciente
+app.post('/v1/ayan/evento', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosEvento = await controllerEvento.insertEvento(dadosBody)
+
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update Paciente
+app.put('/v1/ayan/evento/:id', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
+
+      let dadosBody = request.body
+
+      let resultDadosEvento = await controllerEvento.updateEvento(dadosBody, id)
+
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
+app.delete('/v1/ayan/evento/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnEvento = await controllerEvento.getEventoByID(id)
+
+   if (returnEvento.status == 404) {
+      response.status(returnEvento.status)
+      response.json(returnEvento)
+   } else {
+      let resultDadosEvento = await controllerEvento.deleteEvento(id)
+
+      response.status(resultDadosEvento.status)
+      response.json(resultDadosEvento)
+   }
+})
 
 
 /*************************************************************************************
