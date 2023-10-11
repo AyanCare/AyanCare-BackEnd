@@ -26,6 +26,7 @@ const controllerContato = require('./controller/controller_contato.js');
 const controllerStatus_Contato = require('./controller/controller_statusContato.js');
 const controllerRelatorio = require('./controller/controller_relatorio.js');
 const controllerPergunta_Relatorio= require('./controller/controller_perguntaRelatorio.js')
+const controllerQuestionario_Relatorio = require('./controller/controller_questionarioRelatorio.js')
 const { request } = require('express');
 const { response } = require('express');
 
@@ -1232,12 +1233,54 @@ app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, respon
 
 
 /*************************************************************************************
- * Objetibo: API de controle de Respostas do Relatório.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
+ * Objetibo: API de controle de Questionario do Relatório.
+ * Autor: Gustavo Souza Tenorio De Barros
+ * Data: 11/10/2023
  * Versão: 1.0
  *************************************************************************************/
 
+/********************GET************************** */
+//Get all  Questionario
+app.get('/v1/ayan/questionarios', cors(), async (request, response) => {
+
+   let dadosQuestionario = await  controllerQuestionario_Relatorio.getAllQuestionarios()
+
+   response.json(dadosQuestionario)
+   response.status(dadosQuestionario.status)
+})
+
+//Get by id questionario
+app.get('/v1/ayan/questionario/:id', cors(), async (request, response) => {
+   let idQuestionario = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosQuestionario = await controllerQuestionario_Relatorio.getQuestionarioByID(idQuestionario)
+   //Valida se existe registro
+   response.json(dadosQuestionario)
+   response.status(dadosQuestionario.status)
+})
+
+/********************POST************************** */
+
+app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, response) => {
+
+   let contentType = request.headers['content-type']
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let dadosBody = request.body
+      let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario()
+
+      console.log();
+
+      response.status(resultDadosQuestionario.status)
+      response.json(resultDadosQuestionario)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+
+})
 
 
 /*************************************************************************************
