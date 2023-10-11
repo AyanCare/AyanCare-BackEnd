@@ -31,12 +31,10 @@
  
      let sql = `SELECT * FROM tbl_pergunta where id = ${idPergunta}`
      let rsPerguntas = await prisma.$queryRawUnsafe(sql)
-
-     console.log(rsPerguntas);
  
  
      if (rsPerguntas.length > 0) {
-         return rsPerguntas [0]
+         return rsPerguntas
      } else {
          return false
      }
@@ -67,7 +65,7 @@
  
  const insertPergunta = async function (dadosPerguntas) {
      
-     let sql = `insert into tbl_pergunta(
+     let sql = `insert into tbl_perguntas(
          pergunta
      ) values (
          '${dadosPerguntas.pergunta}'
