@@ -65,7 +65,7 @@
  
  const insertPergunta = async function (dadosPerguntas) {
      
-     let sql = `insert into tbl_perguntas(
+     let sql = `insert into tbl_pergunta(
          pergunta
      ) values (
          '${dadosPerguntas.pergunta}'
@@ -81,10 +81,38 @@
      }
  }
  
+
+
+ /**********************Conexão Pergunta Cuidador************************************* */
+ const connectPerguntaAndCuidador = async function (idPergunta, idCuidador){
+    let sql = `insert into tbl_pergunta_cuidador(
+        id_pergunta,
+        id_cuidador
+    ) values (
+        ${idPergunta},
+        ${idCuidador}
+    )`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    console.log(sql);
+
+    if(resultStatus){
+        return true
+    } else {
+        return false
+    }
+}
+
+
+
+
+
  
  module.exports = {
      selectAllPerguntas,
      selectPerguntaByID,
      selectLastId,
-     insertPergunta
+     insertPergunta,
+     connectPerguntaAndCuidador
  }

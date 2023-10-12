@@ -49,8 +49,8 @@ const getCuidadorByID = async function (id) {
 
 const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
     if (dadosCuidador.email == '' || dadosCuidador.email == undefined ||
-        dadosCuidador.senha == '' || dadosCuidador.senha == undefined ||
-        dadosCuidador.nome == '' || dadosCuidador.nome == undefined){
+        dadosCuidador.senha == '' || dadosCuidador.senha == undefined
+        ){
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
