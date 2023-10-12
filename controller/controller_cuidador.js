@@ -58,9 +58,8 @@ const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
 
         let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenhaAndNome(dadosCuidador)
 
-        if (rsCuidador) {
+        if (rsCuidador ) {
             let tokenUser = await jwt.createJWT(rsCuidador.id)
-
             dadosCuidadorJSON.token = tokenUser
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
             dadosCuidadorJSON.cuidador = rsCuidador

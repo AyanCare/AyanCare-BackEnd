@@ -111,12 +111,13 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
 
 //CRUD (Create, Read, Update, Delete)
 //Login Usuários 
-app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
+app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
       let dadosBody = request.body
+     
       let resultDadosPaciente = await controllerPaciente.getPacienteByEmailAndSenhaAndNome(dadosBody)
 
       if (resultDadosPaciente.status == 200) {
@@ -131,8 +132,8 @@ app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, 
             resultDadosCuidador.tipo = "Cuidador"
          }
 
-         response.status(resultDadosPaciente.status)
-         response.json(resultDadosPaciente)
+         response.status(resultDadosCuidador.status)
+         response.json(resultDadosCuidador)
       }
    } else {
       response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
@@ -1268,8 +1269,6 @@ app.post('/v1/ayan/relatorio', cors(), bodyParserJSON, async (request, response)
       let dadosBody = request.body
       let resultDadosRelatorio = await controllerRelatorio.insertRelatorio(dadosBody)
 
-      console.log();
-
       response.status(resultDadosRelatorio.status)
       response.json(resultDadosRelatorio)
    } else {
@@ -1360,7 +1359,7 @@ app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, respon
       let dadosBody = request.body
       let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario(dadosBody)
 
-      console.log();
+      ();
 
       response.status(resultDadosQuestionario.status)
       response.json(resultDadosQuestionario)
@@ -1434,5 +1433,5 @@ app.post('/v1/ayan/Pergunta', cors(), bodyParserJSON, async (request, response) 
 
 
 app.listen(8080, function () {
-   console.log('Aguardando requisições na porta 8080...');
+   ('Aguardando requisições na porta 8080...');
 })
