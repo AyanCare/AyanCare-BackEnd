@@ -38,7 +38,7 @@ const getContatos = async function (){
 
 const getContatoByID = async function (id){
 
-    console.log(id);
+    (id);
 
     if (id == '' || isNaN(id)|| id == undefined) {
         return message.ERROR_INVALID_ID
