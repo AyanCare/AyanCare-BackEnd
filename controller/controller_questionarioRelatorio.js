@@ -52,12 +52,14 @@ const getQuestionarioByID = async function(id){
 
 /************************** Inserte ******************************/
 const insertQuestionario = async function(dadosQuestionario){
+
+    console.log(dadosQuestionario);
  
     if (
         dadosQuestionario.resposta === ''|| dadosQuestionario.resposta === undefined
-
     ) {
         return message.ERROR_REQUIRED_FIELDS
+
     } else {
         
         let resultDadosQuestionario = await questionarioDAO.insertQuestionario(dadosQuestionario)
@@ -75,7 +77,11 @@ const insertQuestionario = async function(dadosQuestionario){
             
             return message.ERROR_INTERNAL_SERVER
         }
+
+        
     }
+
+   
 
 }
 

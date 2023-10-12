@@ -81,9 +81,9 @@ const selectLastId = async function () {
     if (rsQuestionario.length > 0) {
 
         let questionarioJSON = {}
-        questionarioJSON.id = rsQuestionario[0]
-        questionarioJSON.id_pergunta = resposta[0].id_pergunta
-        questionarioJSON.id_relatorio = resposta[0].id_relatorio
+        questionarioJSON.id = rsQuestionario[0].id
+        questionarioJSON.id_pergunta = rsQuestionario[0].id_pergunta
+        questionarioJSON.id_relatorio = rsQuestionario[0].id_relatorio
 
         if (rsQuestionario.resposta === 1) {
             questionarioJSON.resposta = true
@@ -107,7 +107,7 @@ const insertQuestionario = async function (dadosQuestionario) {
         id_relatorio
     ) values (
         ${dadosQuestionario.id_pergunta},
-        '${dadosQuestionario.resposta}',
+        ${dadosQuestionario.resposta},
         ${dadosQuestionario.id_relatorio}
     )`
 
@@ -120,6 +120,8 @@ const insertQuestionario = async function (dadosQuestionario) {
         return false
     }
 }
+
+
 
 module.exports = {
     selectAllQuestionario,
