@@ -415,17 +415,14 @@ app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (reques
 })
 
 //Update Paciente
-app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/paciente', validateJWT, cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
-
-      let id = request.params.id;
-
       let dadosBody = request.body
 
-      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody, id)
+      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody)
 
       response.status(resultDadosPaciente.status)
       response.json(resultDadosPaciente)
