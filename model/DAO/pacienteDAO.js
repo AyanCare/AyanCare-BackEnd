@@ -224,7 +224,7 @@ const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
 }
 
 const selectCuidadoresConectados = async function (idPaciente){
-	let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome
+	let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto
         from tbl_paciente_cuidador
 	inner join tbl_paciente on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
