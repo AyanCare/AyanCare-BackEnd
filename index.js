@@ -414,7 +414,7 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Conectar
-app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idCuidador = request.query.idCuidador
 

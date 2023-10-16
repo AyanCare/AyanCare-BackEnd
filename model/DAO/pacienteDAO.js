@@ -229,6 +229,14 @@ const selectCuidadoresConectados = async function (idPaciente){
 	inner join tbl_paciente on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
 	where tbl_paciente.id = ${idPaciente}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
 }
 
 /************************** Inserts ******************************/
