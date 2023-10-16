@@ -90,6 +90,24 @@ const getPacienteByEmail = async function (emailPaciente) {
     }
 }
 
+const getCuidadoresConectados = async function (idPaciente) {
+    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente) ) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosPacienteJSON = {}
+
+        let rsPaciente = await pacienteDAO.selectCuidadoresConectados(idPaciente)
+
+        if (rsPaciente) {
+            dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
+            dadosPacienteJSON.cuidadores = rsPaciente
+            return dadosPacienteJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 // '${dadosPaciente.nome}',
 //         '${dadosPaciente.data_nascimento}',
 //         '${dadosPaciente.email}',
@@ -254,5 +272,6 @@ module.exports = {
     getPacienteByEmailAndSenhaAndNome,
     getPacienteByEmail,
     updateSenhaPaciente,
-    connectCuidadorAndPaciente
+    connectCuidadorAndPaciente,
+    getCuidadoresConectados
 }
