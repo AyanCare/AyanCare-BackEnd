@@ -27,10 +27,22 @@ function conversaoDeMilissegundos(milissegundos) {
   }
 
 /************************** Selects ******************************/
+
+// "id": 48,
+//             "nome": "Daniela",
+//             "data_nascimento": "2004-07-07T00:00:00.000Z",
+//             "senha": "Daniela@123",
+//             "email": "daniela@gmail.com",
+//             "foto": "undefined",
+//             "cpf": "3746828357",
+//             "historico_medico": "undefined",
+//             "id_endereco_paciente": 1,
+//             "id_genero": 1
+
 const selectAllPacientes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_paciente'
+    let sql = `SELECT tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.cpf as cpf, tbl_paciente.historico_medico FROM tbl_paciente`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
