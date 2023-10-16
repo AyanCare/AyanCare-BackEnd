@@ -90,6 +90,24 @@ const getPacienteByEmail = async function (emailPaciente) {
     }
 }
 
+const getCuidadoresConectados = async function (idPaciente) {
+    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente) ) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosPacienteJSON = {}
+
+        let rsPaciente = await pacienteDAO.selectCuidadoresConectados(idPaciente)
+
+        if (rsPaciente) {
+            dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
+            dadosPacienteJSON.cuidadores = rsPaciente
+            return dadosPacienteJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 // '${dadosPaciente.nome}',
 //         '${dadosPaciente.data_nascimento}',
 //         '${dadosPaciente.email}',
@@ -156,19 +174,17 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
     }
 }
 
-const updatePaciente = async function (dadosPaciente, id) {
+const updatePaciente = async function (dadosPaciente) {
     if (
         dadosPaciente.nome == '' || dadosPaciente.nome == undefined || dadosPaciente.nome > 80 ||
         dadosPaciente.data_nascimento == '' || dadosPaciente.data_nascimento == undefined ||
         dadosPaciente.cpf == '' || dadosPaciente.cpf == undefined || dadosPaciente.cpf.length > 15
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id == null || id == undefined || isNaN(id)) {
+    } else if (dadosPaciente.id == null || dadosPaciente.id == undefined || isNaN(dadosPaciente.id)) {
         return messages.ERROR_INVALID_ID
     } else {
-        dadosPaciente.id = id
-
-        let atualizacaoPaciente = await pacienteDAO.selectPacienteById(id)
+        let atualizacaoPaciente = await pacienteDAO.selectPacienteById(dadosPaciente.id)
 
         if (atualizacaoPaciente) {
             let resultDadosPaciente = await pacienteDAO.updatePaciente(dadosPaciente)
@@ -256,5 +272,6 @@ module.exports = {
     getPacienteByEmailAndSenhaAndNome,
     getPacienteByEmail,
     updateSenhaPaciente,
-    connectCuidadorAndPaciente
+    connectCuidadorAndPaciente,
+    getCuidadoresConectados
 }

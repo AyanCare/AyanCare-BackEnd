@@ -111,7 +111,7 @@ app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
 
 //CRUD (Create, Read, Update, Delete)
 //Login Usuários 
-app.get('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -386,6 +386,16 @@ app.get('/v1/ayan/paciente/:id', cors(), async (request, response) => {
    response.status(dadosPaciente.status)
 })
 
+//Get Cuidadores conectados ao Paciente
+app.get('/v1/ayan/paciente/conectados/:id', cors(), async (request, response) => {
+   let idPaciente = request.params.id
+
+   let dadosPaciente = await controllerPaciente.getCuidadoresConectados(idPaciente)
+
+   response.json(dadosPaciente)
+   response.status(dadosPaciente.status)
+})
+
 //Insert Paciente
 app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
@@ -404,7 +414,7 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Conectar
-app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idCuidador = request.query.idCuidador
 
@@ -415,17 +425,14 @@ app.post('/v1/ayan/conectar', validateJWT, cors(), bodyParserJSON, async (reques
 })
 
 //Update Paciente
-app.put('/v1/ayan/paciente/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/paciente', validateJWT, cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
-
-      let id = request.params.id;
-
       let dadosBody = request.body
 
-      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody, id)
+      let resultDadosPaciente = await controllerPaciente.updatePaciente(dadosBody)
 
       response.status(resultDadosPaciente.status)
       response.json(resultDadosPaciente)
