@@ -386,6 +386,16 @@ app.get('/v1/ayan/paciente/:id', cors(), async (request, response) => {
    response.status(dadosPaciente.status)
 })
 
+//Get Cuidadores conectados ao Paciente
+app.get('/v1/ayan/paciente/conectados/:id', cors(), async (request, response) => {
+   let idPaciente = request.params.id
+
+   let dadosPaciente = await controllerPaciente.getCuidadoresConectados(idPaciente)
+
+   response.json(dadosPaciente)
+   response.status(dadosPaciente.status)
+})
+
 //Insert Paciente
 app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
