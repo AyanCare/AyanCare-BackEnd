@@ -21,12 +21,16 @@ const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerMedicamento = require('./controller/controller_medicamento.js');
 const controllerAlarme = require('./controller/controller_alarme.js');
 const controllerEvento = require('./controller/controller_evento.js');
+const controllerSintoma = require('./controller/controller_sintoma');
+const controllerExercicio = require('./controller/controller_exercicio.js');
+const controllerHumor = require('./controller/controller_humor.js');
+const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerContato = require('./controller/controller_contato.js');
 const controllerStatus_Contato = require('./controller/controller_statusContato.js');
 const controllerRelatorio = require('./controller/controller_relatorio.js');
-const controllerPergunta_Relatorio= require('./controller/controller_perguntaRelatorio.js')
+const controllerPergunta_Relatorio = require('./controller/controller_perguntaRelatorio.js')
 const controllerQuestionario_Relatorio = require('./controller/controller_questionarioRelatorio.js')
 const { request } = require('express');
 const { response } = require('express');
@@ -117,7 +121,7 @@ app.post('/v1/ayan/usuario/autenticar', cors(), bodyParserJSON, async (request, 
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
       let dadosBody = request.body
-     
+
       let resultDadosPaciente = await controllerPaciente.getPacienteByEmailAndSenhaAndNome(dadosBody)
 
       if (resultDadosPaciente.status == 200) {
@@ -415,13 +419,20 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 
 //Conectar
 app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
-   let idPaciente = request.query.idPaciente
-   let idCuidador = request.query.idCuidador
+   let contentType = request.headers['content-type']
 
-   let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
 
-   response.status(resultDadosPaciente.status)
-   response.json(resultDadosPaciente)
+      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(dadosBody)
+
+      response.status(resultDadosPaciente.status)
+      response.json(resultDadosPaciente)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
 })
 
 //Update Paciente
@@ -516,12 +527,57 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
 })
 
 /*************************************************************************************
- * Objetibo: API de controle de Humor.
+ * Objetibo: API de controle de Teste de Humor.
  * Autor: Lohannes da Silva Costa
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+//Get All (futuramente será um conjunto de GETs)
+app.get('/v1/ayan/testes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
 
+   if (idPaciente != undefined) {
+      let dadosTeste = await controllerTeste_Humor.getTesteByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosTeste)
+      response.status(dadosTeste.status)
+   } else {
+      let dadosTeste = await controllerTeste_Humor.getTestes();
+
+      //Valida se existe registro
+      response.json(dadosTeste)
+      response.status(dadosTeste.status)
+   }
+})
+
+//Get por ID
+app.get('/v1/ayan/teste/:id', cors(), async (request, response) => {
+   let idTeste = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosTeste = await controllerTeste_Humor.getTesteByID(idTeste);
+
+   //Valida se existe registro
+   response.json(dadosTeste)
+   response.status(dadosTeste.status)
+})
+
+app.post('/v1/ayan/teste', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosTeste = await controllerTeste_Humor.insertTeste(dadosBody)
+
+      response.status(resultDadosTeste.status)
+      response.json(resultDadosTeste)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
 
 /*************************************************************************************
  * Objetibo: API de controle de Generos.
@@ -558,7 +614,25 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+app.get('/v1/ayan/sintomas', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosSintoma = await controllerSintoma.getSintomas();
 
+   //Valida se existe registro
+   response.json(dadosSintoma)
+   response.status(dadosSintoma.status)
+})
+
+app.get('/v1/ayan/sintoma/:id', cors(), async (request, response) => {
+   let idSintoma = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosSintoma = await controllerSintoma.getSintomaByID(idSintoma);
+
+   //Valida se existe registro
+   response.json(dadosSintoma)
+   response.status(dadosSintoma.status)
+})
 
 
 /*************************************************************************************
@@ -567,17 +641,61 @@ app.get('/v1/ayan/genero/:id', cors(), async (request, response) => {
    * Data: 04/09/2023
    * Versão: 1.0
    *************************************************************************************/
+app.get('/v1/ayan/exercicios', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosExercicio = await controllerExercicio.getExercicios();
 
+   //Valida se existe registro
+   response.json(dadosExercicio)
+   response.status(dadosExercicio.status)
+})
+
+app.get('/v1/ayan/exercicio/:id', cors(), async (request, response) => {
+   let idExercicio = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosExercicio = await controllerExercicio.getExercicioByID(idExercicio);
+
+   //Valida se existe registro
+   response.json(dadosExercicio)
+   response.status(dadosExercicio.status)
+})
 
 
 /*************************************************************************************
- * Objetibo: API de controle de Respostas de Humor.
+ * Objetibo: API de controle de Humor.
  * Autor: Lohannes da Silva Costa
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+app.get('/v1/ayan/humores', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosHumor = await controllerHumor.getHumores();
 
+   //Valida se existe registro
+   response.json(dadosHumor)
+   response.status(dadosHumor.status)
+})
 
+app.get('/v1/ayan/opcoes', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosHumor = await controllerHumor.getOpcoes();
+
+   //Valida se existe registro
+   response.json(dadosHumor)
+   response.status(dadosHumor.status)
+})
+
+app.get('/v1/ayan/humor/:id', cors(), async (request, response) => {
+   let idHumor = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosHumor = await controllerHumor.getHumorByID(idHumor);
+
+   //Valida se existe registro
+   response.json(dadosHumor)
+   response.status(dadosHumor.status)
+})
 
 /*************************************************************************************
  * Objetibo: API de controle de Contato.
@@ -724,17 +842,6 @@ app.post('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
 
 })
 
-
-
-/*************************************************************************************
-   * Objetibo: API de controle de Responsável.
-   * Autor: Lohannes da Silva Costa
-   * Data: 04/09/2023
-   * Versão: 1.0
-   *************************************************************************************/
-
-
-
 /*************************************************************************************
  * Objetibo: API de Tipos de Telefone.
  * Autor: Lohannes da Silva Costa
@@ -846,15 +953,6 @@ app.delete('/v1/ayan/medicamento/:id', cors(), async (request, response) => {
 })
 
 /*************************************************************************************
- * Objetibo: API de controle de Tipos de Eventos.
- * Autor: Lohannes da Silva Costa
- * Data: 04/09/2023
- * Versão: 1.0
- *************************************************************************************/
-
-
-
-/*************************************************************************************
  * Objetibo: API de controle de Eventos.
  * Autor: Lohannes da Silva Costa
  * Data: 04/09/2023
@@ -865,12 +963,12 @@ app.get('/v1/ayan/eventos', cors(), async (request, response) => {
    let idCuidador = request.query.idCuidador
    let idPaciente = request.query.idPaciente
 
-   if(idCuidador != undefined){
+   if (idCuidador != undefined) {
       let dadosEvento = await controllerEvento.getEventoByCuidador(idCuidador)
 
       response.json(dadosEvento)
       response.status(dadosEvento.status)
-   } else if(idPaciente != undefined){
+   } else if (idPaciente != undefined) {
       let dadosEvento = await controllerEvento.getEventoByPaciente(idPaciente)
 
       response.json(dadosEvento)
@@ -1305,25 +1403,25 @@ app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, respon
       response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
    }
 })
-   /************************** Delete ******************************/
-   app.delete('/v1/ayan/relatorio/:id', cors(), async function (request, response) {
+/************************** Delete ******************************/
+app.delete('/v1/ayan/relatorio/:id', cors(), async function (request, response) {
 
 
-      let id = request.params.id;
+   let id = request.params.id;
 
-      let resultRelatorio = await controllerRelatorio.getRelatorioByID(id)
+   let resultRelatorio = await controllerRelatorio.getRelatorioByID(id)
 
-      if (resultRelatorio.status == 400) {
-         response.status(resultRelatorio.status)
-         response.json(resultRelatorio)
-      } else {
-         let resultDadosRelatorio = await controllerRelatorio.deleteRelatorio(id)
+   if (resultRelatorio.status == 400) {
+      response.status(resultRelatorio.status)
+      response.json(resultRelatorio)
+   } else {
+      let resultDadosRelatorio = await controllerRelatorio.deleteRelatorio(id)
 
-         response.status(resultDadosRelatorio.status)
-         response.json(resultDadosRelatorio)
-      }
+      response.status(resultDadosRelatorio.status)
+      response.json(resultDadosRelatorio)
+   }
 
-   })
+})
 
 
 
@@ -1338,7 +1436,7 @@ app.put('/v1/ayan/relatorio/:id', cors(), bodyParserJSON, async (request, respon
 //Get all  Questionario
 app.get('/v1/ayan/questionarios', cors(), async (request, response) => {
 
-   let dadosQuestionario = await  controllerQuestionario_Relatorio.getAllQuestionarios()
+   let dadosQuestionario = await controllerQuestionario_Relatorio.getAllQuestionarios()
 
    response.json(dadosQuestionario)
    response.status(dadosQuestionario.status)
@@ -1366,7 +1464,7 @@ app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, respon
       let dadosBody = request.body
       let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario(dadosBody)
 
-      ();
+         ();
 
       response.status(resultDadosQuestionario.status)
       response.json(resultDadosQuestionario)

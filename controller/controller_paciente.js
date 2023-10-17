@@ -144,21 +144,21 @@ const insertPaciente = async function (dadosPaciente) {
     }
 }
 
-const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
+const connectCuidadorAndPaciente = async function (dadosUsuarios){
     if(
-        idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)
+        dadosUsuarios.idPaciente == '' || dadosUsuarios.idPaciente == undefined || isNaN(dadosUsuarios.idPaciente)
     ) {
         return messages.ERROR_INVALID_PACIENTE
-    } else if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+    } else if (dadosUsuarios.idCuidador == '' || dadosUsuarios.idCuidador == undefined || isNaN(dadosUsuarios.idCuidador)) {
         return messages.ERROR_INVALID_CUIDADOR
     } else {
-        let validatePaciente = await pacienteDAO.selectPacienteById(idPaciente)
+        let validatePaciente = await pacienteDAO.selectPacienteById(dadosUsuarios.idPaciente)
 
         if(validatePaciente){
-            let validateCuidador = await cuidadorDAO.selectCuidadorById(idCuidador)
+            let validateCuidador = await cuidadorDAO.selectCuidadorById(dadosUsuarios.idCuidador)
 
             if (validateCuidador) {
-                let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
+                let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(dadosUsuarios.idPaciente, dadosUsuarios.idCuidador)
 
                 if (connectionResult){
                     return messages.SUCCESS_USERS_CONNECTED
