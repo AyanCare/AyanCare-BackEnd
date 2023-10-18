@@ -35,7 +35,7 @@ const selectTesteById = async function (idTeste) {
         tbl_paciente.nome as paciente,
         DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i:%s') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
         tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
-        tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_resposta,
+        tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
         tbl_exercicio.exercicio as nome_exercicio, tbl_exercicio.imagem as imagem_exercicio, tbl_exercicio.id as id_exercicio,
         tbl_sintoma_status.status_sintoma as status_sintoma, tbl_sintoma_status.id as id_statusSintoma,
         tbl_resposta_status.status_resposta as status_humor, tbl_resposta_status.id as id_statusHumor,
@@ -62,7 +62,76 @@ const selectTesteById = async function (idTeste) {
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
     if (rsTeste.length > 0) {
-        return rsTeste
+        let testeJSON = {}
+        let sintomas = []
+        let humores = []
+        let exercicios = []
+
+        let arrayIDSintoma = []
+        let arrayIDHumor = []
+        let arrayIDExercicio = []
+        let arrayIDStatus_Sintoma = []
+        let arrayIDStatus_Humor = []
+        let arrayIDStatus_Exercicio = []
+
+        rsTeste.forEach(teste => {
+            testeJSON.id = teste.id
+            testeJSON.paciente = teste.paciente
+            testeJSON.data = teste.data
+            testeJSON.horario = teste.horario
+            testeJSON.observacao = teste.observacao
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
+                    let sintoma = {}
+
+                    arrayIDSintoma.push(repeticao.id_sintoma)
+                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                    sintoma.id = repeticao.id_sintoma
+                    sintoma.nome = repeticao.nome_sintoma
+                    sintoma.icone = repeticao.imagem_sintoma
+
+                    sintomas.push(sintoma)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1) {
+                    let humor = {}
+
+                    arrayIDHumor.push(repeticao.id_humor)
+                    arrayIDStatus_Humor.push(repeticao.id_statusHumor)
+
+                    humor.id = repeticao.id_humor
+                    humor.nome = repeticao.nome_humor
+                    humor.icone = repeticao.imagem_humor
+
+                    humores.push(humor)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDExercicio.includes(repeticao.id_exercicio) && !arrayIDStatus_Exercicio.includes(repeticao.id_statusExercicio) && repeticao.status_exercicio === 1) {
+                    let exercicio = {}
+
+                    arrayIDExercicio.push(repeticao.id_exercicio)
+                    arrayIDStatus_Exercicio.push(repeticao.id_statusExercicio)
+
+                    exercicio.id = repeticao.id_exercicio
+                    exercicio.nome = repeticao.nome_exercicio
+                    exercicio.icone = repeticao.imagem_exercicio
+
+                    exercicios.push(exercicio)
+                }
+            });
+
+            testeJSON.sintomas = sintomas
+            testeJSON.humores = humores
+            testeJSON.exercicios = exercicios
+        })
+
+        return testeJSON
     } else {
         return false
     }
@@ -96,7 +165,7 @@ const selectLastId = async function () {
     } else {
         return false
     }
-    
+
     //retorna o ultimo id inserido no banco de dados
 }
 

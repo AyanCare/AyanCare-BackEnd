@@ -28,17 +28,6 @@ function conversaoDeMilissegundos(milissegundos) {
 
 /************************** Selects ******************************/
 
-// "id": 48,
-//             "nome": "Daniela",
-//             "data_nascimento": "2004-07-07T00:00:00.000Z",
-//             "senha": "Daniela@123",
-//             "email": "daniela@gmail.com",
-//             "foto": "undefined",
-//             "cpf": "3746828357",
-//             "historico_medico": "undefined",
-//             "id_endereco_paciente": 1,
-//             "id_genero": 1
-
 const selectAllPacientes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
@@ -292,10 +281,12 @@ const insertPaciente = async function (dadosPaciente) {
 const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
     let sql = `insert into tbl_paciente_cuidador(
         id_paciente,
-        id_cuidador
+        id_cuidador,
+        status
     ) values (
         ${idPaciente},
-        ${idCuidador}
+        ${idCuidador},
+        1
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
