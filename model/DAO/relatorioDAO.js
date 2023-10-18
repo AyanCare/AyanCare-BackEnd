@@ -12,22 +12,23 @@ var { PrismaClient } = require('@prisma/client');
 var prisma = new PrismaClient()
 
 /********************Selects************************** */
-
-
-
-
 /********************Retorna Todos os relatorios************************** */
 const selectAllRelatorios = async function(){
 
-    let sql = 'SELECT * from tbl_relatorio'
+    let sql = `SELECT tbl_relatorio.id as id,
+    tbl_paciente.nome as paciente,
+    tbl_cuidador.nome as cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto_relatorio
+    from tbl_relatorio
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_relatorio.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador`
     
     let rsRelatorio= await prisma.$queryRawUnsafe(sql)
 
-
     if (rsRelatorio.length > 0) {
-
         return rsRelatorio
-
     } else {
         return false
     }
@@ -37,13 +38,26 @@ const selectAllRelatorios = async function(){
 /********************Select Pelo ID************************** */
 const selectByIDRelatorio = async function(idRelatorio){
 
-    let sql = `SELECT * FROM tbl_relatorio where id = ${idRelatorio}`
+    let sql = `SELECT tbl_relatorio.id as id,
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, tbl_paciente.data_nascimento as data_nascimento, TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) AS idade,
+    tbl_cuidador.nome as cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto_relatorio,
+    tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
+    tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
+    from tbl_relatorio
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_relatorio.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
+        inner join tbl_questionario
+    on tbl_questionario.id_relatorio = tbl_relatorio.id
+        inner join tbl_pergunta
+    on tbl_pergunta.id = tbl_questionario.id_pergunta
+    where id = ${idRelatorio}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
-
-        return rsRelatorio[0]
 
     } else {
         return false
