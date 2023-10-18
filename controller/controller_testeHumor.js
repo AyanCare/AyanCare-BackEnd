@@ -89,9 +89,33 @@ const insertTeste = async function (dadosTeste) {
     }
 }
 
+const deleteTeste = async function (id) {
+
+    if (id == null || id == undefined || id == '' || isNaN(id)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+
+        let searchIdTeste = await teste_humorDAO.selectTesteById(id)
+
+        if (searchIdTeste) {
+            let dadosTeste = await teste_humorDAO.deleteTeste(id)
+
+            if (dadosTeste) {
+                return messages.SUCCESS_DELETED_ITEM
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
+        } else{
+            return messages.ERROR_INVALID_ID
+        }
+    }
+
+}
+
 module.exports = {
     getTestes,
     insertTeste,
     getTesteByID,
-    getTesteByPaciente
+    getTesteByPaciente,
+    deleteTeste
 }

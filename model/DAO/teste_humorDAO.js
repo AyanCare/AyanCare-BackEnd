@@ -13,21 +13,127 @@ var prisma = new PrismaClient()
 
 /************************** Selects ******************************/
 const selectAllTestes = async function () {
+    let sql = `SELECT tbl_data_horario_observacao_humor.id as id,
+    tbl_paciente.nome as paciente,
+    DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i:%s') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
+    tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
+    tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
+    tbl_exercicio.exercicio as nome_exercicio, tbl_exercicio.imagem as imagem_exercicio, tbl_exercicio.id as id_exercicio,
+    tbl_sintoma_status.status_sintoma as status_sintoma, tbl_sintoma_status.id as id_statusSintoma,
+    tbl_resposta_status.status_resposta as status_humor, tbl_resposta_status.id as id_statusHumor,
+    tbl_exercicio_status.status_exercicio as status_exercicio, tbl_exercicio_status.id as id_statusExercicio
+FROM tbl_data_horario_observacao_humor
+    inner join tbl_humor_resposta_exercicio_sintoma_paciente
+on tbl_humor_resposta_exercicio_sintoma_paciente.id_data_horario_observacao_humor = tbl_data_horario_observacao_humor.id
+    inner join tbl_paciente
+on tbl_paciente.id = tbl_humor_resposta_exercicio_sintoma_paciente.id_paciente
+    inner join tbl_sintoma_status
+on tbl_humor_resposta_exercicio_sintoma_paciente.id_sintoma = tbl_sintoma_status.id
+    inner join tbl_exercicio_status
+on tbl_humor_resposta_exercicio_sintoma_paciente.id_exercicio = tbl_exercicio_status.id
+    inner join tbl_resposta_status
+on tbl_humor_resposta_exercicio_sintoma_paciente.id_resposta = tbl_resposta_status.id
+    inner join tbl_sintoma
+on tbl_sintoma_status.tbl_sintoma_id = tbl_sintoma.id
+    inner join tbl_resposta
+on tbl_resposta_status.id_resposta = tbl_resposta.id
+    inner join tbl_exercicio
+on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
 
-    //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_data_horario_observacao_humor'
-
-    //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
-    //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
-    //Valida se o BD retornou algum registro
     if (rsTeste.length > 0) {
-        return rsTeste
+        let sintomas = []
+        let humores = []
+        let exercicios = []
+        let testes = []
+
+        let arrayIDEventos = []
+        let arrayIDSintoma = []
+        let arrayIDHumor = []
+        let arrayIDExercicio = []
+        let arrayIDStatus_Sintoma = []
+        let arrayIDStatus_Humor = []
+        let arrayIDStatus_Exercicio = []
+
+        rsTeste.forEach(teste => {
+            if (!arrayIDEventos.includes(teste.id)) {
+                let testeJSON = {}
+
+                arrayIDEventos.push(teste.id)
+                testeJSON.id = teste.id
+                testeJSON.paciente = teste.paciente
+                testeJSON.data = teste.data
+                testeJSON.horario = teste.horario
+                testeJSON.observacao = teste.observacao
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
+                        let sintoma = {}
+
+                        arrayIDSintoma.push(repeticao.id_sintoma)
+                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                        sintoma.id = repeticao.id_sintoma
+                        sintoma.nome = repeticao.nome_sintoma
+                        sintoma.id_status = repeticao.id_statusSintoma
+                        sintoma.icone = repeticao.imagem_sintoma
+
+                        sintomas.push(sintoma)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1 && repeticao.id == teste.id) {
+                        let humor = {}
+
+                        arrayIDHumor.push(repeticao.id_humor)
+                        arrayIDStatus_Humor.push(repeticao.id_statusHumor)
+
+                        humor.id = repeticao.id_humor
+                        humor.nome = repeticao.nome_humor
+                        humor.id_status = repeticao.id_statusHumor
+                        humor.icone = repeticao.imagem_humor
+
+                        humores.push(humor)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDExercicio.includes(repeticao.id_exercicio) && !arrayIDStatus_Exercicio.includes(repeticao.id_statusExercicio) && repeticao.status_exercicio === 1 && repeticao.id == teste.id) {
+                        let exercicio = {}
+
+                        arrayIDExercicio.push(repeticao.id_exercicio)
+                        arrayIDStatus_Exercicio.push(repeticao.id_statusExercicio)
+
+                        exercicio.id = repeticao.id_exercicio
+                        exercicio.nome = repeticao.nome_exercicio
+                        exercicio.id_status = repeticao.id_statusExercicio
+                        exercicio.icone = repeticao.imagem_exercicio
+
+                        exercicios.push(exercicio)
+                    }
+                });
+
+                testeJSON.sintomas = sintomas
+                testeJSON.humores = humores
+                testeJSON.exercicios = exercicios
+
+                testes.push(testeJSON)
+            }
+
+            arrayIDSintoma = []
+            arrayIDHumor = []
+            arrayIDExercicio = []
+            sintomas = []
+            humores = []
+            exercicios = []
+        })
+
+        return testes
     } else {
         return false
     }
-
 }
 
 const selectTesteById = async function (idTeste) {
@@ -39,7 +145,7 @@ const selectTesteById = async function (idTeste) {
         tbl_exercicio.exercicio as nome_exercicio, tbl_exercicio.imagem as imagem_exercicio, tbl_exercicio.id as id_exercicio,
         tbl_sintoma_status.status_sintoma as status_sintoma, tbl_sintoma_status.id as id_statusSintoma,
         tbl_resposta_status.status_resposta as status_humor, tbl_resposta_status.id as id_statusHumor,
-        tbl_exercicio_status.status_exercicio as status_exercicio, tbl_exercicio_status.id as id_statusHumor
+        tbl_exercicio_status.status_exercicio as status_exercicio, tbl_exercicio_status.id as id_statusExercicio
     FROM tbl_data_horario_observacao_humor
         inner join tbl_humor_resposta_exercicio_sintoma_paciente
     on tbl_humor_resposta_exercicio_sintoma_paciente.id_data_horario_observacao_humor = tbl_data_horario_observacao_humor.id
@@ -138,42 +244,242 @@ const selectTesteById = async function (idTeste) {
 }
 
 const selectTesteByPaciente = async function (idPaciente) {
-    let sql = `SELECT * 
-    FROM tbl_data_horario_observacao_humor 
+    let sql = `SELECT tbl_data_horario_observacao_humor.id as id,
+        tbl_paciente.nome as paciente,
+        DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i:%s') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
+        tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
+        tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
+        tbl_exercicio.exercicio as nome_exercicio, tbl_exercicio.imagem as imagem_exercicio, tbl_exercicio.id as id_exercicio,
+        tbl_sintoma_status.status_sintoma as status_sintoma, tbl_sintoma_status.id as id_statusSintoma,
+        tbl_resposta_status.status_resposta as status_humor, tbl_resposta_status.id as id_statusHumor,
+        tbl_exercicio_status.status_exercicio as status_exercicio, tbl_exercicio_status.id as id_statusExercicio
+    FROM tbl_data_horario_observacao_humor
         inner join tbl_humor_resposta_exercicio_sintoma_paciente
     on tbl_humor_resposta_exercicio_sintoma_paciente.id_data_horario_observacao_humor = tbl_data_horario_observacao_humor.id
         inner join tbl_paciente
     on tbl_paciente.id = tbl_humor_resposta_exercicio_sintoma_paciente.id_paciente
+        inner join tbl_sintoma_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_sintoma = tbl_sintoma_status.id
+        inner join tbl_exercicio_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_exercicio = tbl_exercicio_status.id
+        inner join tbl_resposta_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_resposta = tbl_resposta_status.id
+        inner join tbl_sintoma
+    on tbl_sintoma_status.tbl_sintoma_id = tbl_sintoma.id
+        inner join tbl_resposta
+    on tbl_resposta_status.id_resposta = tbl_resposta.id
+        inner join tbl_exercicio
+    on tbl_exercicio_status.id_exercicio = tbl_exercicio.id
     where tbl_paciente.id = ${idPaciente}`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
     if (rsTeste.length > 0) {
-        return rsTeste
+        let sintomas = []
+        let humores = []
+        let exercicios = []
+        let testes = []
+
+        let arrayIDEventos = []
+        let arrayIDSintoma = []
+        let arrayIDHumor = []
+        let arrayIDExercicio = []
+        let arrayIDStatus_Sintoma = []
+        let arrayIDStatus_Humor = []
+        let arrayIDStatus_Exercicio = []
+
+        rsTeste.forEach(teste => {
+            if (!arrayIDEventos.includes(teste.id)) {
+                let testeJSON = {}
+
+                arrayIDEventos.push(teste.id)
+                testeJSON.id = teste.id
+                testeJSON.paciente = teste.paciente
+                testeJSON.data = teste.data
+                testeJSON.horario = teste.horario
+                testeJSON.observacao = teste.observacao
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
+                        let sintoma = {}
+
+                        arrayIDSintoma.push(repeticao.id_sintoma)
+                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                        sintoma.id = repeticao.id_sintoma
+                        sintoma.nome = repeticao.nome_sintoma
+                        sintoma.id_status = repeticao.id_statusSintoma
+                        sintoma.icone = repeticao.imagem_sintoma
+
+                        sintomas.push(sintoma)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1 && repeticao.id == teste.id) {
+                        let humor = {}
+
+                        arrayIDHumor.push(repeticao.id_humor)
+                        arrayIDStatus_Humor.push(repeticao.id_statusHumor)
+
+                        humor.id = repeticao.id_humor
+                        humor.nome = repeticao.nome_humor
+                        humor.id_status = repeticao.id_statusHumor
+                        humor.icone = repeticao.imagem_humor
+
+                        humores.push(humor)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDExercicio.includes(repeticao.id_exercicio) && !arrayIDStatus_Exercicio.includes(repeticao.id_statusExercicio) && repeticao.status_exercicio === 1 && repeticao.id == teste.id) {
+                        let exercicio = {}
+
+                        arrayIDExercicio.push(repeticao.id_exercicio)
+                        arrayIDStatus_Exercicio.push(repeticao.id_statusExercicio)
+
+                        exercicio.id = repeticao.id_exercicio
+                        exercicio.nome = repeticao.nome_exercicio
+                        exercicio.id_status = repeticao.id_statusExercicio
+                        exercicio.icone = repeticao.imagem_exercicio
+
+                        exercicios.push(exercicio)
+                    }
+                });
+
+                testeJSON.sintomas = sintomas
+                testeJSON.humores = humores
+                testeJSON.exercicios = exercicios
+
+                testes.push(testeJSON)
+            }
+
+            arrayIDSintoma = []
+            arrayIDHumor = []
+            arrayIDExercicio = []
+            sintomas = []
+            humores = []
+            exercicios = []
+        })
+
+        return testes
     } else {
         return false
     }
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_data_horario_observacao_humor order by id desc limit 1;'
+    let sql = `SELECT tbl_data_horario_observacao_humor.id as id,
+        tbl_paciente.nome as paciente,
+        DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i:%s') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
+        tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
+        tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
+        tbl_exercicio.exercicio as nome_exercicio, tbl_exercicio.imagem as imagem_exercicio, tbl_exercicio.id as id_exercicio,
+        tbl_sintoma_status.status_sintoma as status_sintoma, tbl_sintoma_status.id as id_statusSintoma,
+        tbl_resposta_status.status_resposta as status_humor, tbl_resposta_status.id as id_statusHumor,
+        tbl_exercicio_status.status_exercicio as status_exercicio, tbl_exercicio_status.id as id_statusExercicio
+    FROM tbl_data_horario_observacao_humor
+        inner join tbl_humor_resposta_exercicio_sintoma_paciente
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_data_horario_observacao_humor = tbl_data_horario_observacao_humor.id
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_humor_resposta_exercicio_sintoma_paciente.id_paciente
+        inner join tbl_sintoma_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_sintoma = tbl_sintoma_status.id
+        inner join tbl_exercicio_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_exercicio = tbl_exercicio_status.id
+        inner join tbl_resposta_status
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_resposta = tbl_resposta_status.id
+        inner join tbl_sintoma
+    on tbl_sintoma_status.tbl_sintoma_id = tbl_sintoma.id
+        inner join tbl_resposta
+    on tbl_resposta_status.id_resposta = tbl_resposta.id
+        inner join tbl_exercicio
+    on tbl_exercicio_status.id_exercicio = tbl_exercicio.id
+    order by id desc limit 12`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
     if (rsTeste.length > 0) {
-        return rsTeste[0]
+        let testeJSON = {}
+        let sintomas = []
+        let humores = []
+        let exercicios = []
+
+        let arrayIDSintoma = []
+        let arrayIDHumor = []
+        let arrayIDExercicio = []
+        let arrayIDStatus_Sintoma = []
+        let arrayIDStatus_Humor = []
+        let arrayIDStatus_Exercicio = []
+
+        rsTeste.forEach(teste => {
+            testeJSON.id = teste.id
+            testeJSON.paciente = teste.paciente
+            testeJSON.data = teste.data
+            testeJSON.horario = teste.horario
+            testeJSON.observacao = teste.observacao
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
+                    let sintoma = {}
+
+                    arrayIDSintoma.push(repeticao.id_sintoma)
+                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                    sintoma.id = repeticao.id_sintoma
+                    sintoma.nome = repeticao.nome_sintoma
+                    sintoma.icone = repeticao.imagem_sintoma
+
+                    sintomas.push(sintoma)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1) {
+                    let humor = {}
+
+                    arrayIDHumor.push(repeticao.id_humor)
+                    arrayIDStatus_Humor.push(repeticao.id_statusHumor)
+
+                    humor.id = repeticao.id_humor
+                    humor.nome = repeticao.nome_humor
+                    humor.icone = repeticao.imagem_humor
+
+                    humores.push(humor)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDExercicio.includes(repeticao.id_exercicio) && !arrayIDStatus_Exercicio.includes(repeticao.id_statusExercicio) && repeticao.status_exercicio === 1) {
+                    let exercicio = {}
+
+                    arrayIDExercicio.push(repeticao.id_exercicio)
+                    arrayIDStatus_Exercicio.push(repeticao.id_statusExercicio)
+
+                    exercicio.id = repeticao.id_exercicio
+                    exercicio.nome = repeticao.nome_exercicio
+                    exercicio.icone = repeticao.imagem_exercicio
+
+                    exercicios.push(exercicio)
+                }
+            });
+
+            testeJSON.sintomas = sintomas
+            testeJSON.humores = humores
+            testeJSON.exercicios = exercicios
+        })
+
+        return testeJSON
     } else {
         return false
     }
-
-    //retorna o ultimo id inserido no banco de dados
 }
 
 /************************** Inserts ******************************/
 
 const insertTeste = async function (dadosTeste) {
     let sql = `call procInsertHumorRespostaExercicioSintoma(
-        'isso é uma observação', 
+        '${dadosTeste.observacao}', 
         ${dadosTeste.id_paciente}, 
         5, 
         ${dadosTeste.caminhada}, 
@@ -258,10 +564,25 @@ const insertTeste = async function (dadosTeste) {
     }
 }
 
+/************************** Deletes ******************************/
+const deleteTeste = async function (idTeste) {
+    let sql = `delete from tbl_data_horario_observacao_humor where id = ${idTeste}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+}
+
+
 module.exports = {
     insertTeste,
     selectAllTestes,
     selectLastId,
     selectTesteById,
-    selectTesteByPaciente
+    selectTesteByPaciente,
+    deleteTeste
 }

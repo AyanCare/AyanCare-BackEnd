@@ -519,6 +519,22 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
    }
 })
 
+app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnPaciente = await controllerPaciente.getPacienteByID(id)
+
+   if (returnPaciente.status == 404) {
+      response.status(returnPaciente.status)
+      response.json(returnPaciente)
+   } else {
+      let resultDadosPaciente = await controllerPaciente.deletePaciente(id)
+
+      response.status(resultDadosPaciente.status)
+      response.json(resultDadosPaciente)
+   }
+})
+
 /*************************************************************************************
  * Objetibo: API de controle de Teste de Humor.
  * Autor: Lohannes da Silva Costa
@@ -569,6 +585,22 @@ app.post('/v1/ayan/teste', cors(), bodyParserJSON, async (request, response) => 
    } else {
       response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
       response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+app.delete('/v1/ayan/teste/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let returnTeste = await controllerTeste_Humor.getTesteByID(id)
+
+   if (returnTeste.status == 404) {
+      response.status(returnTeste.status)
+      response.json(returnTeste)
+   } else {
+      let resultDadosTeste = await controllerTeste_Humor.deleteTeste(id)
+
+      response.status(resultDadosTeste.status)
+      response.json(resultDadosTeste)
    }
 })
 

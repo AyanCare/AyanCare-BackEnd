@@ -286,7 +286,7 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
     ) values (
         ${idPaciente},
         ${idCuidador},
-        1
+        true
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
