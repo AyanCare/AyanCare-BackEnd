@@ -419,20 +419,13 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 
 //Conectar
 app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
-   let contentType = request.headers['content-type']
+      let idPaciente = request.query.idPaciente
+      let idCuidador = request.query.idCuidador
 
-   //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-      let dadosBody = request.body
-
-      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(dadosBody)
+      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
 
       response.status(resultDadosPaciente.status)
       response.json(resultDadosPaciente)
-   } else {
-      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
-      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
-   }
 })
 
 //Update Paciente
