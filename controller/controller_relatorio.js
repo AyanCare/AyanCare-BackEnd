@@ -132,7 +132,6 @@ const insertRelatorio = async function(dadosRelatorio) {
             return message.ERROR_REQUIRED_FIELDS
     }else{
 
-        console.log(insertRelatorio);
          let resultDadosRelatorio = await relatorioDAO.insertRelatorio(dadosRelatorio)
 
         if (resultDadosRelatorio) {
