@@ -310,9 +310,9 @@ const updatePaciente = async function (dadosPaciente) {
             data_nascimento = '${dadosPaciente.data_nascimento}',
             cpf = '${dadosPaciente.cpf}',
             foto = '${dadosPaciente.foto}',
-            historico_medico = '${dadosPaciente.historico_medico}'
+            historico_medico = '${dadosPaciente.historico_medico}',
             id_endereco_paciente = ${dadosPaciente.id_endereco_paciente},
-            id_genero = ${dadosPaciente.id_genero}
+            id_genero = ${dadosPaciente.genero}
         where id = ${dadosPaciente.id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
