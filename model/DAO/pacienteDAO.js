@@ -298,14 +298,21 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
     }
 }
 
+//id_endereco,
+//id_genero
+
 /************************** Updates ******************************/
 const updatePaciente = async function (dadosPaciente) {
     let sql = `update tbl_paciente set
             nome = '${dadosPaciente.nome}',
+            email = '${dadosPaciente.email}',
+            senha = '${dadosPaciente.senha}',
             data_nascimento = '${dadosPaciente.data_nascimento}',
             cpf = '${dadosPaciente.cpf}',
             foto = '${dadosPaciente.foto}',
             historico_medico = '${dadosPaciente.historico_medico}'
+            id_endereco_paciente = ${dadosPaciente.id_endereco_paciente},
+            id_genero = ${dadosPaciente.id_genero}
         where id = ${dadosPaciente.id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)

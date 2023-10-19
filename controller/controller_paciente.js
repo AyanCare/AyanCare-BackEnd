@@ -12,6 +12,29 @@ const pacienteDAO = require('../model/DAO/pacienteDAO.js')
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
 const jwt = require('../middleware/middlewareJWT.js')
 
+const definirGenero = function (genero){
+    let generoTraduzido = genero.toLowerCase();
+
+    switch (generoTraduzido) {
+        case 'mulher':
+            generoTraduzido = 1
+            break;
+
+        case 'homem':
+            generoTraduzido = 2
+            break;
+
+        case 'não-binário':
+            generoTraduzido = 3
+            break;
+
+        case 'outros':
+            generoTraduzido = 4
+            break;
+    }
+    return generoTraduzido;
+}
+
 const getPacientes = async function () {
     let dadosPacientesJSON = {}
 
@@ -184,6 +207,8 @@ const updatePaciente = async function (dadosPaciente) {
     } else if (dadosPaciente.id == null || dadosPaciente.id == undefined || isNaN(dadosPaciente.id)) {
         return messages.ERROR_INVALID_ID
     } else {
+        dadosPaciente.genero = definirGenero(dadosPaciente.genero)
+
         let atualizacaoPaciente = await pacienteDAO.selectPacienteById(dadosPaciente.id)
 
         if (atualizacaoPaciente) {
