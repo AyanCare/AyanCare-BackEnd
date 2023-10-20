@@ -19,6 +19,7 @@ const controllerGenero = require('./controller/controller_genero.js');
 const controllerComorbidade = require('./controller/controller_comorbidade.js');
 const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerMedicamento = require('./controller/controller_medicamento.js');
+const controllerMedida = require('./controller/controller_medida.js');
 const controllerAlarme = require('./controller/controller_alarme.js');
 const controllerEvento = require('./controller/controller_evento.js');
 const controllerSintoma = require('./controller/controller_sintoma');
@@ -883,7 +884,27 @@ app.post('/v1/ayan/StatusContato/:id', cors(), async (request, response) => {
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+//Get All 
+app.get('/v1/ayan/medidas', cors(), async (request, response) => {
+   //Recebe os dados do controller
+   let dadosMedida = await controllerMedida.getMedidas();
 
+   //Valida se existe registro
+   response.json(dadosMedida)
+   response.status(dadosMedida.status)
+})
+
+//Get por ID
+app.get('/v1/ayan/medida/:id', cors(), async (request, response) => {
+   let idMedida = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosMedida = await controllerMedida.getMedidaByID(idMedida);
+
+   //Valida se existe registro
+   response.json(dadosMedida)
+   response.status(dadosMedida.status)
+})
 
 
 /*************************************************************************************
