@@ -40,6 +40,26 @@
      }
  
  }
+
+ const selectPerguntaByCuidador = async function (idCuidador){
+ 
+    let sql = `SELECT * 
+    FROM tbl_pergunta 
+        inner join tbl_pergunta_cuidador
+    on tbl_pergunta.id = tbl_pergunta_cuidador.id_pergunta
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_pergunta_paciente.id_cuidador
+    where tbl_paciente.id = ${idCuidador}`
+    let rsPerguntas = await prisma.$queryRawUnsafe(sql)
+
+
+    if (rsPerguntas.length > 0) {
+        return rsPerguntas
+    } else {
+        return false
+    }
+
+}
  
  const selectLastId = async function(){
  
@@ -114,5 +134,6 @@
      selectPerguntaByID,
      selectLastId,
      insertPergunta,
-     connectPerguntaAndCuidador
+     connectPerguntaAndCuidador,
+     selectPerguntaByCuidador
  }

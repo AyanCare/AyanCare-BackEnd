@@ -43,6 +43,23 @@ const getPerguntaByID = async function (id) {
   }
 };
 
+const getPerguntaByCuidador = async function (idCuidador) {
+  if (idCuidador == "" || isNaN(idCuidador) || idCuidador == undefined) {
+    return message.ERROR_INVALID_ID;
+  } else {
+    let dadosPerguntaJSON = {};
+
+    let dadosPergunta = await perguntasDAO.selectPerguntaByCuidador(id);
+
+    if (dadosPergunta) {
+      dadosPerguntaJSON.pergunta = dadosPergunta;
+      return dadosPerguntaJSON;
+    } else {
+      return message.ERROR_NOT_FOUND;
+    }
+  }
+};
+
 /************************** Inserte ******************************/
 const insertPergunta = async function (dadosPergunta) {
   
@@ -82,4 +99,5 @@ module.exports = {
   getAllPerguntas,
   getPerguntaByID,
   insertPergunta,
+  getPerguntaByCuidador
 };

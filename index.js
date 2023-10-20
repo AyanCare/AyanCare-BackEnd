@@ -25,6 +25,7 @@ const controllerEvento = require('./controller/controller_evento.js');
 const controllerSintoma = require('./controller/controller_sintoma');
 const controllerExercicio = require('./controller/controller_exercicio.js');
 const controllerHumor = require('./controller/controller_humor.js');
+const controllerHistorico = require('./controller/controller_historicoMedico.js');
 const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
@@ -1365,9 +1366,9 @@ app.delete('/v1/ayan/alarme/:id', cors(), async (request, response) => {
 /********************GET************************** */
 //Get all Relatório 
 app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
-   let idPaciente = request.params.idPaciente;
-   let idCuidador = request.params.idCuidador;
-   let data = request.params.data;
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
+   let data = request.query.data;
 
    if (idPaciente != undefined && idCuidador != undefined && data != undefined) {
       let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidadorAndPacienteAndData(idCuidador, idPaciente, data);
@@ -1402,6 +1403,16 @@ app.get('/v1/ayan/relatorio/:id', cors(), async (request, response) => {
    let idRelatorio = request.params.id;
 
    let dadosRelatorio = await controllerRelatorio.getRelatorioByID(idRelatorio);
+
+   response.json(dadosRelatorio)
+   response.status(dadosRelatorio.status)
+})
+
+app.get('/v1/ayan/relatorios/datas/', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
+
+   let dadosRelatorio = await controllerRelatorio.getAllDatas(idCuidador, idPaciente);
 
    response.json(dadosRelatorio)
    response.status(dadosRelatorio.status)
@@ -1479,11 +1490,19 @@ app.delete('/v1/ayan/relatorio/:id', cors(), async function (request, response) 
 /********************GET************************** */
 //Get all  Questionario
 app.get('/v1/ayan/questionarios', cors(), async (request, response) => {
+   let idRelatorio = request.query.idRelatorio
 
-   let dadosQuestionario = await controllerQuestionario_Relatorio.getAllQuestionarios()
+   if (idRelatorio != undefined) {
+      let dadosQuestionario = await controllerQuestionario_Relatorio.getQuestionarioByRelatorio(idRelatorio)
 
-   response.json(dadosQuestionario)
-   response.status(dadosQuestionario.status)
+      response.json(dadosQuestionario)
+      response.status(dadosQuestionario.status)
+   } else {
+      let dadosQuestionario = await controllerQuestionario_Relatorio.getAllQuestionarios()
+
+      response.json(dadosQuestionario)
+      response.status(dadosQuestionario.status)
+   }
 })
 
 //Get by id questionario
@@ -1569,17 +1588,98 @@ app.post('/v1/ayan/Pergunta', cors(), bodyParserJSON, async (request, response) 
 
 })
 
+/*************************************************************************************
+ * Objetibo: API de controle de Historicos Medicos.
+ * Autor: Lohannes da Silva Costa
+ * Data: 20/10/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
+app.get('/v1/ayan/historicos', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+
+   if (idPaciente != undefined) {
+      let dadosHistorico = await controllerHistorico.getHistoricoByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosHistorico)
+      response.status(dadosHistorico.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosHistorico = await controllerHistorico.getHistoricos();
+
+      //Valida se existe registro
+      response.json(dadosHistorico)
+      response.status(dadosHistorico.status)
+   }
+})
+
+//Get  por ID
+app.get('/v1/ayan/historico/:id', cors(), async (request, response) => {
+   let idHistorico = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosHistorico = await controllerHistorico.getHistoricoByID(idHistorico);
+
+   //Valida se existe registro
+   response.json(dadosHistorico)
+   response.status(dadosHistorico.status)
+})
+
+//Insert 
+app.post('/v1/ayan/historico', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosHistorico = await controllerHistorico.insertHistorico(dadosBody)
+
+      response.status(resultDadosHistorico.status)
+      response.json(resultDadosHistorico)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update 
+app.put('/v1/ayan/historico/:id', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+      let id = request.params.id;
 
 
+      let dadosBody = request.body
 
+      let resultDadosHistorico = await controllerHistorico.updateHistorico(dadosBody, id)
 
+      response.status(resultDadosHistorico.status)
+      response.json(resultDadosHistorico)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
 
+app.delete('/v1/ayan/historico/:id', cors(), async function (request, response) {
+   let id = request.params.id;
 
+   let returnHistorico = await controllerHistorico.getHistoricoByID(id)
 
+   if (returnHistorico.status == 404) {
+      response.status(returnHistorico.status)
+      response.json(returnHistorico)
+   } else {
+      let resultDadosHistorico = await controllerHistorico.deleteHistorico(id)
 
-
-
-
+      response.status(resultDadosHistorico.status)
+      response.json(resultDadosHistorico)
+   }
+})
 
 app.listen(8080, function () {
    ('Aguardando requisições na porta 8080...');

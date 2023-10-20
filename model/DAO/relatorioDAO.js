@@ -592,8 +592,12 @@ const selectByData = async function (idCuidador, idPaciente, data) {
 /********************Select DATAS de todos os relatórios cadastrados daquele Cuidador e Paciente************************** */
 const selectAllDatas = async function (idCuidador, idPaciente) {
 
-    let sql = `SELECT tbl_relatorio.data as data
+    let sql = `SELECT DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data_formatada, DATE_FORMAT(tbl_relatorio.data,'%Y-%m-%d') as data_sql
     from tbl_relatorio
+    inner join tbl_paciente
+    on tbl_paciente.id = tbl_relatorio.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
     where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)

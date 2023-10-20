@@ -49,6 +49,25 @@ const getQuestionarioByID = async function(id){
     }
 }
 
+const getQuestionarioByRelatorio = async function(idRelatorio){
+ 
+    if (idRelatorio == '' || isNaN(idRelatorio)|| idRelatorio == undefined ) {
+        return message.ERROR_INVALID_ID
+    } else {
+        
+        let dadosQuestionarioJSON = {}
+
+        let dadosQuestionario = await questionarioDAO.selectQuestionarioByRelatorio(idRelatorio)
+
+        if (dadosQuestionario) {
+            dadosQuestionarioJSON.questionario = dadosQuestionario
+            return dadosQuestionarioJSON
+        } else {
+            
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
 
 /************************** Inserte ******************************/
 const insertQuestionario = async function(dadosQuestionario){
@@ -89,5 +108,6 @@ module.exports ={
 
     getAllQuestionarios,
     getQuestionarioByID,
-    insertQuestionario
+    insertQuestionario,
+    getQuestionarioByRelatorio
 }

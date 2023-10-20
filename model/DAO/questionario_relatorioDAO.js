@@ -13,7 +13,11 @@ var prisma = new PrismaClient()
 
 /********************Selects************************** */
 const selectAllQuestionario = async function () {
-    let sql = 'Select * from tbl_questionario'
+    let sql = `Select tbl_questionario.id as id, tbl_questionario.resposta as resposta,tbl_questionario.id_relatorio as id_relatorio,
+        tbl_pergunta.pergunta as pergunta
+    from tbl_questionario
+    inner join tbl_pergunta
+    on tbl_questionario.id_pergunta = tbl_pergunta.id`
 
     let rsQuestionario = await prisma.$queryRawUnsafe(sql)
 
@@ -25,6 +29,7 @@ const selectAllQuestionario = async function () {
             let questionarioJSON = {}
 
             questionarioJSON.id = resposta.id
+            questionarioJSON.pergunta = resposta.pergunta
 
             if (resposta.resposta === 1) {
                 questionarioJSON.resposta = true
@@ -32,7 +37,6 @@ const selectAllQuestionario = async function () {
                 questionarioJSON.resposta = false
             }
 
-            questionarioJSON.id_pergunta = resposta.id_pergunta
             questionarioJSON.id_relatorio = resposta.id_relatorio
 
             questionarios.push(questionarioJSON)
@@ -46,23 +50,28 @@ const selectAllQuestionario = async function () {
 
 const selectQuestionarioByID = async function (idQuestionario) {
 
-    let sql = `SELECT * FROM tbl_questionario where id = ${idQuestionario}`
+    let sql = `Select tbl_questionario.id as id, tbl_questionario.resposta as resposta,tbl_questionario.id_relatorio as id_relatorio,
+    tbl_pergunta.pergunta as pergunta
+    from tbl_questionario
+        inner join tbl_pergunta
+    on tbl_questionario.id_pergunta = tbl_pergunta.id
+    where tbl_questionario.id = ${idQuestionario}`
+
     let rsQuestionario = await prisma.$queryRawUnsafe(sql)
-
-
 
     if (rsQuestionario.length > 0) {
 
         let questionarioJSON = {}
         questionarioJSON.id = rsQuestionario[0].id
-        questionarioJSON.id_pergunta = rsQuestionario[0].id_pergunta
-        questionarioJSON.id_relatorio = rsQuestionario[0].id_relatorio
+        questionarioJSON.pergunta = rsQuestionario[0].pergunta
 
-        if (rsQuestionario.resposta === 1) {
+        if (rsQuestionario[0].resposta === 1) {
             questionarioJSON.resposta = true
         } else {
             questionarioJSON.resposta = false
         }
+
+        questionarioJSON.id_relatorio = rsQuestionario[0].id_relatorio
         
         return questionarioJSON
     } else {
@@ -71,27 +80,70 @@ const selectQuestionarioByID = async function (idQuestionario) {
 
 }
 
-const selectLastId = async function () {
+const selectQuestionarioByRelatorio = async function (idRelatorio) {
 
-    let sql = 'select * from tbl_questionario order by id desc limit 1;'
+    let sql = `Select tbl_questionario.id as id, tbl_questionario.resposta as resposta,tbl_questionario.id_relatorio as id_relatorio,
+    tbl_pergunta.pergunta as pergunta
+    from tbl_questionario
+        inner join tbl_pergunta
+    on tbl_questionario.id_pergunta = tbl_pergunta.id
+        inner join tbl_relatorio
+    on tbl_relatorio.id = tbl_questionario.id_relatorio
+    where tbl_relatorio.id = ${idRelatorio}`
 
     let rsQuestionario = await prisma.$queryRawUnsafe(sql)
 
+    if (rsQuestionario.length > 0) {
+        let questionarios = []
+        rsQuestionario.forEach(resposta => {
+            let questionarioJSON = {}
+
+            questionarioJSON.id = resposta.id
+            questionarioJSON.pergunta = resposta.pergunta
+
+            if (resposta.resposta === 1) {
+                questionarioJSON.resposta = true
+            } else {
+                questionarioJSON.resposta = false
+            }
+
+            questionarioJSON.id_relatorio = resposta.id_relatorio
+
+            questionarios.push(questionarioJSON)
+        });
+
+        return questionarios
+    } else {
+        return false
+    }
+
+}
+
+const selectLastId = async function () {
+
+    let sql = `Select tbl_questionario.id as id, tbl_questionario.resposta as resposta,tbl_questionario.id_relatorio as id_relatorio,
+    tbl_pergunta.pergunta as pergunta
+    from tbl_questionario
+        inner join tbl_pergunta
+    on tbl_questionario.id_pergunta = tbl_pergunta.id
+    order by id desc limit 1`
+
+    let rsQuestionario = await prisma.$queryRawUnsafe(sql)
 
     if (rsQuestionario.length > 0) {
 
         let questionarioJSON = {}
         questionarioJSON.id = rsQuestionario[0].id
-        questionarioJSON.id_pergunta = rsQuestionario[0].id_pergunta
-        questionarioJSON.id_relatorio = rsQuestionario[0].id_relatorio
+        questionarioJSON.pergunta = rsQuestionario[0].pergunta
 
-        if (rsQuestionario.resposta === 1) {
+        if (rsQuestionario[0].resposta === 1) {
             questionarioJSON.resposta = true
         } else {
             questionarioJSON.resposta = false
         }
-       
 
+        questionarioJSON.id_relatorio = rsQuestionario[0].id_relatorio
+        
         return questionarioJSON
     } else {
         return false
@@ -127,5 +179,6 @@ module.exports = {
     selectAllQuestionario,
     selectQuestionarioByID,
     selectLastId,
-    insertQuestionario
+    insertQuestionario,
+    selectQuestionarioByRelatorio
 }

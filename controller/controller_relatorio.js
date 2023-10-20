@@ -11,10 +11,6 @@ const message = require('./modules/config.js')
 const relatorioDAO = require('../model/DAO/relatorioDAO.js')
 const jwt = require('../middleware/middlewareJWT.js')
 
-
-
-
-
 /************************** GET ******************************/
 const getRelatorios = async function () {
 
@@ -129,18 +125,18 @@ const getRelatorioByIDCuidadorAndPaciente = async function (idCuidador, idPacien
     }
 }
 
-const getRelatorioByIDCuidadorAndPacienteAndData = async function (dadosRelatorio) {
+const getRelatorioByIDCuidadorAndPacienteAndData = async function (idCuidador, idPaciente, data) {
 
-    if (dadosRelatorio.idCuidador == '' || dadosRelatorio.idCuidador == undefined || isNaN(dadosRelatorio.idCuidador)) {
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
         return message.ERROR_INVALID_CUIDADOR
-    } else if (dadosRelatorio.idPaciente == '' || dadosRelatorio.idPaciente == undefined || isNaN(dadosRelatorio.idPaciente)) {
+    } else if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
         return message.ERROR_INVALID_PACIENTE
-    } else if (dadosRelatorio.data == '' || dadosRelatorio.data == undefined) {
+    } else if (data == '' || data == undefined) {
         return message.ERROR_REQUIRED_FIELDS
     } else {
         let dadosRelatorioJSON = {}
 
-        let dadosRelatorio = await relatorioDAO.selectByData(dadosRelatorio)
+        let dadosRelatorio = await relatorioDAO.selectByData(idCuidador, idPaciente, data)
 
         if (dadosRelatorio) {
             dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
@@ -176,7 +172,6 @@ const getAllDatas = async function (idCuidador, idPaciente) {
 
 const insertRelatorio = async function (dadosRelatorio) {
     if (
-
         dadosRelatorio.texto_relatorio == '' || dadosRelatorio.texto_relatorio == undefined ||
         dadosRelatorio.validacao == '' || dadosRelatorio.validacao == undefined ||
         dadosRelatorio.id_paciente == '' || dadosRelatorio.id_paciente == undefined || isNaN(dadosRelatorio.id_paciente) ||

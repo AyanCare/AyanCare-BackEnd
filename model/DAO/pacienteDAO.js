@@ -31,7 +31,7 @@ function conversaoDeMilissegundos(milissegundos) {
 const selectAllPacientes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.cpf as cpf, tbl_paciente.historico_medico FROM tbl_paciente`
+    let sql = `SELECT tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.cpf as cpf FROM tbl_paciente`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -50,8 +50,9 @@ const selectAllPacientes = async function () {
 //tbl_alarme_medicamento.id as alarme_id, tbl_alarme_medicamento.intervalo as intervalo
 
 const selectPacienteById = async function (idPaciente) {
-    let sql = `select tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.senha as senha, tbl_paciente.cpf as cpf, tbl_paciente.foto as foto, tbl_paciente.historico_medico as historico_medico,
+    let sql = `select tbl_paciente.id as id, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.nome as nome, tbl_paciente.email as email, tbl_paciente.senha as senha, tbl_paciente.cpf as cpf, tbl_paciente.foto as foto,
     tbl_genero.nome as genero,
+    tbl_historico_medico.id as id_historico, tbl_historico_medico.historico_medico as historico,
     tbl_doenca_cronica.id as doenca_id, tbl_doenca_cronica.nome as doenca, tbl_doenca_cronica.grau as doenca_grau, 
     tbl_comorbidade.id as comorbidade_id, tbl_comorbidade.nome as comorbidade,
     tbl_medicamento.id as medicamento_id, tbl_medicamento.nome as medicamento, concat(tbl_medicamento.quantidade, ' ',tbl_medida.sigla) as quantidade, DATE_FORMAT(tbl_medicamento.data_validade,'%d/%m/%Y') as validade, tbl_medicamento.estocado as estocado,
@@ -76,6 +77,8 @@ from tbl_paciente
  on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
     left join tbl_endereco_paciente
  on tbl_endereco_paciente.id = tbl_paciente.id_endereco_paciente
+    left join tbl_historico_medico
+on tbl_historico_medico.id_paciente = tbl_paciente.id
 where tbl_paciente.id = ${idPaciente};`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
@@ -85,11 +88,13 @@ where tbl_paciente.id = ${idPaciente};`
         let doencas = []
         let comorbidades = []
         let medicamentos = []
+        let historicos = []
         let set = Array.from(new Set(rsPaciente))
 
         let arrayIDComorbidade = []
         let arrayIDDoenca = []
         let arrayIDMedicamento = []
+        let arrayIDHistorico = []
 
         set.forEach(paciente => {
             pacienteJSON.id = paciente.id
@@ -100,7 +105,6 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.senha = paciente.senha
             pacienteJSON.cpf = paciente.cpf
             pacienteJSON.foto = paciente.foto
-            pacienteJSON.historico_medico = paciente.historico_medico
             pacienteJSON.endereco_id = paciente.endereco_id
             pacienteJSON.logradouro = paciente.logradouro
             pacienteJSON.bairro = paciente.bairro
@@ -108,6 +112,16 @@ where tbl_paciente.id = ${idPaciente};`
             pacienteJSON.cep = paciente.cep
             pacienteJSON.cidade = paciente.cidade
             pacienteJSON.estado = paciente.estado
+
+            if(!arrayIDHistorico.includes(paciente.id_historico)){
+                let historico = {}
+
+                arrayIDHistorico.push(paciente.id_historico)
+                historico.id = paciente.id_historico
+                historico.nome = paciente.historico
+
+                historicos.push(historico)
+            }
 
             if(!arrayIDDoenca.includes(paciente.doenca_id)){
                 let doenca = {}
@@ -161,6 +175,7 @@ where tbl_paciente.id = ${idPaciente};`
                 medicamentos.push(medicamento)
             }
 
+            pacienteJSON.historicos_medicos = historicos
             pacienteJSON.doencas_cronicas = doencas
             pacienteJSON.comorbidades = comorbidades
             pacienteJSON.medicamentos = medicamentos
@@ -208,8 +223,7 @@ const selectPacienteByEmailAndSenhaAndNome = async function (dadosPaciente){
     tbl_paciente.nome as nome, 
     tbl_paciente.email as email, 
     DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, 
-    tbl_paciente.foto as foto, 
-    tbl_paciente.historico_medico as historico_medico,
+    tbl_paciente.foto as foto,
 	tbl_genero.nome as genero
     from tbl_paciente
         inner join tbl_genero on tbl_genero.id = tbl_paciente.id_genero
@@ -253,7 +267,6 @@ const insertPaciente = async function (dadosPaciente) {
         senha,
         cpf,
         foto,
-        historico_medico,
         id_endereco_paciente,
         id_genero
     ) values (
@@ -263,7 +276,6 @@ const insertPaciente = async function (dadosPaciente) {
         '${dadosPaciente.senha}',
         '${dadosPaciente.cpf}',
         '${dadosPaciente.foto}',
-        '${dadosPaciente.historico_medico}',
         1,
         1
     )`
@@ -310,7 +322,6 @@ const updatePaciente = async function (dadosPaciente) {
             data_nascimento = '${dadosPaciente.data_nascimento}',
             cpf = '${dadosPaciente.cpf}',
             foto = '${dadosPaciente.foto}',
-            historico_medico = '${dadosPaciente.historico_medico}',
             id_endereco_paciente = ${dadosPaciente.id_endereco_paciente},
             id_genero = ${dadosPaciente.genero}
         where id = ${dadosPaciente.id}`
