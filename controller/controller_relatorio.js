@@ -8,7 +8,7 @@
 
 const message = require('./modules/config.js')
 
-const relatorioDAO =  require ('../model/DAO/relatorioDAO.js')
+const relatorioDAO = require('../model/DAO/relatorioDAO.js')
 const jwt = require('../middleware/middlewareJWT.js')
 
 
@@ -16,67 +16,67 @@ const jwt = require('../middleware/middlewareJWT.js')
 
 
 /************************** GET ******************************/
-const getRelatorios = async function(){
+const getRelatorios = async function () {
 
     let dadosRelatorioJSON = {}
 
     let dadosRelatorios = await relatorioDAO.selectAllRelatorios()
-        
+
     if (dadosRelatorios) {
-        
+
         dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
         dadosRelatorioJSON.quantidade = dadosRelatorios.length
         dadosRelatorioJSON.relatorios = dadosRelatorios
         return dadosRelatorioJSON
-        
-    }else{
+
+    } else {
 
         return message.ERROR_INTERNAL_SERVER
-    }    
+    }
 }
 
-const getRelatorioByID = async function(id){
+const getRelatorioByID = async function (id) {
 
-    if (id == ''|| id == undefined|| isNaN(id)) {
+    if (id == '' || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
     } else {
-        
+
         let dadosRelatorioJSON = {}
 
         let dadosRelatorio = await relatorioDAO.selectByIDRelatorio(id)
 
         if (dadosRelatorio) {
-            dadosRelatorioJSON.status=message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
             dadosRelatorioJSON.relatorio = dadosRelatorio
             return dadosRelatorioJSON
         } else {
 
             return message.ERROR_NOT_FOUND
-            
+
         }
 
 
     }
 }
 
-const getRelatorioByIDPaciente = async function(idPaciente){
+const getRelatorioByIDPaciente = async function (idPaciente) {
 
-    if (idPaciente == ''|| idPaciente == undefined|| isNaN(idPaciente)) {
+    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
         return message.ERROR_INVALID_ID
     } else {
-        
+
         let dadosRelatorioJSON = {}
 
         let dadosRelatorio = await relatorioDAO.selectByIDPaciente(idPaciente)
 
         if (dadosRelatorio) {
-            dadosRelatorioJSON.status=message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
             dadosRelatorioJSON.relatorio = dadosRelatorio
             return dadosRelatorioJSON
         } else {
 
             return message.ERROR_NOT_FOUND
-            
+
         }
 
 
@@ -84,90 +84,144 @@ const getRelatorioByIDPaciente = async function(idPaciente){
 }
 
 
-const getRelatorioByIDCuidador = async function(idCuidador){
+const getRelatorioByIDCuidador = async function (idCuidador) {
 
-    if (idCuidador == ''|| idCuidador == undefined||isNaN(idCuidador) ) {
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
         return message.ERROR_INVALID_ID
     } else {
-        
+
         let dadosRelatorioJSON = {}
 
         let dadosRelatorio = await relatorioDAO.selectByIDCuidador(idCuidador)
 
         if (dadosRelatorio) {
-            dadosRelatorioJSON.status=message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
             dadosRelatorioJSON.relatorio = dadosRelatorio
             return dadosRelatorioJSON
         } else {
 
             return message.ERROR_NOT_FOUND
-            
+
         }
 
 
     }
 }
 
+const getRelatorioByIDCuidadorAndPaciente = async function (idCuidador, idPaciente) {
 
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return message.ERROR_INVALID_CUIDADOR
+    } else if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
+        return message.ERROR_INVALID_PACIENTE
+    } else {
+        let dadosRelatorioJSON = {}
 
+        let dadosRelatorio = await relatorioDAO.selectByIDCuidadorAndPaciente(idCuidador, idPaciente)
 
+        if (dadosRelatorio) {
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.relatorio = dadosRelatorio
+            return dadosRelatorioJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
 
+const getRelatorioByIDCuidadorAndPacienteAndData = async function (dadosRelatorio) {
 
+    if (dadosRelatorio.idCuidador == '' || dadosRelatorio.idCuidador == undefined || isNaN(dadosRelatorio.idCuidador)) {
+        return message.ERROR_INVALID_CUIDADOR
+    } else if (dadosRelatorio.idPaciente == '' || dadosRelatorio.idPaciente == undefined || isNaN(dadosRelatorio.idPaciente)) {
+        return message.ERROR_INVALID_PACIENTE
+    } else if (dadosRelatorio.data == '' || dadosRelatorio.data == undefined) {
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+        let dadosRelatorioJSON = {}
+
+        let dadosRelatorio = await relatorioDAO.selectByData(dadosRelatorio)
+
+        if (dadosRelatorio) {
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.relatorio = dadosRelatorio
+            return dadosRelatorioJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getAllDatas = async function (idCuidador, idPaciente) {
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return message.ERROR_INVALID_CUIDADOR
+    } else if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
+        return message.ERROR_INVALID_PACIENTE
+    } else {
+        let dadosRelatorioJSON = {}
+
+        let dadosRelatorio = await relatorioDAO.selectAllDatas(idCuidador, idPaciente)
+
+        if (dadosRelatorio) {
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.relatorio = dadosRelatorio
+            return dadosRelatorioJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
 
 /************************** Inserte ******************************/
 
-const insertRelatorio = async function(dadosRelatorio) {
-
-
-    
-    
+const insertRelatorio = async function (dadosRelatorio) {
     if (
 
-        dadosRelatorio.texto_relatorio == ''|| dadosRelatorio.texto_relatorio == undefined||
-        dadosRelatorio.validacao == '' || dadosRelatorio.validacao ==     undefined||
+        dadosRelatorio.texto_relatorio == '' || dadosRelatorio.texto_relatorio == undefined ||
+        dadosRelatorio.validacao == '' || dadosRelatorio.validacao == undefined ||
         dadosRelatorio.id_paciente == '' || dadosRelatorio.id_paciente == undefined || isNaN(dadosRelatorio.id_paciente) ||
-        dadosRelatorio.id_cuidador == '' || dadosRelatorio.id_cuidador == undefined || isNaN(dadosRelatorio.id_cuidador)         
-        ) {
-        
-            return message.ERROR_REQUIRED_FIELDS
-    }else{
+        dadosRelatorio.id_cuidador == '' || dadosRelatorio.id_cuidador == undefined || isNaN(dadosRelatorio.id_cuidador)
+    ) {
 
-         let resultDadosRelatorio = await relatorioDAO.insertRelatorio(dadosRelatorio)
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+
+        let resultDadosRelatorio = await relatorioDAO.insertRelatorio(dadosRelatorio)
 
         if (resultDadosRelatorio) {
-             let novoRelatorio = await relatorioDAO.selectLastId()
+            let novoRelatorio = await relatorioDAO.selectLastId()
 
-             let dadosRelatorioJSON= {}
-            
-             dadosRelatorioJSON.status = message.SUCCESS_CREATED_ITEM.status
-             dadosRelatorioJSON.relatorio = novoRelatorio
+            let dadosRelatorioJSON = {}
 
-             return dadosRelatorioJSON
+            dadosRelatorioJSON.status = message.SUCCESS_CREATED_ITEM.status
+            dadosRelatorioJSON.relatorio = novoRelatorio
+
+            return dadosRelatorioJSON
         } else {
-             return message.ERROR_INTERNAL_SERVER
-            }
+            return message.ERROR_INTERNAL_SERVER
+        }
     }
-    
+
 }
 
 
 /************************** update ******************************/
 
-const updateRelatorio = async function(dadosRelatorio, id){
+const updateRelatorio = async function (dadosRelatorio, id) {
 
-    if(
-        dadosRelatorio.texto_relatorio == ''|| dadosRelatorio.texto_relatorio == undefined||
-        dadosRelatorio.validacao == '' || dadosRelatorio.validacao == undefined||
+    if (
+        dadosRelatorio.texto_relatorio == '' || dadosRelatorio.texto_relatorio == undefined ||
+        dadosRelatorio.validacao == '' || dadosRelatorio.validacao == undefined ||
         dadosRelatorio.id_paciente === '' || dadosRelatorio.id_paciente === undefined || isNaN(dadosRelatorio.id_paciente) ||
         dadosRelatorio.id_cuidador === '' || dadosRelatorio.id_cuidador === undefined || isNaN(dadosRelatorio.id_cuidador)
 
-    ){
+    ) {
         return message.ERROR_REQUIRED_FIELDS
-    
-    }else if (id == null || id == undefined || isNaN(id)){
+
+    } else if (id == null || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
-    }else {
-        dadosRelatorio.id = id 
+    } else {
+        dadosRelatorio.id = id
 
         let atualizarDadosRelatorio = await relatorioDAO.selectByIDRelatorio(id)
 
@@ -175,14 +229,14 @@ const updateRelatorio = async function(dadosRelatorio, id){
             let resultDadosRelatorio = await relatorioDAO.updateRelatorio(dadosRelatorio)
 
             if (resultDadosRelatorio) {
-                
+
                 let atualizarRelatorio = await relatorioDAO.selectLastId()
-                
+
                 let dadosRelatorioJSON = {}
-                
+
                 dadosRelatorioJSON.status = message.SUCCESS_UPDATED_ITEM.status
-                dadosRelatorioJSON.message =  message.SUCCESS_UPDATED_ITEM.message
-                dadosRelatorioJSON.relatorio =  dadosRelatorio
+                dadosRelatorioJSON.message = message.SUCCESS_UPDATED_ITEM.message
+                dadosRelatorioJSON.relatorio = dadosRelatorio
 
                 return dadosRelatorioJSON
             } else {
@@ -197,33 +251,33 @@ const updateRelatorio = async function(dadosRelatorio, id){
 
 /************************** Delete ******************************/
 
-const deleteRelatorio = async function(id){
+const deleteRelatorio = async function (id) {
 
     if (id == null || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
-    }else{
+    } else {
 
         let searchIdRelatorio = await relatorioDAO.selectLastId(id)
 
         if (searchIdRelatorio) {
             let deletarDadosRelatorio = await relatorioDAO.deleteRelatorio(id)
-            
+
 
 
             if (deletarDadosRelatorio) {
-                 return message.SUCCESS_DELETED_ITEM   
+                return message.SUCCESS_DELETED_ITEM
             } else {
                 return message.ERROR_INTERNAL_SERVER
             }
         } else {
-            
+
             return message.ERROR_INVALID_ID
         }
     }
 }
 
 
-module.exports={
+module.exports = {
     getRelatorios,
     getRelatorioByID,
     getRelatorioByIDCuidador,
@@ -231,4 +285,7 @@ module.exports={
     insertRelatorio,
     updateRelatorio,
     deleteRelatorio,
+    getAllDatas,
+    getRelatorioByIDCuidadorAndPaciente,
+    getRelatorioByIDCuidadorAndPacienteAndData
 }

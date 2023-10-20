@@ -420,13 +420,13 @@ app.post('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) 
 
 //Conectar
 app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) => {
-      let idPaciente = request.query.idPaciente
-      let idCuidador = request.query.idCuidador
+   let idPaciente = request.query.idPaciente
+   let idCuidador = request.query.idCuidador
 
-      let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
+   let resultDadosPaciente = await controllerPaciente.connectCuidadorAndPaciente(idPaciente, idCuidador)
 
-      response.status(resultDadosPaciente.status)
-      response.json(resultDadosPaciente)
+   response.status(resultDadosPaciente.status)
+   response.json(resultDadosPaciente)
 })
 
 //Update Paciente
@@ -1365,46 +1365,43 @@ app.delete('/v1/ayan/alarme/:id', cors(), async (request, response) => {
 /********************GET************************** */
 //Get all Relatório 
 app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
+   let idPaciente = request.params.idPaciente;
+   let idCuidador = request.params.idCuidador;
+   let data = request.params.data;
 
-   let dadosRelatorio = await controllerRelatorio.getRelatorios();
+   if (idPaciente != undefined && idCuidador != undefined && data != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidadorAndPacienteAndData(idCuidador, idPaciente, data);
 
-   response.json(dadosRelatorio)
-   response.status(dadosRelatorio.status)
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   } else if (idPaciente != undefined && idCuidador != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidadorAndPaciente(idCuidador, idPaciente);
 
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   } else if (idPaciente != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByIDPaciente(idPaciente);
 
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   } else if (idCuidador != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidador(idCuidador);
+
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   } else {
+      let dadosRelatorio = await controllerRelatorio.getRelatorios();
+
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   }
 })
 
 //Get id Relatorio 
 app.get('/v1/ayan/relatorio/:id', cors(), async (request, response) => {
    let idRelatorio = request.params.id;
 
-
    let dadosRelatorio = await controllerRelatorio.getRelatorioByID(idRelatorio);
-
-   response.json(dadosRelatorio)
-   response.status(dadosRelatorio.status)
-})
-
-
-
-//Get Relatorio By ID paciente
-app.get('/v1/ayan/relatorio/paciente/:id', cors(), async (request, response) => {
-   let idPaciente = request.params.id;
-
-
-   let dadosRelatorio = await controllerRelatorio.getRelatorioByIDPaciente(idPaciente);
-
-   response.json(dadosRelatorio)
-   response.status(dadosRelatorio.status)
-})
-
-
-//Get Relatorio By ID Cuidador
-app.get('/v1/ayan/relatorio/cuidador/:id', cors(), async (request, response) => {
-   let idCuidador = request.params.id;
-
-
-   let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidador(idCuidador);
 
    response.json(dadosRelatorio)
    response.status(dadosRelatorio.status)

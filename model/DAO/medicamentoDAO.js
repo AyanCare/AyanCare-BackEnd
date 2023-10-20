@@ -16,7 +16,7 @@ var prisma = new PrismaClient()
 const selectAllMedicamentos = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_medicamento'
+    let sql = 'select DISTINCT tbl_medicamento.nome from tbl_medicamento;'
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método

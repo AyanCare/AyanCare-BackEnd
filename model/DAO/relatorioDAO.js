@@ -11,7 +11,7 @@ var { PrismaClient } = require('@prisma/client');
 //Instância da classe PrismaClient
 var prisma = new PrismaClient()
 
-const definirGenero = function (idGenero){
+const definirGenero = function (idGenero) {
     let genero = idGenero;
 
     switch (genero) {
@@ -36,22 +36,92 @@ const definirGenero = function (idGenero){
 
 /********************Selects************************** */
 /********************Retorna Todos os relatorios************************** */
-const selectAllRelatorios = async function(){
+const selectAllRelatorios = async function () {
 
     let sql = `SELECT tbl_relatorio.id as id,
-    tbl_paciente.nome as paciente,
-    tbl_cuidador.nome as cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto_relatorio
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
+    tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
+    tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
         inner join tbl_paciente
     on tbl_paciente.id = tbl_relatorio.id_paciente
         inner join tbl_cuidador
-    on tbl_cuidador.id = tbl_relatorio.id_cuidador`
-    
-    let rsRelatorio= await prisma.$queryRawUnsafe(sql)
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
+        left join tbl_questionario
+    on tbl_questionario.id_relatorio = tbl_relatorio.id
+        left join tbl_pergunta
+    on tbl_pergunta.id = tbl_questionario.id_pergunta`
+
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
-        return rsRelatorio
+        let relatorios = []
+        let perguntas = []
+
+        let arrayIDRelatorios = []
+        let arrayIDPerguntas = []
+        let arrayIDRespostas = []
+
+        rsRelatorio.forEach(relatorio => {
+            if (!arrayIDRelatorios.includes(relatorio.id)) {
+                let relatorioJSON = {}
+
+                arrayIDRelatorios.push(relatorio.id)
+
+                let paciente = {}
+                paciente.id = relatorio.id_paciente
+                paciente.foto = relatorio.foto_paciente
+                paciente.nome = relatorio.paciente
+                paciente.data_nascimento = relatorio.data_nascimento_paciente
+                paciente.idade = relatorio.idade_paciente
+                paciente.genero = definirGenero(relatorio.genero_paciente)
+
+                let cuidador = {}
+                cuidador.id = relatorio.id_cuidador
+                cuidador.foto = relatorio.foto_cuidador
+                cuidador.nome = relatorio.cuidador
+                cuidador.data_nascimento = relatorio.data_nascimento_cuidador
+                cuidador.idade = relatorio.idade_cuidador
+                cuidador.genero = definirGenero(relatorio.genero_cuidador)
+
+                relatorioJSON.id = relatorio.id
+                relatorioJSON.cuidador = cuidador
+                relatorioJSON.paciente = paciente
+                relatorioJSON.data = relatorio.data
+                relatorioJSON.horario = relatorio.horario
+                relatorioJSON.texto = relatorio.texto
+
+                rsRelatorio.forEach(repeticao => {
+                    if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta) && repeticao.id == relatorio.id) {
+                        let pergunta = {}
+
+                        arrayIDPerguntas.push(repeticao.id_pergunta)
+                        arrayIDRespostas.push(repeticao.id_resposta)
+                        pergunta.id = repeticao.id_pergunta
+                        pergunta.pergunta = repeticao.pergunta
+
+                        if (repeticao.resposta === 1) {
+                            pergunta.resposta = true
+                        } else {
+                            pergunta.resposta = false
+                        }
+
+                        perguntas.push(pergunta)
+                    }
+                });
+
+                relatorioJSON.perguntas = perguntas
+
+                relatorios.push(relatorioJSON)
+            }
+
+            arrayIDPerguntas = []
+            perguntas = []
+        })
+
+        return relatorios
     } else {
         return false
     }
@@ -59,7 +129,7 @@ const selectAllRelatorios = async function(){
 }
 
 /********************Select Pelo ID************************** */
-const selectByIDRelatorio = async function(idRelatorio){
+const selectByIDRelatorio = async function (idRelatorio) {
 
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
@@ -143,20 +213,95 @@ const selectByIDRelatorio = async function(idRelatorio){
 /********************Select Pelo ID do paciente************************** */
 const selectByIDPaciente = async function (idPaciente) {
 
-    let sql = `SELECT * FROM tbl_relatorio 
-        inner join tbl_paciente 
+    let sql = `SELECT tbl_relatorio.id as id,
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
+    tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
+    tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
+    from tbl_relatorio
+        inner join tbl_paciente
     on tbl_paciente.id = tbl_relatorio.id_paciente
-        where tbl_paciente.id = ${idPaciente}`
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
+        left join tbl_questionario
+    on tbl_questionario.id_relatorio = tbl_relatorio.id
+        left join tbl_pergunta
+    on tbl_pergunta.id = tbl_questionario.id_pergunta
+    where tbl_paciente.id = ${idPaciente}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
+        let relatorios = []
+        let perguntas = []
 
-        return rsRelatorio
+        let arrayIDRelatorios = []
+        let arrayIDPerguntas = []
+        let arrayIDRespostas = []
 
+        rsRelatorio.forEach(relatorio => {
+            if (!arrayIDRelatorios.includes(relatorio.id)) {
+                let relatorioJSON = {}
+
+                arrayIDRelatorios.push(relatorio.id)
+
+                let paciente = {}
+                paciente.id = relatorio.id_paciente
+                paciente.foto = relatorio.foto_paciente
+                paciente.nome = relatorio.paciente
+                paciente.data_nascimento = relatorio.data_nascimento_paciente
+                paciente.idade = relatorio.idade_paciente
+                paciente.genero = definirGenero(relatorio.genero_paciente)
+
+                let cuidador = {}
+                cuidador.id = relatorio.id_cuidador
+                cuidador.foto = relatorio.foto_cuidador
+                cuidador.nome = relatorio.cuidador
+                cuidador.data_nascimento = relatorio.data_nascimento_cuidador
+                cuidador.idade = relatorio.idade_cuidador
+                cuidador.genero = definirGenero(relatorio.genero_cuidador)
+
+                relatorioJSON.id = relatorio.id
+                relatorioJSON.cuidador = cuidador
+                relatorioJSON.paciente = paciente
+                relatorioJSON.data = relatorio.data
+                relatorioJSON.horario = relatorio.horario
+                relatorioJSON.texto = relatorio.texto
+
+                rsRelatorio.forEach(repeticao => {
+                    if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta) && repeticao.id == relatorio.id) {
+                        let pergunta = {}
+
+                        arrayIDPerguntas.push(repeticao.id_pergunta)
+                        arrayIDRespostas.push(repeticao.id_resposta)
+                        pergunta.id = repeticao.id_pergunta
+                        pergunta.pergunta = repeticao.pergunta
+
+                        if (repeticao.resposta === 1) {
+                            pergunta.resposta = true
+                        } else {
+                            pergunta.resposta = false
+                        }
+
+                        perguntas.push(pergunta)
+                    }
+                });
+
+                relatorioJSON.perguntas = perguntas
+
+                relatorios.push(relatorioJSON)
+            }
+
+            arrayIDPerguntas = []
+            perguntas = []
+        })
+
+        return relatorios
     } else {
         return false
     }
+
 
 }
 
@@ -164,24 +309,99 @@ const selectByIDPaciente = async function (idPaciente) {
 
 const selectByIDCuidador = async function (idCuidador) {
 
-    let sql = `SELECT * FROM tbl_relatorio 
-        inner join tbl_cuidador 
+    let sql = `SELECT tbl_relatorio.id as id,
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
+    tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
+    tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
+    from tbl_relatorio
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_relatorio.id_paciente
+        inner join tbl_cuidador
     on tbl_cuidador.id = tbl_relatorio.id_cuidador
-        where tbl_cuidador.id = ${idCuidador}`
+        left join tbl_questionario
+    on tbl_questionario.id_relatorio = tbl_relatorio.id
+        left join tbl_pergunta
+    on tbl_pergunta.id = tbl_questionario.id_pergunta
+    where tbl_cuidador.id = ${idCuidador}`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
+        let relatorios = []
+        let perguntas = []
 
-        return rsRelatorio
+        let arrayIDRelatorios = []
+        let arrayIDPerguntas = []
+        let arrayIDRespostas = []
 
+        rsRelatorio.forEach(relatorio => {
+            if (!arrayIDRelatorios.includes(relatorio.id)) {
+                let relatorioJSON = {}
+
+                arrayIDRelatorios.push(relatorio.id)
+
+                let paciente = {}
+                paciente.id = relatorio.id_paciente
+                paciente.foto = relatorio.foto_paciente
+                paciente.nome = relatorio.paciente
+                paciente.data_nascimento = relatorio.data_nascimento_paciente
+                paciente.idade = relatorio.idade_paciente
+                paciente.genero = definirGenero(relatorio.genero_paciente)
+
+                let cuidador = {}
+                cuidador.id = relatorio.id_cuidador
+                cuidador.foto = relatorio.foto_cuidador
+                cuidador.nome = relatorio.cuidador
+                cuidador.data_nascimento = relatorio.data_nascimento_cuidador
+                cuidador.idade = relatorio.idade_cuidador
+                cuidador.genero = definirGenero(relatorio.genero_cuidador)
+
+                relatorioJSON.id = relatorio.id
+                relatorioJSON.cuidador = cuidador
+                relatorioJSON.paciente = paciente
+                relatorioJSON.data = relatorio.data
+                relatorioJSON.horario = relatorio.horario
+                relatorioJSON.texto = relatorio.texto
+
+                rsRelatorio.forEach(repeticao => {
+                    if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta) && repeticao.id == relatorio.id) {
+                        let pergunta = {}
+
+                        arrayIDPerguntas.push(repeticao.id_pergunta)
+                        arrayIDRespostas.push(repeticao.id_resposta)
+                        pergunta.id = repeticao.id_pergunta
+                        pergunta.pergunta = repeticao.pergunta
+
+                        if (repeticao.resposta === 1) {
+                            pergunta.resposta = true
+                        } else {
+                            pergunta.resposta = false
+                        }
+
+                        perguntas.push(pergunta)
+                    }
+                });
+
+                relatorioJSON.perguntas = perguntas
+
+                relatorios.push(relatorioJSON)
+            }
+
+            arrayIDPerguntas = []
+            perguntas = []
+        })
+
+        return relatorios
     } else {
         return false
     }
 
+
 }
 
-/********************Select Pelo ID do Cuidador************************** */
+/********************Select Pelo ID do Cuidador e Paciente************************** */
 const selectByIDCuidadorAndPaciente = async function (idCuidador, idPaciente) {
 
     let sql = `SELECT tbl_relatorio.id as id,
@@ -204,59 +424,182 @@ const selectByIDCuidadorAndPaciente = async function (idCuidador, idPaciente) {
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
     if (rsRelatorio.length > 0) {
-        let relatorioJSON = {}
+        let relatorios = []
         let perguntas = []
 
+        let arrayIDRelatorios = []
         let arrayIDPerguntas = []
         let arrayIDRespostas = []
 
         rsRelatorio.forEach(relatorio => {
-            let paciente = {}
-            paciente.id = relatorio.id_paciente
-            paciente.foto = relatorio.foto_paciente
-            paciente.nome = relatorio.paciente
-            paciente.data_nascimento = relatorio.data_nascimento_paciente
-            paciente.idade = relatorio.idade_paciente
-            paciente.genero = definirGenero(relatorio.genero_paciente)
+            if (!arrayIDRelatorios.includes(relatorio.id)) {
+                let relatorioJSON = {}
 
-            let cuidador = {}
-            cuidador.id = relatorio.id_cuidador
-            cuidador.foto = relatorio.foto_cuidador
-            cuidador.nome = relatorio.cuidador
-            cuidador.data_nascimento = relatorio.data_nascimento_cuidador
-            cuidador.idade = relatorio.idade_cuidador
-            cuidador.genero = definirGenero(relatorio.genero_cuidador)
+                arrayIDRelatorios.push(relatorio.id)
 
-            relatorioJSON.id = relatorio.id
-            relatorioJSON.cuidador = cuidador
-            relatorioJSON.paciente = paciente
-            relatorioJSON.data = relatorio.data
-            relatorioJSON.horario = relatorio.horario
-            relatorioJSON.texto = relatorio.texto
+                let paciente = {}
+                paciente.id = relatorio.id_paciente
+                paciente.foto = relatorio.foto_paciente
+                paciente.nome = relatorio.paciente
+                paciente.data_nascimento = relatorio.data_nascimento_paciente
+                paciente.idade = relatorio.idade_paciente
+                paciente.genero = definirGenero(relatorio.genero_paciente)
 
-            rsRelatorio.forEach(repeticao => {
-                if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta)) {
-                    let pergunta = {}
+                let cuidador = {}
+                cuidador.id = relatorio.id_cuidador
+                cuidador.foto = relatorio.foto_cuidador
+                cuidador.nome = relatorio.cuidador
+                cuidador.data_nascimento = relatorio.data_nascimento_cuidador
+                cuidador.idade = relatorio.idade_cuidador
+                cuidador.genero = definirGenero(relatorio.genero_cuidador)
 
-                    arrayIDPerguntas.push(repeticao.id_pergunta)
-                    arrayIDRespostas.push(repeticao.id_resposta)
-                    pergunta.id = repeticao.id_pergunta
-                    pergunta.pergunta = repeticao.pergunta
+                relatorioJSON.id = relatorio.id
+                relatorioJSON.cuidador = cuidador
+                relatorioJSON.paciente = paciente
+                relatorioJSON.data = relatorio.data
+                relatorioJSON.horario = relatorio.horario
+                relatorioJSON.texto = relatorio.texto
 
-                    if (repeticao.resposta === 1) {
-                        pergunta.resposta = true
-                    } else {
-                        pergunta.resposta = false
+                rsRelatorio.forEach(repeticao => {
+                    if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta) && repeticao.id == relatorio.id) {
+                        let pergunta = {}
+
+                        arrayIDPerguntas.push(repeticao.id_pergunta)
+                        arrayIDRespostas.push(repeticao.id_resposta)
+                        pergunta.id = repeticao.id_pergunta
+                        pergunta.pergunta = repeticao.pergunta
+
+                        if (repeticao.resposta === 1) {
+                            pergunta.resposta = true
+                        } else {
+                            pergunta.resposta = false
+                        }
+
+                        perguntas.push(pergunta)
                     }
+                });
 
-                    perguntas.push(pergunta)
-                }
-            });
+                relatorioJSON.perguntas = perguntas
 
-            relatorioJSON.perguntas = perguntas
+                relatorios.push(relatorioJSON)
+            }
+
+            arrayIDPerguntas = []
+            perguntas = []
         })
 
-        return relatorioJSON
+        return relatorios
+    } else {
+        return false
+    }
+
+}
+
+/********************Select Pela DATA e Cuidador e Paciente************************** */
+const selectByData = async function (idCuidador, idPaciente, data) {
+
+    let sql = `SELECT tbl_relatorio.id as id,
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
+    tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
+    tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
+    from tbl_relatorio
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_relatorio.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_relatorio.id_cuidador
+        left join tbl_questionario
+    on tbl_questionario.id_relatorio = tbl_relatorio.id
+        left join tbl_pergunta
+    on tbl_pergunta.id = tbl_questionario.id_pergunta
+    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador} and tbl_relatorio.data = '${data}'`
+
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
+        let relatorios = []
+        let perguntas = []
+
+        let arrayIDRelatorios = []
+        let arrayIDPerguntas = []
+        let arrayIDRespostas = []
+
+        rsRelatorio.forEach(relatorio => {
+            if (!arrayIDRelatorios.includes(relatorio.id)) {
+                let relatorioJSON = {}
+
+                arrayIDRelatorios.push(relatorio.id)
+
+                let paciente = {}
+                paciente.id = relatorio.id_paciente
+                paciente.foto = relatorio.foto_paciente
+                paciente.nome = relatorio.paciente
+                paciente.data_nascimento = relatorio.data_nascimento_paciente
+                paciente.idade = relatorio.idade_paciente
+                paciente.genero = definirGenero(relatorio.genero_paciente)
+
+                let cuidador = {}
+                cuidador.id = relatorio.id_cuidador
+                cuidador.foto = relatorio.foto_cuidador
+                cuidador.nome = relatorio.cuidador
+                cuidador.data_nascimento = relatorio.data_nascimento_cuidador
+                cuidador.idade = relatorio.idade_cuidador
+                cuidador.genero = definirGenero(relatorio.genero_cuidador)
+
+                relatorioJSON.id = relatorio.id
+                relatorioJSON.cuidador = cuidador
+                relatorioJSON.paciente = paciente
+                relatorioJSON.data = relatorio.data
+                relatorioJSON.horario = relatorio.horario
+                relatorioJSON.texto = relatorio.texto
+
+                rsRelatorio.forEach(repeticao => {
+                    if (!arrayIDPerguntas.includes(repeticao.id_pergunta) && !arrayIDRespostas.includes(repeticao.id_resposta) && repeticao.id == relatorio.id) {
+                        let pergunta = {}
+
+                        arrayIDPerguntas.push(repeticao.id_pergunta)
+                        arrayIDRespostas.push(repeticao.id_resposta)
+                        pergunta.id = repeticao.id_pergunta
+                        pergunta.pergunta = repeticao.pergunta
+
+                        if (repeticao.resposta === 1) {
+                            pergunta.resposta = true
+                        } else {
+                            pergunta.resposta = false
+                        }
+
+                        perguntas.push(pergunta)
+                    }
+                });
+
+                relatorioJSON.perguntas = perguntas
+
+                relatorios.push(relatorioJSON)
+            }
+
+            arrayIDPerguntas = []
+            perguntas = []
+        })
+
+        return relatorios
+    } else {
+        return false
+    }
+
+}
+
+/********************Select DATAS de todos os relatórios cadastrados daquele Cuidador e Paciente************************** */
+const selectAllDatas = async function (idCuidador, idPaciente) {
+
+    let sql = `SELECT tbl_relatorio.data as data
+    from tbl_relatorio
+    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
+
+    let rsRelatorio = await prisma.$queryRawUnsafe(sql)
+
+    if (rsRelatorio.length > 0) {
+        return rsRelatorio
     } else {
         return false
     }
@@ -293,14 +636,14 @@ const insertRelatorio = async function (dadosRelatorio) {
         CURTIME(),
         '${dadosRelatorio.texto_relatorio}',
         ${dadosRelatorio.validacao},
-        2,
-        4
+        ${dadosRelatorio.id_paciente},
+        ${dadosRelatorio.id_cuidador}
     )`
 
     console.log(sql);
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
 
-    
+
 
     if (resultRelatorio) {
         return true
@@ -347,6 +690,9 @@ module.exports = {
     selectLastId,
     selectByIDCuidador,
     selectByIDPaciente,
+    selectByIDCuidadorAndPaciente,
+    selectByData,
+    selectAllDatas,
     insertRelatorio,
     updateRelatorio,
     deleteRelatorio
