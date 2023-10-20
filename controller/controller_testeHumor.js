@@ -7,7 +7,65 @@
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
-const jwt = require('../middleware/middlewareJWT.js')
+
+var dadosTesteReal = {}
+
+const criadorDeDadosParaInsert = function (){
+    dadosTesteReal.observacao = ""
+    dadosTesteReal.id_paciente = ""
+    dadosTesteReal.caminhada = false
+    dadosTesteReal.natacao = false
+    dadosTesteReal.danca = false
+    dadosTesteReal.alongamento = false
+    dadosTesteReal.yoga = false
+    dadosTesteReal.volei = false
+    dadosTesteReal.tenis = false
+    dadosTesteReal.corrida = false
+    dadosTesteReal.ginastica = false
+    dadosTesteReal.futebol = false
+    dadosTesteReal.artesmarciais = false
+    dadosTesteReal.academia = false
+    dadosTesteReal.irritado = false
+    dadosTesteReal.culpado = false
+    dadosTesteReal.mudancasdehumor = false
+    dadosTesteReal.agitado = false
+    dadosTesteReal.confuso = false
+    dadosTesteReal.apatico = false
+    dadosTesteReal.energetico = false
+    dadosTesteReal.calmo = false
+    dadosTesteReal.feliz = false
+    dadosTesteReal.confiante = false
+    dadosTesteReal.confortavel = false
+    dadosTesteReal.desanimado = false
+    dadosTesteReal.apertonopeito = false
+    dadosTesteReal.doresabdominais = false
+    dadosTesteReal.faltadear = false
+    dadosTesteReal.tontura = false
+    dadosTesteReal.calafrios = false
+    dadosTesteReal.nauseaevomito = false
+    dadosTesteReal.cansaco = false
+    dadosTesteReal.poucoapetite = false
+    dadosTesteReal.dordecabeca = false
+    dadosTesteReal.visaoembacada = false
+    dadosTesteReal.dornobraco = false
+    dadosTesteReal.intestinopreso = false
+}
+
+criadorDeDadosParaInsert()
+
+const removerAcentos = function (string) {
+    const acentos = {
+        'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a',
+        'é': 'e', 'è': 'e', 'ê': 'e',
+        'í': 'i', 'ì': 'i', 'î': 'i',
+        'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o',
+        'ú': 'u', 'ù': 'u', 'û': 'u',
+        'ç': 'c'
+      };
+    
+    stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, match => acentos[match] || match)
+    return (stringConcertada.toLowerCase()).replace(' ', '')
+}
 
 const teste_humorDAO = require('../model/DAO/teste_humorDAO.js')
 
@@ -73,7 +131,15 @@ const insertTeste = async function (dadosTeste) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTeste)
+        dadosTesteReal.observacao = dadosTeste.observacao
+        dadosTesteReal.id_paciente = dadosTeste.id_paciente
+        dadosTeste.escolhas.forEach(escolha => {
+            escolhaCorrigida = removerAcentos(escolha)
+
+            dadosTesteReal[`"${escolhaCorrigida}"`] = true
+        });
+
+        let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)
 
         if (resultDadosTeste) {
             let novoTeste = await teste_humorDAO.selectLastId()

@@ -76,7 +76,6 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
 
                         sintoma.id = repeticao.id_sintoma
                         sintoma.nome = repeticao.nome_sintoma
-                        sintoma.id_status = repeticao.id_statusSintoma
                         sintoma.icone = repeticao.imagem_sintoma
 
                         sintomas.push(sintoma)
@@ -92,7 +91,6 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
 
                         humor.id = repeticao.id_humor
                         humor.nome = repeticao.nome_humor
-                        humor.id_status = repeticao.id_statusHumor
                         humor.icone = repeticao.imagem_humor
 
                         humores.push(humor)
@@ -108,7 +106,6 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
 
                         exercicio.id = repeticao.id_exercicio
                         exercicio.nome = repeticao.nome_exercicio
-                        exercicio.id_status = repeticao.id_statusExercicio
                         exercicio.icone = repeticao.imagem_exercicio
 
                         exercicios.push(exercicio)
@@ -308,7 +305,6 @@ const selectTesteByPaciente = async function (idPaciente) {
 
                         sintoma.id = repeticao.id_sintoma
                         sintoma.nome = repeticao.nome_sintoma
-                        sintoma.id_status = repeticao.id_statusSintoma
                         sintoma.icone = repeticao.imagem_sintoma
 
                         sintomas.push(sintoma)
@@ -324,7 +320,6 @@ const selectTesteByPaciente = async function (idPaciente) {
 
                         humor.id = repeticao.id_humor
                         humor.nome = repeticao.nome_humor
-                        humor.id_status = repeticao.id_statusHumor
                         humor.icone = repeticao.imagem_humor
 
                         humores.push(humor)
@@ -340,7 +335,6 @@ const selectTesteByPaciente = async function (idPaciente) {
 
                         exercicio.id = repeticao.id_exercicio
                         exercicio.nome = repeticao.nome_exercicio
-                        exercicio.id_status = repeticao.id_statusExercicio
                         exercicio.icone = repeticao.imagem_exercicio
 
                         exercicios.push(exercicio)
@@ -502,7 +496,7 @@ const insertTeste = async function (dadosTeste) {
         12, 
         ${dadosTeste.futebol}, 
         19, 
-        ${dadosTeste.artesMarciais}, 
+        ${dadosTeste.artesmarciais}, 
         20, 
         ${dadosTeste.academia}, 
         1, 
@@ -510,7 +504,7 @@ const insertTeste = async function (dadosTeste) {
         2, 
         ${dadosTeste.culpado}, 
         4, 
-        ${dadosTeste.mudancaHumor}, 
+        ${dadosTeste.mudancasdehumor}, 
         5, 
         ${dadosTeste.agitado}, 
         8, 
@@ -530,30 +524,32 @@ const insertTeste = async function (dadosTeste) {
         20, 
         ${dadosTeste.desanimado},
         1, 
-        ${dadosTeste.apertoPeito}, 
+        ${dadosTeste.apertonopeito}, 
         2, 
-        ${dadosTeste.doresAbdominais}, 
+        ${dadosTeste.doresabdominais}, 
         3, 
-        ${dadosTeste.faltaDeAr}, 
+        ${dadosTeste.faltadear}, 
         5, 
         ${dadosTeste.tontura}, 
         6,
         ${dadosTeste.calafrios}, 
         7, 
-        ${dadosTeste.nausea}, 
+        ${dadosTeste.nauseaevomito}, 
         8, 
         ${dadosTeste.cansaco}, 
         9, 
-        ${dadosTeste.poucoApetite}, 
+        ${dadosTeste.poucoapetite}, 
         12, 
-        ${dadosTeste.dorDeCabeca}, 
+        ${dadosTeste.dordecabeca}, 
         13,
-        ${dadosTeste.visaoEmbacada}, 
+        ${dadosTeste.visaoembacada}, 
         17, 
-        ${dadosTeste.dorNoBraco}, 
+        ${dadosTeste.dornobraco}, 
         19, 
-        ${dadosTeste.intestinoPreso});`
+        ${dadosTeste.intestinopreso});`
     //talvez ID de endereco e de genero mudem de nome
+
+    console.log(sql);
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
