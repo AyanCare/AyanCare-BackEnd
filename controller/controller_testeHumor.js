@@ -136,7 +136,7 @@ const insertTeste = async function (dadosTeste) {
         dadosTeste.escolhas.forEach(escolha => {
             escolhaCorrigida = removerAcentos(escolha)
 
-            dadosTesteReal[`"${escolhaCorrigida}"`] = true
+            dadosTesteReal[`${escolhaCorrigida}`] = true
         });
 
         let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)

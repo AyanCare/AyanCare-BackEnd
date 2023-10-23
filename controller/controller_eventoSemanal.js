@@ -8,6 +8,8 @@
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
 
+var dadosEventoReal = {}
+
 const criadorDeDadosParaInsert = function (){
     dadosEventoReal.nome = ""
     dadosEventoReal.descricao = ""
@@ -131,8 +133,10 @@ const insertEvento = async function (dadosEvento) {
         dadosEvento.dias.forEach(dia => {
             escolhaCorrigida = removerAcentos(dia)
 
-            dadosEventoReal[`"${escolhaCorrigida}"`] = true
+            dadosEventoReal[`${escolhaCorrigida}`] = true
         });
+
+        console.log(dadosEventoReal);
 
         let resultDadosEvento = await evento_semanalDAO.insertEvento(dadosEventoReal)
 
@@ -156,14 +160,7 @@ const updateEvento = async function (dadosEvento, id) {
         dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
-        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
-        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
-        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
-        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
-        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
-        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
-        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {

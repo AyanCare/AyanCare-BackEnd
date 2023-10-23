@@ -92,7 +92,7 @@ const selectEventoById = async function (idEvento) {
     let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
-    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, 
+    time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
     tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
@@ -130,6 +130,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
 
                 arrayIDDia.push(evento.dia_id)
                 dia.id = evento.dia_id
+                dia.id_status = evento.dia_statu
                 dia.dia = evento.dia
 
                 if (evento.status === 1) {
@@ -275,8 +276,8 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                         arrayIDDia.push(repeticao.dia_id)
                         arrayIDStatus.push(repeticao.id_status)
                         dia.id = repeticao.dia_id
-                        dia.dia = repeticao.dia
                         dia.status_id = repeticao.id_status
+                        dia.dia = repeticao.dia
 
                         if (repeticao.status === 1) {
                             dia.status = true
@@ -422,21 +423,27 @@ const updateEvento = async function (dadosEvento) {
         ${dadosEvento.sabado_id}, 
         1, 
         ${dadosEvento.sabado}, 
+        /**/
         ${dadosEvento.segunda_id}, 
         2, 
         ${dadosEvento.segunda}, 
+        /**/
         ${dadosEvento.terca_id}, 
         3, 
         ${dadosEvento.terca}, 
+        /**/
         ${dadosEvento.quarta_id}, 
         4, 
         ${dadosEvento.quarta}, 
+        /**/
         ${dadosEvento.quinta_id}, 
         5, 
         ${dadosEvento.quinta}, 
+        /**/
         ${dadosEvento.sexta_id}, 
         6, 
         ${dadosEvento.sexta}, 
+        /**/
         ${dadosEvento.domingo_id}, 
         7, 
         ${dadosEvento.domingo}
