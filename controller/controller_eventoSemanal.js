@@ -7,7 +7,37 @@
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
-const jwt = require('../middleware/middlewareJWT.js')
+
+const criadorDeDadosParaInsert = function (){
+    dadosEventoReal.nome = ""
+    dadosEventoReal.descricao = ""
+    dadosEventoReal.local = ""
+    dadosEventoReal.hora = ""
+    dadosEventoReal.id_paciente_cuidador = 0
+    dadosEventoReal.domingo = false
+    dadosEventoReal.segunda = false
+    dadosEventoReal.terca = false
+    dadosEventoReal.quarta = false
+    dadosEventoReal.quinta = false
+    dadosEventoReal.sexta = false
+    dadosEventoReal.sabado = false
+}
+
+criadorDeDadosParaInsert()
+
+const removerAcentos = function (string) {
+    const acentos = {
+        'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a',
+        'é': 'e', 'è': 'e', 'ê': 'e',
+        'í': 'i', 'ì': 'i', 'î': 'i',
+        'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o',
+        'ú': 'u', 'ù': 'u', 'û': 'u',
+        'ç': 'c'
+      };
+    
+    stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, equivalente => acentos[equivalente] || equivalente)
+    return (stringConcertada.toLowerCase()).replace(' ', '')
+}
 
 const evento_semanalDAO = require('../model/DAO/evento_semanalDAO.js')
 
@@ -82,26 +112,6 @@ const getEventoByCuidador = async function (idCuidador) {
     }
 }
 
-// '${dadosEvento.nome}',
-//         '${dadosEvento.descricao}',
-//         '${dadosEvento.local}',
-//         '${dadosEvento.hora}',
-//         ${dadosEvento.id_paciente_cuidador},
-//         1,
-//         ${dadosEvento.domingo},
-//         2,
-//         ${dadosEvento.segunda},
-//         3,
-//         ${dadosEvento.terca},
-//         4,
-//         ${dadosEvento.quarta},
-//         5,
-//         ${dadosEvento.quinta},
-//         6,
-//         ${dadosEvento.sexta},
-//         7,
-//         ${dadosEvento.domingo}
-
 const insertEvento = async function (dadosEvento) {
 
     if (
@@ -109,18 +119,22 @@ const insertEvento = async function (dadosEvento) {
         dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador) ||
-        dadosEvento.domingo === '' || dadosEvento.domingo === undefined || 
-        dadosEvento.segunda === '' || dadosEvento.segunda === undefined || 
-        dadosEvento.terca === '' || dadosEvento.terca === undefined || 
-        dadosEvento.quarta === '' || dadosEvento.quarta === undefined || 
-        dadosEvento.quinta === '' || dadosEvento.quinta === undefined || 
-        dadosEvento.sexta === '' || dadosEvento.sexta === undefined || 
-        dadosEvento.sabado === '' || dadosEvento.sabado === undefined 
+        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosEvento = await evento_semanalDAO.insertEvento(dadosEvento)
+        dadosEventoReal.nome = dadosEvento.nome
+        dadosEventoReal.descricao = dadosEvento.descricao
+        dadosEventoReal.local = dadosEvento.local
+        dadosEventoReal.hora = dadosEvento.hora
+        dadosEventoReal.id_paciente_cuidador = dadosEvento.id_paciente_cuidador
+        dadosEvento.dias.forEach(dia => {
+            escolhaCorrigida = removerAcentos(dia)
+
+            dadosEventoReal[`"${escolhaCorrigida}"`] = true
+        });
+
+        let resultDadosEvento = await evento_semanalDAO.insertEvento(dadosEventoReal)
 
         if (resultDadosEvento) {
             let novoEvento = await evento_semanalDAO.selectLastId()

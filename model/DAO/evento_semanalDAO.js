@@ -398,7 +398,7 @@ const insertEvento = async function (dadosEvento) {
         6,
         ${dadosEvento.sexta},
         7,
-        ${dadosEvento.domingo}
+        ${dadosEvento.sabado}
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)

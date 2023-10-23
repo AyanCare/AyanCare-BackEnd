@@ -63,7 +63,7 @@ const removerAcentos = function (string) {
         'ç': 'c'
       };
     
-    stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, match => acentos[match] || match)
+    stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, equivalente => acentos[equivalente] || equivalente)
     return (stringConcertada.toLowerCase()).replace(' ', '')
 }
 
