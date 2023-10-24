@@ -26,6 +26,8 @@ const controllerSintoma = require('./controller/controller_sintoma');
 const controllerExercicio = require('./controller/controller_exercicio.js');
 const controllerHumor = require('./controller/controller_humor.js');
 const controllerHistorico = require('./controller/controller_historicoMedico.js');
+const controllerConexao = require('./controller/controller_conexao.js');
+const controllerCor = require('./controller/controller_cor.js');
 const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
@@ -1775,6 +1777,112 @@ app.delete('/v1/ayan/historico/:id', cors(), async function (request, response) 
       response.status(resultDadosHistorico.status)
       response.json(resultDadosHistorico)
    }
+})
+
+/*************************************************************************************
+ * Objetibo: API de controle de Conexoes.
+ * Autor: Lohannes da Silva Costa
+ * Data: 24/10/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
+ app.get('/v1/ayan/conexoes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+   let idCuidador = request.query.idCuidador
+   let nomePaciente = request.query.nomePaciente
+   let nomeCuidador = request.query.nomeCuidador
+
+   if (idPaciente != undefined && nomeCuidador != undefined) {
+      let dadosConexao = await controllerConexao.getConexaoByPacienteAndNomeCuidador(idPaciente, nomeCuidador);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else if (idCuidador != undefined && nomePaciente != undefined){
+      let dadosConexao = await controllerConexao.getConexaoByCuidadorAndNomePaciente(idCuidador, nomePaciente);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else if (idCuidador != undefined){
+      let dadosConexao = await controllerConexao.getConexaoByCuidador(idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else if (idPaciente != undefined){
+      let dadosConexao = await controllerConexao.getConexaoByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosConexao = await controllerConexao.getConexoes();
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   }
+})
+
+//Get  por ID
+app.get('/v1/ayan/conexao/:id', cors(), async (request, response) => {
+   let idConexao = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosConexao = await controllerConexao.getConexaoByID(idConexao);
+
+   //Valida se existe registro
+   response.json(dadosConexao)
+   response.status(dadosConexao.status)
+})
+
+//Update 
+app.put('/v1/ayan/conexao/ativar/:id', cors(), async (request, response) => {
+      let id = request.params.id;
+
+      let resultDadosConexao = await controllerConexao.activateConnection(id)
+
+      response.status(resultDadosConexao.status)
+      response.json(resultDadosConexao)
+})
+
+app.put('/v1/ayan/conexao/desativar/:id', cors(), async (request, response) => {
+   let id = request.params.id;
+
+   let resultDadosConexao = await controllerConexao.deactivateConnection(id)
+
+   response.status(resultDadosConexao.status)
+   response.json(resultDadosConexao)
+})
+
+/**************************************************************************************
+* Objetibo: API de controle de Cores.
+* Autor: Lohannes da Silva Costa
+* Data: 24/10/2023
+* Versão: 1.0
+*************************************************************************************/
+
+/********************GET************************** */
+//Get all Perguntas 
+app.get('/v1/ayan/cores', cors(), async (request, response) => {
+let dadosCores = await controllerCor.getCores()
+
+response.json(dadosCores)
+response.status(dadosCores.status)
+})
+
+//Get by ID Pergunta
+app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
+let id = request.params.id;
+
+//Recebe os dados do controller
+let dadosCores = await controllerCor.getCorByID(id)
+
+//Valida se existe registro
+response.json(dadosCores)
+response.status(dadosCores.status)
 })
 
 app.listen(8080, function () {

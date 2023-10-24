@@ -23,6 +23,8 @@ const SUCCESS_UPDATED_ITEM = { status: 200, message: 'Item atualizado com sucess
 const SUCCESS_DELETED_ITEM = { status: 200, message: 'Item deletado com sucesso.' }
 const SUCCESS_ITEM_FOUND = { status: 200, message: 'Item encontrado sucesso.' }
 const SUCCESS_USERS_CONNECTED = { status: 200, message: 'Cuidador e Paciente conectado com sucesso.' }
+const SUCCESS_ACTIVATED_CONNECTION = { status: 200, message: 'Conexão ativada com sucesso.' }
+const SUCCESS_DEACTIVATED_CONNECTION = { status: 200, message: 'Conexão desativada com sucesso.' }
 
 module.exports = {
     ERROR_INTERNAL_SERVER,
@@ -39,5 +41,7 @@ module.exports = {
     ERROR_INVALID_TOKEN,
     ERROR_INVALID_PACIENTE,
     ERROR_INVALID_CUIDADOR,
-    SUCCESS_USERS_CONNECTED
+    SUCCESS_USERS_CONNECTED,
+    SUCCESS_ACTIVATED_CONNECTION,
+    SUCCESS_DEACTIVATED_CONNECTION
 }

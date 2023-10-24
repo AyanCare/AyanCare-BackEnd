@@ -18,27 +18,56 @@ const selectAllCategorias = async function (){
     let rsHumor = await prisma.$queryRawUnsafe(sql)
 
     if (rsHumor.length > 0) {
-        let humores = rsHumor
+        let humores = rsHumor.sort()
 
         sql = 'SELECT * FROM tbl_sintoma'
 
         let rsSintoma = await prisma.$queryRawUnsafe(sql)
 
         if (rsSintoma.length > 0) {
-            let sintomas = rsSintoma
+            let sintomas = rsSintoma.sort()
 
             sql = 'SELECT * FROM tbl_exercicio'
 
             let rsExercicio = await prisma.$queryRawUnsafe(sql)
 
             if (rsExercicio.length > 0) {
-                let exercicios = rsExercicio
+                let exercicios = rsExercicio.sort()
 
                 let opcoes = {}
 
-                opcoes.humores = humores
-                opcoes.sintomas = sintomas
-                opcoes.exercicios = exercicios
+                opcoes.humores = humores.sort(function (a, b) {
+                    if (a.resposta > b.resposta) {
+                      return 1;
+                    }
+                    if (a.resposta < b.resposta) {
+                      return -1;
+                    }
+                    
+                    return 0;
+                  });
+
+                opcoes.sintomas = sintomas.sort(function (a, b) {
+                    if (a.sintoma > b.sintoma) {
+                      return 1;
+                    }
+                    if (a.sintoma < b.sintoma) {
+                      return -1;
+                    }
+                    
+                    return 0;
+                  });
+
+                opcoes.exercicios = exercicios.sort(function (a, b) {
+                    if (a.exercicio > b.exercicio) {
+                      return 1;
+                    }
+                    if (a.exercicio < b.exercicio) {
+                      return -1;
+                    }
+                    
+                    return 0;
+                  });
 
                 return opcoes
             } else {
