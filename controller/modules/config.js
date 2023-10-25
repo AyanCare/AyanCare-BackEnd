@@ -15,6 +15,7 @@ const ERROR_UNAUTHORIZED_USER = { status: 401, message: 'Usuário não autorizad
 const ERROR_NOT_FOUND = { status: 404, message: 'O Item não foi encontrado.' }
 const ERROR_INVALID_CONTENT_TYPE = { status: 415, message: 'O tipo de mídia Content-Type da solicitação não é compatível com o servidor. Tipo Aceito: [application/json]' }
 const ERROR_INVALID_TOKEN = { status: 401, message: 'O token está errado ou expirou.' }
+const ERROR_TEST_ALREADY_DONE_TODAY = { status: 400, message: 'Um teste de humor já foi feito hoje.' }
 
 /***************************************** MENSAGENS DE SUCESSO *****************************************/
 const SUCCESS_REQUEST = { status: 200, message: 'Requisição realizada com sucesso.' }
@@ -43,5 +44,6 @@ module.exports = {
     ERROR_INVALID_CUIDADOR,
     SUCCESS_USERS_CONNECTED,
     SUCCESS_ACTIVATED_CONNECTION,
-    SUCCESS_DEACTIVATED_CONNECTION
+    SUCCESS_DEACTIVATED_CONNECTION,
+    ERROR_TEST_ALREADY_DONE_TODAY
 }

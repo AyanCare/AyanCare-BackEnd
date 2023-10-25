@@ -10,7 +10,7 @@ const messages = require('./modules/config.js')
 
 var dadosTesteReal = {}
 
-const criadorDeDadosParaInsert = function (){
+const criadorDeDadosParaInsert = function () {
     dadosTesteReal.observacao = ""
     dadosTesteReal.id_paciente = ""
     dadosTesteReal.caminhada = false
@@ -61,8 +61,8 @@ const removerAcentos = function (string) {
         'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o',
         'ú': 'u', 'ù': 'u', 'û': 'u',
         'ç': 'c'
-      };
-    
+    };
+
     stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, equivalente => acentos[equivalente] || equivalente)
     return (stringConcertada.toLowerCase()).replace(/[ ]/g, '')
 }
@@ -131,27 +131,33 @@ const insertTeste = async function (dadosTeste) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        dadosTesteReal.observacao = dadosTeste.observacao
-        dadosTesteReal.id_paciente = dadosTeste.id_paciente
-        dadosTeste.escolhas.forEach(escolha => {
-            escolhaCorrigida = removerAcentos(escolha)
+        let dateVerification = await teste_humorDAO.selectTesteByData(dadosTeste.data)
 
-            dadosTesteReal[`${escolhaCorrigida}`] = true
-        });
+        if (dateVerification > 0) {
+            dadosTesteReal.observacao = dadosTeste.observacao
+            dadosTesteReal.id_paciente = dadosTeste.id_paciente
+            dadosTeste.escolhas.forEach(escolha => {
+                escolhaCorrigida = removerAcentos(escolha)
 
-        let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)
+                dadosTesteReal[`${escolhaCorrigida}`] = true
+            });
 
-        if (resultDadosTeste) {
-            let ultimoPost = await teste_humorDAO.selectLastId()
-            let novoTeste = await teste_humorDAO.selectTesteById(ultimoPost.id_teste_humor)
+            let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)
 
-            let dadosTesteJSON = {}
-            dadosTesteJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosTesteJSON.teste = novoTeste
+            if (resultDadosTeste) {
+                let ultimoPost = await teste_humorDAO.selectLastId()
+                let novoTeste = await teste_humorDAO.selectTesteById(ultimoPost.id_teste_humor)
 
-            return dadosTesteJSON
+                let dadosTesteJSON = {}
+                dadosTesteJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosTesteJSON.teste = novoTeste
+
+                return dadosTesteJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
         } else {
-            return messages.ERROR_INTERNAL_SERVER
+            return messages.ERROR_TEST_ALREADY_DONE_TODAY
         }
     }
 }
@@ -172,7 +178,7 @@ const deleteTeste = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
     }
