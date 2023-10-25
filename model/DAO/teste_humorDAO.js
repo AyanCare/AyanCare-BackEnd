@@ -389,7 +389,7 @@ const selectLastId = async function () {
     on tbl_resposta_status.id_resposta = tbl_resposta.id
         inner join tbl_exercicio
     on tbl_exercicio_status.id_exercicio = tbl_exercicio.id
-    order by id desc limit 12`
+    order by id desc limit 1`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
