@@ -143,7 +143,7 @@ const insertTeste = async function (dadosTeste) {
 
         if (resultDadosTeste) {
             let ultimoPost = await teste_humorDAO.selectLastId()
-            let novoTeste = await teste_humorDAO.selectTesteById(ultimoPost.id)
+            let novoTeste = await teste_humorDAO.selectTesteById(ultimoPost.id_teste_humor)
 
             let dadosTesteJSON = {}
             dadosTesteJSON.status = messages.SUCCESS_CREATED_ITEM.status

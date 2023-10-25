@@ -61,7 +61,7 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
                 let testeJSON = {}
 
                 arrayIDEventos.push(teste.id)
-                testeJSON.id = teste.id
+                testeJSON.id_teste_humor = teste.id
                 testeJSON.paciente = teste.paciente
                 testeJSON.data = teste.data
                 testeJSON.horario = teste.horario
@@ -178,7 +178,7 @@ const selectTesteById = async function (idTeste) {
         let arrayIDStatus_Exercicio = []
 
         rsTeste.forEach(teste => {
-            testeJSON.id = teste.id
+            testeJSON.id_teste_humor = teste.id
             testeJSON.paciente = teste.paciente
             testeJSON.data = teste.data
             testeJSON.horario = teste.horario
@@ -290,7 +290,7 @@ const selectTesteByPaciente = async function (idPaciente) {
                 let testeJSON = {}
 
                 arrayIDEventos.push(teste.id)
-                testeJSON.id = teste.id
+                testeJSON.id_teste_humor = teste.id
                 testeJSON.paciente = teste.paciente
                 testeJSON.data = teste.data
                 testeJSON.horario = teste.horario
@@ -407,7 +407,7 @@ const selectLastId = async function () {
         let arrayIDStatus_Exercicio = []
 
         rsTeste.forEach(teste => {
-            testeJSON.id = teste.id
+            testeJSON.id_teste_humor = teste.id
             testeJSON.paciente = teste.paciente
             testeJSON.data = teste.data
             testeJSON.horario = teste.horario
@@ -465,6 +465,19 @@ const selectLastId = async function () {
         })
 
         return testeJSON
+    } else {
+        return false
+    }
+}
+
+const selectTesteByData = async function (data){
+    let sql = `select * from tbl_data_horario_observacao_humor where data = ${data}`
+
+    let rsTeste = await prisma.$queryRawUnsafe(sql)
+
+    //Valida se o BD retornou algum registro
+    if (rsTeste.length > 0) {
+        return rsTeste
     } else {
         return false
     }
@@ -550,8 +563,6 @@ const insertTeste = async function (dadosTeste) {
         ${dadosTeste.intestinopreso});`
     //talvez ID de endereco e de genero mudem de nome
 
-    console.log(sql);
-
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
     if (resultStatus) {
@@ -581,5 +592,6 @@ module.exports = {
     selectLastId,
     selectTesteById,
     selectTesteByPaciente,
-    deleteTeste
+    deleteTeste,
+    selectTesteByData
 }
