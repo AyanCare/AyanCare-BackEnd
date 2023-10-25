@@ -64,7 +64,7 @@ const removerAcentos = function (string) {
       };
     
     stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, equivalente => acentos[equivalente] || equivalente)
-    return (stringConcertada.toLowerCase()).replace(' ', '')
+    return (stringConcertada.toLowerCase()).replace(/[ ]/g, '')
 }
 
 const teste_humorDAO = require('../model/DAO/teste_humorDAO.js')
@@ -137,8 +137,6 @@ const insertTeste = async function (dadosTeste) {
             escolhaCorrigida = removerAcentos(escolha)
 
             dadosTesteReal[`${escolhaCorrigida}`] = true
-
-            console.log(`A palavra ficou assim: ${escolhaCorrigida}\nE ele deixou a sua chave como ${dadosTesteReal[`${escolhaCorrigida}`]}\n\n`)
         });
 
         let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)
