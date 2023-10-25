@@ -137,6 +137,8 @@ const insertTeste = async function (dadosTeste) {
             escolhaCorrigida = removerAcentos(escolha)
 
             dadosTesteReal[`${escolhaCorrigida}`] = true
+
+            console.log(`A palavra ficou assim: ${escolhaCorrigida}\nE ele deixou a sua chave como ${dadosTesteReal[`${escolhaCorrigida}`]}\n\n`)
         });
 
         let resultDadosTeste = await teste_humorDAO.insertTeste(dadosTesteReal)
