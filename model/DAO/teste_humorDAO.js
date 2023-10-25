@@ -68,21 +68,6 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
                 testeJSON.observacao = teste.observacao
 
                 rsTeste.forEach(repeticao => {
-                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
-                        let sintoma = {}
-
-                        arrayIDSintoma.push(repeticao.id_sintoma)
-                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
-
-                        sintoma.id = repeticao.id_sintoma
-                        sintoma.nome = repeticao.nome_sintoma
-                        sintoma.icone = repeticao.imagem_sintoma
-
-                        sintomas.push(sintoma)
-                    }
-                });
-
-                rsTeste.forEach(repeticao => {
                     if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1 && repeticao.id == teste.id) {
                         let humor = {}
 
@@ -94,6 +79,21 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
                         humor.icone = repeticao.imagem_humor
 
                         humores.push(humor)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
+                        let sintoma = {}
+
+                        arrayIDSintoma.push(repeticao.id_sintoma)
+                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                        sintoma.id = repeticao.id_sintoma
+                        sintoma.nome = repeticao.nome_sintoma
+                        sintoma.icone = repeticao.imagem_sintoma
+
+                        sintomas.push(sintoma)
                     }
                 });
 
@@ -112,8 +112,8 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
                     }
                 });
 
-                testeJSON.sintomas = sintomas
                 testeJSON.humores = humores
+                testeJSON.sintomas = sintomas
                 testeJSON.exercicios = exercicios
 
                 testes.push(testeJSON)
@@ -185,21 +185,6 @@ const selectTesteById = async function (idTeste) {
             testeJSON.observacao = teste.observacao
 
             rsTeste.forEach(repeticao => {
-                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
-                    let sintoma = {}
-
-                    arrayIDSintoma.push(repeticao.id_sintoma)
-                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
-
-                    sintoma.id = repeticao.id_sintoma
-                    sintoma.nome = repeticao.nome_sintoma
-                    sintoma.icone = repeticao.imagem_sintoma
-
-                    sintomas.push(sintoma)
-                }
-            });
-
-            rsTeste.forEach(repeticao => {
                 if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1) {
                     let humor = {}
 
@@ -211,6 +196,21 @@ const selectTesteById = async function (idTeste) {
                     humor.icone = repeticao.imagem_humor
 
                     humores.push(humor)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
+                    let sintoma = {}
+
+                    arrayIDSintoma.push(repeticao.id_sintoma)
+                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                    sintoma.id = repeticao.id_sintoma
+                    sintoma.nome = repeticao.nome_sintoma
+                    sintoma.icone = repeticao.imagem_sintoma
+
+                    sintomas.push(sintoma)
                 }
             });
 
@@ -229,8 +229,8 @@ const selectTesteById = async function (idTeste) {
                 }
             });
 
-            testeJSON.sintomas = sintomas
             testeJSON.humores = humores
+            testeJSON.sintomas = sintomas
             testeJSON.exercicios = exercicios
         })
 
@@ -297,21 +297,6 @@ const selectTesteByPaciente = async function (idPaciente) {
                 testeJSON.observacao = teste.observacao
 
                 rsTeste.forEach(repeticao => {
-                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
-                        let sintoma = {}
-
-                        arrayIDSintoma.push(repeticao.id_sintoma)
-                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
-
-                        sintoma.id = repeticao.id_sintoma
-                        sintoma.nome = repeticao.nome_sintoma
-                        sintoma.icone = repeticao.imagem_sintoma
-
-                        sintomas.push(sintoma)
-                    }
-                });
-
-                rsTeste.forEach(repeticao => {
                     if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1 && repeticao.id == teste.id) {
                         let humor = {}
 
@@ -323,6 +308,21 @@ const selectTesteByPaciente = async function (idPaciente) {
                         humor.icone = repeticao.imagem_humor
 
                         humores.push(humor)
+                    }
+                });
+
+                rsTeste.forEach(repeticao => {
+                    if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1 && repeticao.id == teste.id) {
+                        let sintoma = {}
+
+                        arrayIDSintoma.push(repeticao.id_sintoma)
+                        arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                        sintoma.id = repeticao.id_sintoma
+                        sintoma.nome = repeticao.nome_sintoma
+                        sintoma.icone = repeticao.imagem_sintoma
+
+                        sintomas.push(sintoma)
                     }
                 });
 
@@ -341,8 +341,8 @@ const selectTesteByPaciente = async function (idPaciente) {
                     }
                 });
 
-                testeJSON.sintomas = sintomas
                 testeJSON.humores = humores
+                testeJSON.sintomas = sintomas
                 testeJSON.exercicios = exercicios
 
                 testes.push(testeJSON)
@@ -414,21 +414,6 @@ const selectLastId = async function () {
             testeJSON.observacao = teste.observacao
 
             rsTeste.forEach(repeticao => {
-                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
-                    let sintoma = {}
-
-                    arrayIDSintoma.push(repeticao.id_sintoma)
-                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
-
-                    sintoma.id = repeticao.id_sintoma
-                    sintoma.nome = repeticao.nome_sintoma
-                    sintoma.icone = repeticao.imagem_sintoma
-
-                    sintomas.push(sintoma)
-                }
-            });
-
-            rsTeste.forEach(repeticao => {
                 if (!arrayIDHumor.includes(repeticao.id_humor) && !arrayIDStatus_Humor.includes(repeticao.id_statusHumor) && repeticao.status_humor === 1) {
                     let humor = {}
 
@@ -440,6 +425,21 @@ const selectLastId = async function () {
                     humor.icone = repeticao.imagem_humor
 
                     humores.push(humor)
+                }
+            });
+
+            rsTeste.forEach(repeticao => {
+                if (!arrayIDSintoma.includes(repeticao.id_sintoma) && !arrayIDStatus_Sintoma.includes(repeticao.id_statusSintoma) && repeticao.status_sintoma === 1) {
+                    let sintoma = {}
+
+                    arrayIDSintoma.push(repeticao.id_sintoma)
+                    arrayIDStatus_Sintoma.push(repeticao.id_statusSintoma)
+
+                    sintoma.id = repeticao.id_sintoma
+                    sintoma.nome = repeticao.nome_sintoma
+                    sintoma.icone = repeticao.imagem_sintoma
+
+                    sintomas.push(sintoma)
                 }
             });
 
@@ -458,8 +458,9 @@ const selectLastId = async function () {
                 }
             });
 
-            testeJSON.sintomas = sintomas
+
             testeJSON.humores = humores
+            testeJSON.sintomas = sintomas
             testeJSON.exercicios = exercicios
         })
 

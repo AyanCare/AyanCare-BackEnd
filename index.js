@@ -1885,6 +1885,6 @@ response.json(dadosCores)
 response.status(dadosCores.status)
 })
 
-app.listen(8080, function () {
+app.listen(8000, function () {
    ('Aguardando requisições na porta 8080...');
 })
