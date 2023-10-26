@@ -45,7 +45,7 @@ const selectCuidadorById = async function (idCuidador) {
     on tbl_genero.id = tbl_cuidador.id_genero
     inner join tbl_endereco_cuidador
     on tbl_endereco_cuidador.id = tbl_cuidador.id_endereco_cuidador
-    FROM tbl_cuidador where tbl_cuidador.id = ${idCuidador}`
+    where tbl_cuidador.id = ${idCuidador}`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
