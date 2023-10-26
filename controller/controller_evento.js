@@ -123,9 +123,11 @@ const insertEvento = async function (dadosEvento) {
                 await eventoDAO.insertCuidadorIntoEvento(dadosEvento.idCuidador, novoEvento.id)
             }
 
+            let eventoCriado = await eventoDAO.selectEventoById(novoEvento.id)
+
             let dadosEventoJSON = {}
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosEventoJSON.evento = novoEvento
+            dadosEventoJSON.evento = eventoCriado
 
             return dadosEventoJSON
         } else {
