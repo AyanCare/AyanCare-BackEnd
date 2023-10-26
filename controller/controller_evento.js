@@ -108,7 +108,7 @@ const insertEvento = async function (dadosEvento) {
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
         dadosEvento.dia == '' || dadosEvento.dia == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador)
+        dadosEvento.idPaciente == '' || dadosEvento.idPaciente == undefined || isNaN(dadosEvento.idPaciente)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -116,6 +116,12 @@ const insertEvento = async function (dadosEvento) {
 
         if (resultDadosEvento) {
             let novoEvento = await eventoDAO.selectLastId()
+
+            await eventoDAO.insertPacienteIntoEvento(dadosEvento.idPaciente, novoEvento.id)
+            
+            if (dadosEvento.idCuidador != undefined) {
+                await eventoDAO.insertCuidadorIntoEvento(dadosEvento.idCuidador, novoEvento.id)
+            }
 
             let dadosEventoJSON = {}
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
@@ -134,8 +140,7 @@ const updateEvento = async function (dadosEvento, id) {
         dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
         dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
-        dadosEvento.dia == '' || dadosEvento.dia == undefined ||
-        dadosEvento.id_paciente_cuidador == '' || dadosEvento.id_paciente_cuidador == undefined || isNaN(dadosEvento.id_paciente_cuidador)
+        dadosEvento.dia == '' || dadosEvento.dia == undefined
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {
