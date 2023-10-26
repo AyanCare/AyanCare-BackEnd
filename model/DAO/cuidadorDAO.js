@@ -44,7 +44,7 @@ const selectCuidadorById = async function (idCuidador) {
     on tbl_genero.id = tbl_cuidador.id_genero
     inner join tbl_endereco_cuidador
     on tbl_endereco_cuidador.id = tbl_cuidador.id_endereco_cuidador
-    FROM tbl_cuidador where id = ${idCuidador}`
+    FROM tbl_cuidador where tbl_cuidador.id = ${idCuidador}`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
@@ -61,7 +61,7 @@ const selectLastId = async function () {
     from tbl_cuidador
     inner join tbl_genero
     on tbl_genero.id = tbl_cuidador.id_genero
-    order by id desc limit 1;`
+    order by tbl_cuidador.id desc limit 1;`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
