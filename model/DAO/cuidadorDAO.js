@@ -17,6 +17,7 @@ const selectAllCuidadores = async function () {
     //scriptSQL para buscar todos os itens do BD
     let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
     tbl_genero.nome as genero
+    FROM tbl_cuidador
     inner join tbl_genero
     on tbl_genero.id = tbl_cuidador.id_genero`
 
