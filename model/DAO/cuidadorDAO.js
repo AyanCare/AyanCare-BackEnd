@@ -15,7 +15,10 @@ var prisma = new PrismaClient()
 const selectAllCuidadores = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = 'SELECT * FROM tbl_cuidador'
+    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
+    tbl_genero.nome as genero
+    inner join tbl_genero
+    on tbl_genero.id = tbl_cuidador.id_genero`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -30,8 +33,15 @@ const selectAllCuidadores = async function () {
 
 }
 
+	nome, data_nascimento, foto, genero, descrição_experiencia
+
 const selectCuidadorById = async function (idCuidador) {
-    let sql = `SELECT tbl_cuidador.*, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_formatada FROM tbl_cuidador where id = ${idCuidador}`
+    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
+    tbl_genero.nome as genero
+    from tbl_cuidador
+    inner join tbl_genero
+    on tbl_genero.id = tbl_cuidador.id_genero
+    FROM tbl_cuidador where id = ${idCuidador}`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
@@ -43,7 +53,12 @@ const selectCuidadorById = async function (idCuidador) {
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_cuidador order by id desc limit 1;'
+    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
+    tbl_genero.nome as genero
+    from tbl_cuidador
+    inner join tbl_genero
+    on tbl_genero.id = tbl_cuidador.id_genero
+    order by id desc limit 1;`
 
     let rsCuidador = await prisma.$queryRawUnsafe(sql)
 
