@@ -34,8 +34,6 @@ const selectAllCuidadores = async function () {
 
 }
 
-	nome, data_nascimento, foto, genero, descrição_experiencia
-
 const selectCuidadorById = async function (idCuidador) {
     let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
     tbl_genero.nome as genero,
