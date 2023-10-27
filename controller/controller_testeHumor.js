@@ -133,7 +133,7 @@ const insertTeste = async function (dadosTeste) {
     } else {
         let dateVerification = await teste_humorDAO.selectTesteByData(dadosTeste.data)
 
-        if (dateVerification > 0) {
+        if (dateVerification.length > 0) {
             dadosTesteReal.observacao = dadosTeste.observacao
             dadosTesteReal.id_paciente = dadosTeste.id_paciente
             dadosTeste.escolhas.forEach(escolha => {
