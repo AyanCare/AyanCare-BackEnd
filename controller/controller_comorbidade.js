@@ -56,7 +56,7 @@ const insertComorbidade = async function (dadosComorbidade) {
     } else {
         let verifyName = await comorbidadeDAO.selectComorbidadeByNomeAndPaciente(dadosComorbidade.nome, dadosComorbidade.id_paciente)
 
-        if (verifyName > 0) {
+        if (verifyName.length > 0) {
             return messages.ERROR_COMORBIDITY_ALREADY_EXISTS
         } else {
             let resultDadosComorbidade = await comorbidadeDAO.insertComorbidade(dadosComorbidade)

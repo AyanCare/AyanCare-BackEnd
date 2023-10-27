@@ -100,7 +100,7 @@ const insertCuidador = async function (dadosCuidador) {
     } else {
         let verifyEmail = await cuidadorDAO.selectCuidadorByEmail(dadosCuidador.email)
 
-        if (verifyEmail > 0) {
+        if (verifyEmail.length > 0) {
             return messages.ERROR_EMAIL_ALREADY_EXISTS
         } else {
             let resultDadosCuidador = await cuidadorDAO.insertCuidador(dadosCuidador)

@@ -86,7 +86,7 @@ const insertMedicamento = async function (dadosMedicamento) {
     } else {
         let verifyMedicine = await medicamentoDAO.selectMedicamentoByNameAndMedidaAndPaciente(dadosMedicamento.nome, dadosMedicamento.id_paciente, dadosMedicamento.id_medida)
 
-        if (verifyMedicine > 0) {
+        if (verifyMedicine.length > 0) {
             return messages.ERROR_MEDICINE_ALREADY_EXISTS
         } else {
             let resultDadosMedicamento = await medicamentoDAO.insertMedicamento(dadosMedicamento)

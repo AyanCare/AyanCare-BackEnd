@@ -57,7 +57,7 @@ const insertDoenca = async function (dadosDoenca) {
     } else {
         let verifyName = await doencaDAO.selectDoencaByNomeAndPaciente(dadosDoenca.nome, dadosDoenca.id_paciente)
 
-        if (verifyName > 0) {
+        if (verifyName.length > 0) {
             return messages.ERROR_DISEASE_ALREADY_EXISTS
         } else {
             let resultDadosDoenca = await doencaDAO.insertDoenca(dadosDoenca)

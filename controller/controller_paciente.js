@@ -150,7 +150,9 @@ const insertPaciente = async function (dadosPaciente) {
     } else {
         let verificateEmail = await pacienteDAO.selectPacienteByEmail(dadosPaciente.email)
 
-        if (verificateEmail > 0) {
+        console.log(verificateEmail);
+
+        if (verificateEmail.length > 0) {
             return messages.ERROR_EMAIL_ALREADY_EXISTS
         } else {
            let resultDadosPaciente = await pacienteDAO.insertPaciente(dadosPaciente)
