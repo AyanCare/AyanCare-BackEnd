@@ -60,9 +60,8 @@ const selectContatoByIdPaciente = async function (idContato) {
 const selectContatoByNomeAndNumeroAndPaciente = async function (nomeContato, numeroContato, idPaciente) {
     let sql = `select * from tbl_contato
 		inner join tbl_paciente
-	on tbl_paciente.id = tbl_contato.id
-    where tbl_paciente.id = ${idPaciente} and tbl_contato.nome like '${nomeContato}' and tbl_contato.numero = '${numeroContato}';`
-
+	on tbl_paciente.id = tbl_contato.id_paciente
+    where tbl_paciente.id = ${idPaciente} and tbl_contato.nome like '${nomeContato}' and tbl_contato.numero = '${numeroContato}'`
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
     if (rsContato.length > 0) {
