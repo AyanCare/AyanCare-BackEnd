@@ -14,8 +14,8 @@ var prisma = new PrismaClient()
 
 /********************Selects************************** */
 
-const selectAllContatos = async function() {
-    
+const selectAllContatos = async function () {
+
 
     //ScriptSQL para buscar todos os itens do BD
     let sql = `SELECT * tbl_contato.* tbl_status.nome as statusTodosContato
@@ -45,9 +45,23 @@ const selectContatoByIdPaciente = async function (idContato) {
         inner join tbl_paciente 
     on tbl_paciente.id = tbl_contato.id_paciente
         inner join tbl_status_contato
-    on 
-        tbl_contato.id_status_contato = tbl_status_contato.id
+    on tbl_contato.id_status_contato = tbl_status_contato.id
     where tbl_paciente.id = ${idContato};`
+
+    let rsContato = await prisma.$queryRawUnsafe(sql)
+
+    if (rsContato.length > 0) {
+        return rsContato
+    } else {
+        return false
+    }
+}
+
+const selectContatoByNomeAndNumeroAndPaciente = async function (nomeContato, numeroContato, idPaciente) {
+    let sql = `select * from tbl_contato
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_contato.id
+    where tbl_paciente.id = ${idPaciente} and tbl_contato.nome like '${nomeContato}' and tbl_contato.numero = '${numeroContato}';`
 
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
@@ -94,7 +108,7 @@ const selectLastId = async function () {
 
 /***********************Inserte***************************** */
 
-const insertContato = async function( dadosContato){
+const insertContato = async function (dadosContato) {
 
     let sql = `insert into tbl_contato(
         nome,
@@ -125,7 +139,7 @@ const insertContato = async function( dadosContato){
 
 /****************** Updates  *********************************** */
 
-const updateContato = async function(dadosContato){
+const updateContato = async function (dadosContato) {
 
     let sql = `update tbl_contato set 
             nome   = '${dadosContato.nome}',
@@ -133,13 +147,13 @@ const updateContato = async function(dadosContato){
             local  = '${dadosContato.local}'
         where id = ${dadosContato.id} `
     let resultStatus = await prisma.$executeRawUnsafe(sql)
-    
-    if (resultStatus){
+
+    if (resultStatus) {
         return true
-    }else{
+    } else {
         return false
     }
-    
+
 }
 
 
@@ -165,5 +179,6 @@ module.exports = {
     selectAllContatos,
     selectContatoById,
     selectLastId,
-    selectContatoByIdPaciente
+    selectContatoByIdPaciente,
+    selectContatoByNomeAndNumeroAndPaciente
 }

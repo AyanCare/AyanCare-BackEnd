@@ -54,27 +54,33 @@ const insertComorbidade = async function (dadosComorbidade) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosComorbidade = await comorbidadeDAO.insertComorbidade(dadosComorbidade)
+        let verifyName = await comorbidadeDAO.selectComorbidadeByNomeAndPaciente(dadosComorbidade.nome, dadosComorbidade.id_paciente)
 
-        if (resultDadosComorbidade) {
-            let novoComorbidade = await comorbidadeDAO.selectLastId()
+        if (verifyName > 0) {
+            return messages.ERROR_COMORBIDITY_ALREADY_EXISTS
+        } else {
+            let resultDadosComorbidade = await comorbidadeDAO.insertComorbidade(dadosComorbidade)
 
-            dadosComorbidade.id_comorbidade = novoComorbidade.id
-
-            let resultDadosComorbidadePaciente = await comorbidadeDAO.insertComorbidadeIntoPaciente(dadosComorbidade)
-
-            if (resultDadosComorbidadePaciente) {
-                let dadosComorbidadeJSON = {}
-
-                dadosComorbidadeJSON.status = messages.SUCCESS_CREATED_ITEM.status
-                dadosComorbidadeJSON.comorbidade = novoComorbidade
-
-                return dadosComorbidadeJSON
+            if (resultDadosComorbidade) {
+                let novoComorbidade = await comorbidadeDAO.selectLastId()
+    
+                dadosComorbidade.id_comorbidade = novoComorbidade.id
+    
+                let resultDadosComorbidadePaciente = await comorbidadeDAO.insertComorbidadeIntoPaciente(dadosComorbidade)
+    
+                if (resultDadosComorbidadePaciente) {
+                    let dadosComorbidadeJSON = {}
+    
+                    dadosComorbidadeJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                    dadosComorbidadeJSON.comorbidade = novoComorbidade
+    
+                    return dadosComorbidadeJSON
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
             } else {
                 return messages.ERROR_INTERNAL_SERVER
-            }
-        } else {
-            return messages.ERROR_INTERNAL_SERVER
+            } 
         }
     }
 }

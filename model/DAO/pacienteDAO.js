@@ -197,7 +197,7 @@ const selectPacienteByEmail = async function (emailPaciente) {
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
     if (rsPaciente.length > 0) {
-        return rsPaciente[0]
+        return rsPaciente
     } else {
         return false
     }
@@ -255,10 +255,6 @@ const selectCuidadoresConectados = async function (idPaciente){
 }
 
 /************************** Inserts ******************************/
-
-/****************************************************************************************
-VVVVV Depois fazer o tratamento para caso exista um paciente com dados parecidos!!! VVVVV
-****************************************************************************************/
 const insertPaciente = async function (dadosPaciente) {
     let sql = `insert into tbl_paciente(
         nome,

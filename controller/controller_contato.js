@@ -9,13 +9,13 @@
 //Importe de arquivo 
 const message = require('./modules/config.js')
 
-const contatoDAO = require ('../model/DAO/contatoDAO.js');
+const contatoDAO = require('../model/DAO/contatoDAO.js');
 const { JsonWebTokenError } = require('jsonwebtoken');
 
 
 
 /*******************Todos do Contatos ****************************** */
-const getContatos = async function (){
+const getContatos = async function () {
 
     let dadosContatoJSON = {};
 
@@ -23,12 +23,12 @@ const getContatos = async function (){
 
 
     if (dadosContatos) {
-        
+
         dadosContatoJSON.status = message.SUCCESS_REQUEST.status
         dadosContatoJSON.quantidade = dadosContatos.length
         dadosContatoJSON.contatos = dadosContatos
         return dadosContatoJSON
-    }else{
+    } else {
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -36,16 +36,16 @@ const getContatos = async function (){
 
 /******************GET**************************************** */
 
-const getContatoByID = async function (id){
+const getContatoByID = async function (id) {
 
     (id);
 
-    if (id == '' || isNaN(id)|| id == undefined) {
+    if (id == '' || isNaN(id) || id == undefined) {
         return message.ERROR_INVALID_ID
-    }else{
+    } else {
         let dadosContato = await contatoDAO.selectContatoById(id)
         let dadosContatoJSON = {}
-        
+
         if (dadosContato) {
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
             dadosContatoJSON.quantidade = dadosContato.length
@@ -58,21 +58,21 @@ const getContatoByID = async function (id){
     }
 }
 
-const getContatoByIDPaciente = async function(id_paciente){
+const getContatoByIDPaciente = async function (id_paciente) {
 
-    if (id_paciente == ''|| id_paciente == undefined) {
+    if (id_paciente == '' || id_paciente == undefined) {
         return message.ERROR_REQUIRED_FIELDS
-    }else{
+    } else {
         let resultDadosContatoPaciente = await contatoDAO.selectContatoByIdPaciente(id_paciente)
         let dadosContatoJSON = {}
-        
-        if(resultDadosContatoPaciente){
+
+        if (resultDadosContatoPaciente) {
             dadosContatoJSON.status = message.SUCCESS_REQUEST.status
             dadosContatoJSON.quantidade = resultDadosContatoPaciente.length
             dadosContatoJSON.contatos = resultDadosContatoPaciente
 
             return dadosContatoJSON
-        }else{
+        } else {
             let erro = message.ERROR_NOT_FOUND
             erro.contato = []
 
@@ -85,70 +85,76 @@ const getContatoByIDPaciente = async function(id_paciente){
 }
 
 /******************Insert**************************************** */
-const insertContato = async function (dadosContato){
+const insertContato = async function (dadosContato) {
 
     if (
 
-        dadosContato.nome == ''  || dadosContato.nome == undefined || dadosContato.nome   > 200 || 
-        dadosContato.numero == ''  || dadosContato.numero     ==   undefined || dadosContato.numero.length > 20  ||
-        dadosContato.local ==   undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
+        dadosContato.nome == '' || dadosContato.nome == undefined || dadosContato.nome > 200 ||
+        dadosContato.numero == '' || dadosContato.numero == undefined || dadosContato.numero.length > 20 ||
+        dadosContato.local == undefined || dadosContato.local > 255 ||
+        dadosContato.id_status_contato == '' || dadosContato.id_status_contato == undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
-    }else{
-        let resultDadosContato = await contatoDAO.insertContato(dadosContato)
+    } else {
+        let verifyContact = await contatoDAO.selectContatoByNomeAndNumeroAndPaciente(dadosContato.nome, dadosContato.numero, dadosContato.id_paciente)
 
-        if (resultDadosContato) {
-            let novoContato = await contatoDAO.selectLastId()
-
-            let dadosContatoJSON = {}
-
-            dadosContatoJSON.status = message.SUCCESS_CREATED_ITEM.status
-            dadosContatoJSON.contato = novoContato
-
-            return dadosContatoJSON
+        if (verifyContact > 0) {
+            return message.ERROR_CONTACT_ALREADY_EXISTS
         } else {
-            return message.ERROR_INTERNAL_SERVER
-            
+            let resultDadosContato = await contatoDAO.insertContato(dadosContato)
+
+            if (resultDadosContato) {
+                let novoContato = await contatoDAO.selectLastId()
+
+                let dadosContatoJSON = {}
+
+                dadosContatoJSON.status = message.SUCCESS_CREATED_ITEM.status
+                dadosContatoJSON.contato = novoContato
+
+                return dadosContatoJSON
+            } else {
+                return message.ERROR_INTERNAL_SERVER
+
+            }
         }
     }
 }
 
 /******************UpdateContato**************************** */
 
-const updateContato = async function (dadosContato, id){
+const updateContato = async function (dadosContato, id) {
 
     if (
 
-        dadosContato.nome      == ''  || dadosContato.nome          ==   undefined || dadosContato.nome   > 200 || 
-        dadosContato.numero    == ''  || dadosContato.numero        ==   undefined || dadosContato.numero.length > 20  ||
-        dadosContato.local         ==  undefined || dadosContato.local  > 255 ||
-        dadosContato.id_status_contato == ''    || dadosContato.id_status_contato  ==   undefined ||
+        dadosContato.nome == '' || dadosContato.nome == undefined || dadosContato.nome > 200 ||
+        dadosContato.numero == '' || dadosContato.numero == undefined || dadosContato.numero.length > 20 ||
+        dadosContato.local == undefined || dadosContato.local > 255 ||
+        dadosContato.id_status_contato == '' || dadosContato.id_status_contato == undefined ||
         dadosContato.id_paciente == '' || dadosContato.id_paciente == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
-    }else if (id == null || id == undefined || isNaN(id)){
+    } else if (id == null || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
-    }else{
+    } else {
         dadosContato.id = id
 
         let atualizacaoContato = await contatoDAO.selectContatoById(id)
 
-        if(atualizacaoContato){
+        if (atualizacaoContato) {
             let resultDadosContato = await contatoDAO.updateContato(dadosContato)
 
-            if(resultDadosContato){
+            if (resultDadosContato) {
                 let dadosContatoJSON = {}
                 dadosContatoJSON.status = message.SUCCESS_UPDATED_ITEM.status
                 dadosContatoJSON.message = message.SUCCESS_UPDATED_ITEM.message
                 dadosContatoJSON.contato = dadosContato
 
                 return dadosContatoJSON
-            }else{
+            } else {
                 return message.ERROR_INTERNAL_SERVER
             }
-        }else{
+        } else {
             return message.ERROR_INVALID_ID
         }
     }
@@ -156,14 +162,14 @@ const updateContato = async function (dadosContato, id){
 
 /******************deletarContato**************************** */
 
-const deletarContato = async function (id){
-    if(id == null || id == undefined || id == ''|| isNaN(id)){
+const deletarContato = async function (id) {
+    if (id == null || id == undefined || id == '' || isNaN(id)) {
         return message.ERROR_INVALID_ID
-    }else {
+    } else {
         let searchIdContato = await contatoDAO.selectContatoById(id)
 
         if (searchIdContato) {
-            let dadosContato =await contatoDAO.deleteContato(id)
+            let dadosContato = await contatoDAO.deleteContato(id)
             if (dadosContato) {
                 return message.SUCCESS_DELETED_ITEM
             } else {
@@ -171,7 +177,7 @@ const deletarContato = async function (id){
             }
         } else {
             return message.ERROR_INVALID_ID
-            
+
         }
     }
 }

@@ -30,6 +30,23 @@ const selectAllComorbidades = async function () {
 
 }
 
+const selectComorbidadeByNomeAndPaciente = async function (nomeComorbidade, idPaciente) {
+    let sql = `select * from tbl_comorbidade_paciente
+        inner join tbl_comorbidade
+    on tbl_comorbidade_paciente.id_comorbidade = tbl_comorbidade.id
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_comorbidade_paciente.id_paciente
+    where tbl_comorbidade.nome like '${nomeComorbidade}' and tbl_paciente.id = ${idPaciente}`
+
+    let rsComorbidade = await prisma.$queryRawUnsafe(sql)
+
+    if (rsComorbidade.length > 0) {
+        return rsComorbidade
+    } else {
+        return false
+    }
+}
+
 const selectComorbidadeById = async function (idComorbidade) {
     let sql = `SELECT * FROM tbl_comorbidade where id = ${idComorbidade}`
 
@@ -57,10 +74,6 @@ const selectLastId = async function () {
 }
 
 /************************** Inserts ******************************/
-
-/****************************************************************************************
-VVVVV Depois fazer o tratamento para caso exista um comorbidade com dados parecidos!!! VVVVV
-****************************************************************************************/
 const insertComorbidade = async function (dadosComorbidade) {
     let sql = `insert into tbl_comorbidade(
         nome
@@ -145,5 +158,6 @@ module.exports = {
     selectLastId,
     updateComorbidade,
     deleteComorbidadeOfPaciente,
-    insertComorbidadeIntoPaciente
+    insertComorbidadeIntoPaciente,
+    selectComorbidadeByNomeAndPaciente
 }

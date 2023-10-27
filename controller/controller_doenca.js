@@ -55,27 +55,33 @@ const insertDoenca = async function (dadosDoenca) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosDoenca = await doencaDAO.insertDoenca(dadosDoenca)
+        let verifyName = await doencaDAO.selectDoencaByNomeAndPaciente(dadosDoenca.nome, dadosDoenca.id_paciente)
 
-        if (resultDadosDoenca) {
-            let novoDoenca = await doencaDAO.selectLastId()
+        if (verifyName > 0) {
+            return messages.ERROR_DISEASE_ALREADY_EXISTS
+        } else {
+            let resultDadosDoenca = await doencaDAO.insertDoenca(dadosDoenca)
 
-            dadosDoenca.id_doenca = novoDoenca.id
+            if (resultDadosDoenca) {
+                let novoDoenca = await doencaDAO.selectLastId()
 
-            let resultDadosDoencaPaciente = await doencaDAO.insertDoencaIntoPaciente(dadosDoenca)
+                dadosDoenca.id_doenca = novoDoenca.id
 
-            if (resultDadosDoencaPaciente) {
-                let dadosDoencaJSON = {}
+                let resultDadosDoencaPaciente = await doencaDAO.insertDoencaIntoPaciente(dadosDoenca)
 
-                dadosDoencaJSON.status = messages.SUCCESS_CREATED_ITEM.status
-                dadosDoencaJSON.doenca = novoDoenca
+                if (resultDadosDoencaPaciente) {
+                    let dadosDoencaJSON = {}
 
-                return dadosDoencaJSON
+                    dadosDoencaJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                    dadosDoencaJSON.doenca = novoDoenca
+
+                    return dadosDoencaJSON
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else {
-            return messages.ERROR_INTERNAL_SERVER
         }
     }
 }

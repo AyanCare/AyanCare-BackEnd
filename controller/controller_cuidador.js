@@ -98,22 +98,28 @@ const insertCuidador = async function (dadosCuidador) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosCuidador = await cuidadorDAO.insertCuidador(dadosCuidador)
+        let verifyEmail = await cuidadorDAO.selectCuidadorByEmail(dadosCuidador.email)
 
-        if (resultDadosCuidador) {
-            let novoCuidador = await cuidadorDAO.selectLastId()
-
-            let dadosCuidadorJSON = {}
-
-            let tokenUser = await jwt.createJWT(novoCuidador.id)
-
-            dadosCuidadorJSON.token = tokenUser
-            dadosCuidadorJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosCuidadorJSON.cuidador = novoCuidador
-
-            return dadosCuidadorJSON
+        if (verifyEmail > 0) {
+            return messages.ERROR_EMAIL_ALREADY_EXISTS
         } else {
-            return messages.ERROR_INTERNAL_SERVER
+            let resultDadosCuidador = await cuidadorDAO.insertCuidador(dadosCuidador)
+
+            if (resultDadosCuidador) {
+                let novoCuidador = await cuidadorDAO.selectLastId()
+    
+                let dadosCuidadorJSON = {}
+    
+                let tokenUser = await jwt.createJWT(novoCuidador.id)
+    
+                dadosCuidadorJSON.token = tokenUser
+                dadosCuidadorJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosCuidadorJSON.cuidador = novoCuidador
+    
+                return dadosCuidadorJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }   
         }
     }
 }

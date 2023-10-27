@@ -148,21 +148,27 @@ const insertPaciente = async function (dadosPaciente) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosPaciente = await pacienteDAO.insertPaciente(dadosPaciente)
+        let verificateEmail = await pacienteDAO.selectPacienteByEmail(dadosPaciente.email)
 
-        if (resultDadosPaciente) {
-            let novoPaciente = await pacienteDAO.selectLastId()
-
-            let dadosPacienteJSON = {}
-            let tokenUser = await jwt.createJWT(novoPaciente.id)
-
-            dadosPacienteJSON.token = tokenUser
-            dadosPacienteJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosPacienteJSON.paciente = novoPaciente
-
-            return dadosPacienteJSON
+        if (verificateEmail > 0) {
+            return messages.ERROR_EMAIL_ALREADY_EXISTS
         } else {
-            return messages.ERROR_INTERNAL_SERVER
+           let resultDadosPaciente = await pacienteDAO.insertPaciente(dadosPaciente)
+
+            if (resultDadosPaciente) {
+                let novoPaciente = await pacienteDAO.selectLastId()
+    
+                let dadosPacienteJSON = {}
+                let tokenUser = await jwt.createJWT(novoPaciente.id)
+    
+                dadosPacienteJSON.token = tokenUser
+                dadosPacienteJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosPacienteJSON.paciente = novoPaciente
+    
+                return dadosPacienteJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }   
         }
     }
 }

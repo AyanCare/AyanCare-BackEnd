@@ -47,8 +47,8 @@ const getMedicamentoByID = async function (id) {
     }
 }
 
-const getMedicamentosByPaciente = async function (idPaciente){
-    if(idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)){
+const getMedicamentosByPaciente = async function (idPaciente) {
+    if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
     } else {
         let dadosMedicamentoJSON = {};
@@ -84,18 +84,24 @@ const insertMedicamento = async function (dadosMedicamento) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosMedicamento = await medicamentoDAO.insertMedicamento(dadosMedicamento)
+        let verifyMedicine = await medicamentoDAO.selectMedicamentoByNameAndMedidaAndPaciente(dadosMedicamento.nome, dadosMedicamento.id_paciente, dadosMedicamento.id_medida)
 
-        if (resultDadosMedicamento) {
-            let novoMedicamento = await medicamentoDAO.selectLastId()
-
-            let dadosMedicamentoJSON = {}
-            dadosMedicamentoJSON.status = messages.SUCCESS_CREATED_ITEM.status
-            dadosMedicamentoJSON.medicamento = novoMedicamento
-
-            return dadosMedicamentoJSON
+        if (verifyMedicine > 0) {
+            return messages.ERROR_MEDICINE_ALREADY_EXISTS
         } else {
-            return messages.ERROR_INTERNAL_SERVER
+            let resultDadosMedicamento = await medicamentoDAO.insertMedicamento(dadosMedicamento)
+
+            if (resultDadosMedicamento) {
+                let novoMedicamento = await medicamentoDAO.selectLastId()
+
+                let dadosMedicamentoJSON = {}
+                dadosMedicamentoJSON.status = messages.SUCCESS_CREATED_ITEM.status
+                dadosMedicamentoJSON.medicamento = novoMedicamento
+
+                return dadosMedicamentoJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
         }
     }
 }
@@ -153,7 +159,7 @@ const deleteMedicamento = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
 

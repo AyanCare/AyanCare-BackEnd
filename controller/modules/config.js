@@ -16,6 +16,11 @@ const ERROR_NOT_FOUND = { status: 404, message: 'O Item não foi encontrado.' }
 const ERROR_INVALID_CONTENT_TYPE = { status: 415, message: 'O tipo de mídia Content-Type da solicitação não é compatível com o servidor. Tipo Aceito: [application/json]' }
 const ERROR_INVALID_TOKEN = { status: 401, message: 'O token está errado ou expirou.' }
 const ERROR_TEST_ALREADY_DONE_TODAY = { status: 400, message: 'Um teste de humor já foi feito hoje.' }
+const ERROR_EMAIL_ALREADY_EXISTS = {status: 409, message: 'Um usuário com esse email já está cadastrado.'}
+const ERROR_DISEASE_ALREADY_EXISTS = {status: 409, message: 'Você já registrou uma doença com o mesmo nome.'}
+const ERROR_COMORBIDITY_ALREADY_EXISTS = {status: 409, message: 'Você já registrou uma comorbidade com o mesmo nome.'}
+const ERROR_MEDICINE_ALREADY_EXISTS = {status: 409, message: 'Você já registrou um medicamento com o mesmo nome.'}
+const ERROR_CONTACT_ALREADY_EXISTS = {status: 409, message: 'Você já registrou um contato com o mesmo nome.'}
 
 /***************************************** MENSAGENS DE SUCESSO *****************************************/
 const SUCCESS_REQUEST = { status: 200, message: 'Requisição realizada com sucesso.' }
@@ -45,5 +50,10 @@ module.exports = {
     SUCCESS_USERS_CONNECTED,
     SUCCESS_ACTIVATED_CONNECTION,
     SUCCESS_DEACTIVATED_CONNECTION,
-    ERROR_TEST_ALREADY_DONE_TODAY
+    ERROR_TEST_ALREADY_DONE_TODAY,
+    ERROR_COMORBIDITY_ALREADY_EXISTS,
+    ERROR_CONTACT_ALREADY_EXISTS,
+    ERROR_DISEASE_ALREADY_EXISTS,
+    ERROR_EMAIL_ALREADY_EXISTS,
+    ERROR_MEDICINE_ALREADY_EXISTS
 }
