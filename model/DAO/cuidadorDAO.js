@@ -55,7 +55,7 @@ const selectCuidadorById = async function (idCuidador) {
 }
 
 const selectLastId = async function () {
-    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
+    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.email as email, tbl_cuidador.senha as senha, tbl_cuidador.descricao_experiencia,
     tbl_genero.nome as genero
     from tbl_cuidador
     inner join tbl_genero
