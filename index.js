@@ -1262,7 +1262,7 @@ app.put('/v1/ayan/cuidador', validateJWT, cors(), bodyParserJSON, async (request
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') 
+   if (String(contentType).toLowerCase() == 'application/json') {
 
       let dadosBody = request.body
 
