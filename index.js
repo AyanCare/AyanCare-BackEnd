@@ -1258,18 +1258,15 @@ app.post('/v1/ayan/cuidador', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Update Cuidador
-app.put('/v1/ayan/cuidador/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/cuidador', validateJWT, cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
-   if (String(contentType).toLowerCase() == 'application/json') {
-
-      let id = request.params.id;
-
+   if (String(contentType).toLowerCase() == 'application/json') 
 
       let dadosBody = request.body
 
-      let resultDadosCuidador = await controllerCuidador.updateCuidador(dadosBody, id)
+      let resultDadosCuidador = await controllerCuidador.updateCuidador(dadosBody)
 
       response.status(resultDadosCuidador.status)
       response.json(resultDadosCuidador)
