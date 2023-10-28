@@ -124,18 +124,17 @@ const insertCuidador = async function (dadosCuidador) {
     }
 }
 
-const updateCuidador = async function (dadosCuidador, id) {
+const updateCuidador = async function (dadosCuidador) {
     if (
         dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
         dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id == null || id == undefined || isNaN(id)) {
+    } else if (dadosCuidador.id == null || dadosCuidador.id == undefined || isNaN(dadosCuidador.id)) {
         return messages.ERROR_INVALID_ID
     } else {
-        dadosCuidador.id = id
 
-        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(id)
+        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(dadosCuidador.id)
 
         if (atualizacaoCuidador) {
             let resultDadosCuidador = await cuidadorDAO.updateCuidador(dadosCuidador)
