@@ -63,9 +63,9 @@ const insertStatusContato = async function(dadosStatusContato){
 
         if(resultadoStatusContato){
         let dadosStatusContatoJSON = {}
-        
+
+        dadosStatusContatoJSON.message = messages.SUCCESS_REQUEST
         dadosStatusContatoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosStatusContatoJSON.status = dadosStatusContato
             return dadosStatusContatoJSON
         }else{
         
