@@ -867,7 +867,7 @@ app.get('/v1/ayan/status-contato/:id', cors(), async (request, response) => {
 })
 
 //insert
-app.post('/v1/ayan/status-contato', cors(), async (request, response) => {
+app.post('/v1/ayan/status-contato', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
