@@ -52,8 +52,28 @@ const selectStatusContatoById = async function(id){
 
 }
 
+const insertStatusContati = async function(dadoStatus){
+
+    //scriptSQL para buscar todos os itens do BD
+    let sql = `insert into tbl_status_contato (nome) values ('${dadosStatus.nome}')`
+
+    //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
+    //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
+    let rsStatusContato = await prisma.$executeRawUnsafe(sql)
+
+    //Valida se o BD retornou algum registro
+    if (rsStatusContato) {
+        return true
+    } else {
+        return false
+    } 
+
+
+}
+
 
 module.exports = {
     selectAllStatusContato,
-    selectStatusContatoById
+    selectStatusContatoById,
+    insertStatusContato
 }
