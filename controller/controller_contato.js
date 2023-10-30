@@ -84,6 +84,33 @@ const getContatoByIDPaciente = async function (id_paciente) {
 
 }
 
+const getResponsavelByIDPaciente = async function (id_paciente) {
+
+    if (id_paciente == '' || id_paciente == undefined) {
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+        let resultDadosContatoPaciente = await contatoDAO.selectResponsavelByIdPaciente(id_paciente)
+        let dadosContatoJSON = {}
+
+        if (resultDadosContatoPaciente) {
+            dadosContatoJSON.status = message.SUCCESS_REQUEST.status
+            dadosContatoJSON.quantidade = resultDadosContatoPaciente.length
+            dadosContatoJSON.contatos = resultDadosContatoPaciente
+
+            return dadosContatoJSON
+        } else {
+            let erro = message.ERROR_NOT_FOUND
+            erro.contato = []
+
+            return erro
+        }
+
+    }
+
+
+}
+
+
 /******************Insert**************************************** */
 const insertContato = async function (dadosContato) {
 
@@ -189,5 +216,6 @@ module.exports = {
     getContatoByIDPaciente,
     insertContato,
     updateContato,
-    deletarContato
+    deletarContato,
+    getResponsavelByIDPaciente
 }
