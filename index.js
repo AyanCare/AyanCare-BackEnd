@@ -737,18 +737,9 @@ app.get('/v1/ayan/humor/:id', cors(), async (request, response) => {
 
 //Todos os Contatos
 app.get('/v1/ayan/contatos', cors(), async (request, response) => {
-
-   let idContato = request.query.idContato;
    let idContatoPaciente = request.query.idContatoPaciente;
 
-   if (idContato != undefined) {
-
-      let dadosContato = await controllerContato.getContatoByID(idContato)
-
-      response.json(dadosContato)
-      response.status(dadosContato.status)
-
-   } else if (idContatoPaciente != undefined) {
+   if (idContatoPaciente != undefined) {
 
       let dadosContatoPaciente = await controllerContato.getContatoByIDPaciente(idContatoPaciente)
 
