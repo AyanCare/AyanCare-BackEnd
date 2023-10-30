@@ -339,16 +339,8 @@ const selectTesteByPaciente = async function (idPaciente) {
 
                         exercicios.push(exercicio)
                     }
-          let sql = `select * from tbl_data_horario_observacao_humor where data = ${data}`
-
-    let rsTeste = await prisma.$queryRawUnsafe(sql)
-
-    //Valida se o BD retornou algum registro
-    if (rsTeste.length > 0) {
-        return rsTeste
-    } else {
-        return false
-                }      });
+          
+                });
 
                 testeJSON.humores = humores
                 testeJSON.sintomas = sintomas
@@ -385,7 +377,7 @@ const selectLastId = async function () {
 }
 
 const selectTesteByData = async function (data){
-    let sql = `select * from tbl_data_horario_observacao_humor where data = ${data}`
+    let sql = `select * from tbl_data_horario_observacao_humor where data = '${data}'`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 
@@ -474,8 +466,7 @@ const insertTeste = async function (dadosTeste) {
         17, 
         ${dadosTeste.dornobraco}, 
         19, 
-        ${dadosTeste.intestinopreso});`
-    //talvez ID de endereco e de genero mudem de nome
+        ${dadosTeste.intestinopreso})`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
