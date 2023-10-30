@@ -774,8 +774,18 @@ app.get('/v2/ayan/contato/:id', cors(), async (request, response) => {
    response.status(dadosContato.status)
 })
 
+//Responsáveis do paciente
+app.get('/v1/ayan/contato/responsavel/:id', cors(), async (request, response) => {
+   let idPaciente = request.params.id
+
+   let dadosContato = await controllerContato.getResponsavelByIDPaciente(idPaciente)
+
+   response.json(dadosContato)
+   response.status(dadosContato.status)
+})
+
 // Inserir Contato
-app.post('/v1/ayan/contato/', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/contato', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
