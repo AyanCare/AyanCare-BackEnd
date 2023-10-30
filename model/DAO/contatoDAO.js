@@ -57,6 +57,24 @@ const selectContatoByIdPaciente = async function (idContato) {
     }
 }
 
+const selectResponsavelByIdPaciente = async function (idPaciente) {
+    let sql = `select tbl_contato.*, tbl_status_contato.nome as status
+    FROM tbl_contato
+        inner join tbl_paciente 
+    on tbl_paciente.id = tbl_contato.id_paciente
+        inner join tbl_status_contato
+    on tbl_contato.id_status_contato = tbl_status_contato.id
+    where tbl_status_contato.nome = 'Responsável' and tbl_paciente.id = ${idContato};`
+
+    let rsContato = await prisma.$queryRawUnsafe(sql)
+
+    if (rsContato.length > 0) {
+        return rsContato
+    } else {
+        return false
+    }
+}
+
 const selectContatoByNomeAndNumeroAndPaciente = async function (nomeContato, numeroContato, idPaciente) {
     let sql = `select * from tbl_contato
 		inner join tbl_paciente
@@ -179,5 +197,6 @@ module.exports = {
     selectContatoById,
     selectLastId,
     selectContatoByIdPaciente,
-    selectContatoByNomeAndNumeroAndPaciente
+    selectContatoByNomeAndNumeroAndPaciente,
+    selectResponsavelByIdPaciente
 }
