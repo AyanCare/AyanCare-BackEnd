@@ -57,15 +57,20 @@ const insertStatusContato = async function(dadosStatusContato){
     if (
         dadosStatusContato.nome == ''|| dadosStatusContato.nome == undefined|| dadosStatusContato.nome > 45
     ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
         let resultadoStatusContato = await status_contatoDAO.insertStatusContato(dadosStatusContato)
+
+        if(resultadoStatusContato){
         let dadosStatusContatoJSON = {}
         
         dadosStatusContatoJSON.status = messages.SUCCESS_REQUEST.status
             dadosStatusContatoJSON.status = dadosStatusContato
             return dadosStatusContatoJSON
-    }else{
+        }else{
         
-        return messages.ERROR_NOT_FOUND
+        return messages.ERROR_INTERNAL_SERVER
+        }
     }
 
 
