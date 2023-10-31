@@ -35,7 +35,7 @@ const selectAllCuidadores = async function () {
 }
 
 const selectCuidadorById = async function (idCuidador) {
-    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
+    let sql = `SELECT tbl_cuidador.id as id, tbl_cuidador.nome as nome, tbl_cuidador.email as email, tbl_cuidador.foto as foto, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_cuidador.descricao_experiencia,
     tbl_genero.nome as genero,
     tbl_endereco_cuidador.id as endereco_id, tbl_endereco_cuidador.logradouro as logradouro, tbl_endereco_cuidador.bairro as bairro, tbl_endereco_cuidador.numero as numero, tbl_endereco_cuidador.cep as cep, tbl_endereco_cuidador.cidade as cidade, tbl_endereco_cuidador.estado as estado
     from tbl_cuidador
@@ -71,6 +71,18 @@ const selectLastId = async function () {
     }
     
     //retorna o ultimo id inserido no banco de dados
+}
+
+const selectToken = async function (token) {
+    let sql = `SELECT tbl_cuidador.id, tbl_cuidador.nome, tbl_cuidador.token, tbl_cuidador.tokenExpiration as validade from tbl_cuidador where token = '${token}'`
+
+    let rsCuidador = await prisma.$queryRawUnsafe(sql)
+
+    if (rsCuidador.length > 0) {
+        return rsCuidador[0]
+    } else {
+        return false
+    }
 }
 
 const selectCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
@@ -166,6 +178,36 @@ const updateSenhaCuidador = async function (dadosCuidador) {
     }
 }
 
+const updateToken = async function (dadosCuidador) {
+    let sql = `update tbl_cuidador set
+            token = '${dadosCuidador.token}',
+            tokenExpiration = '${dadosCuidador.expiration}'
+        where id = ${dadosCuidador.id}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
+const deleteToken = async function (idCuidador) {
+    let sql = `update tbl_cuidador set
+            token = null,
+            tokenExpiration = null
+        where id = ${idCuidador}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 const updateEnderecoCuidador = async function (idEndereco, idCuidador) {
     let sql = `update tbl_cuidador set
             id_endereco_cuidador = '${idEndereco}'
@@ -203,5 +245,8 @@ module.exports = {
     updateCuidador,
     updateSenhaCuidador,
     selectCuidadorByEmail,
-    updateEnderecoCuidador
+    updateEnderecoCuidador,
+    updateToken,
+    selectToken,
+    deleteToken
 }
