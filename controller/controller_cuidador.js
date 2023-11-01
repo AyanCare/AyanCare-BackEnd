@@ -10,7 +10,7 @@ const messages = require('./modules/config.js')
 const emailSender = require('../middleware/middlewareEmail.js')
 const crypto = require("crypto");
 const moment = require("moment");
-
+const jwt = require('../middleware/middlewareJWT.js')
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
 
 const getCuidadores = async function () {
