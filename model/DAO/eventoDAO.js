@@ -41,7 +41,7 @@ const selectEventoById = async function (idEvento) {
     let sql = `select tbl_evento_unitario.id as id,
     tbl_paciente.nome as paciente,
     tbl_cuidador.nome as cuidador,
-    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia
+    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes_unico
 from tbl_evento_unitario
     left join tbl_paciente_evento_unitario
 on tbl_evento_unitario.id = tbl_paciente_evento_unitario.id_evento_unitario
@@ -149,13 +149,15 @@ const insertEvento = async function (dadosEvento) {
         descricao,
         local,
         dia,
-        horario
+        horario,
+        id_cor
     ) values (
         '${dadosEvento.nome}',
         '${dadosEvento.descricao}',
         '${dadosEvento.local}',
         '${dadosEvento.dia}',
-        '${dadosEvento.hora}'
+        '${dadosEvento.hora}',
+        ${dadosEvento.id_cor}
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
