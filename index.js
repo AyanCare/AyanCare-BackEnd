@@ -73,24 +73,19 @@ app.get('/v1/ayan/esqueciasenha/criartoken', cors(), async (request, response) =
    if (resultDadosPaciente.status == 200) {
       resultDadosPaciente.tipo = "Paciente"
 
-      let tokenUser = await jwt.createJWTRecover(resultDadosPaciente.paciente[0].id)
-      resultDadosPaciente.token = tokenUser
-      await jwtRecover.sendEmail(email, tokenUser)
+      let tokenCreation = await controllerPaciente.updateTokenPaciente(resultDadosPaciente.paciente.id)
 
-      response.status(resultDadosPaciente.status)
-      response.json(resultDadosPaciente)
+      response.status(tokenCreation.status)
+      response.json(tokenCreation)
    } else {
       let resultDadosCuidador = await controllerCuidador.getCuidadorByEmail(email)
 
       if (resultDadosCuidador.status == 200) {
-         resultDadosPaciente.tipo = "Cuidador"
 
-         let tokenUser = await jwt.createJWTRecover(resultDadosCuidador.cuidador[0].id)
-         resultDadosCuidador.token = tokenUser
-         await jwtRecover.sendEmail(email, tokenUser)
+         let tokenCreation = await controllerCuidador.updateTokenCuidador(resultDadosCuidador.cuidador.id)
 
-         response.status(resultDadosCuidador.status)
-         response.json(resultDadosCuidador)
+         response.status(tokenCreation.status)
+         response.json(tokenCreation)
       } else {
          response.status(resultDadosCuidador.status)
          response.json(resultDadosCuidador)
@@ -100,21 +95,31 @@ app.get('/v1/ayan/esqueciasenha/criartoken', cors(), async (request, response) =
 
 //validar token para relembrar a senha
 app.get('/v1/ayan/esqueciasenha/validar', cors(), async (request, response) => {
+   let email = request.query.email
    let token = request.query.token
 
-   const autenticarToken = await jwt.validateJWT(token)
+   let resultDadosPaciente = await controllerPaciente.getPacienteByEmail(email)
 
-   if (autenticarToken) {
-      let responseJSON = {}
+   if (resultDadosPaciente.status == 200) {
+      resultDadosPaciente.tipo = "Paciente"
 
-      responseJSON.status = messages.SUCCESS_REQUEST.status
-      responseJSON.result = autenticarToken
+      let tokenValidation = await controllerPaciente.validateToken(token)
 
-      response.status(responseJSON.status)
-      response.json(responseJSON)
+      response.status(tokenValidation.status)
+      response.json(tokenValidation)
    } else {
-      response.status(messages.ERROR_INVALID_TOKEN.status)
-      response.json(messages.ERROR_INVALID_TOKEN)
+      let resultDadosCuidador = await controllerCuidador.getCuidadorByEmail(email)
+
+      if (resultDadosCuidador.status == 200) {
+
+         let tokenValidation = await controllerCuidador.validateToken(token)
+
+         response.status(tokenValidation.status)
+         response.json(tokenValidation)
+      } else {
+         response.status(resultDadosCuidador.status)
+         response.json(resultDadosCuidador)
+      }
    }
 })
 
@@ -1784,7 +1789,7 @@ app.delete('/v1/ayan/historico/:id', cors(), async function (request, response) 
  * Versão: 1.0
  *************************************************************************************/
 
- app.get('/v1/ayan/conexoes', cors(), async (request, response) => {
+app.get('/v1/ayan/conexoes', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idCuidador = request.query.idCuidador
    let nomePaciente = request.query.nomePaciente
@@ -1796,19 +1801,19 @@ app.delete('/v1/ayan/historico/:id', cors(), async function (request, response) 
       //Valida se existe registro
       response.json(dadosConexao)
       response.status(dadosConexao.status)
-   } else if (idCuidador != undefined && nomePaciente != undefined){
+   } else if (idCuidador != undefined && nomePaciente != undefined) {
       let dadosConexao = await controllerConexao.getConexaoByCuidadorAndNomePaciente(idCuidador, nomePaciente);
 
       //Valida se existe registro
       response.json(dadosConexao)
       response.status(dadosConexao.status)
-   } else if (idCuidador != undefined){
+   } else if (idCuidador != undefined) {
       let dadosConexao = await controllerConexao.getConexaoByCuidador(idCuidador);
 
       //Valida se existe registro
       response.json(dadosConexao)
       response.status(dadosConexao.status)
-   } else if (idPaciente != undefined){
+   } else if (idPaciente != undefined) {
       let dadosConexao = await controllerConexao.getConexaoByPaciente(idPaciente);
 
       //Valida se existe registro
@@ -1838,12 +1843,12 @@ app.get('/v1/ayan/conexao/:id', cors(), async (request, response) => {
 
 //Update 
 app.put('/v1/ayan/conexao/ativar/:id', cors(), async (request, response) => {
-      let id = request.params.id;
+   let id = request.params.id;
 
-      let resultDadosConexao = await controllerConexao.activateConnection(id)
+   let resultDadosConexao = await controllerConexao.activateConnection(id)
 
-      response.status(resultDadosConexao.status)
-      response.json(resultDadosConexao)
+   response.status(resultDadosConexao.status)
+   response.json(resultDadosConexao)
 })
 
 app.put('/v1/ayan/conexao/desativar/:id', cors(), async (request, response) => {
@@ -1865,22 +1870,22 @@ app.put('/v1/ayan/conexao/desativar/:id', cors(), async (request, response) => {
 /********************GET************************** */
 //Get all Perguntas 
 app.get('/v1/ayan/cores', cors(), async (request, response) => {
-let dadosCores = await controllerCor.getCores()
+   let dadosCores = await controllerCor.getCores()
 
-response.json(dadosCores)
-response.status(dadosCores.status)
+   response.json(dadosCores)
+   response.status(dadosCores.status)
 })
 
 //Get by ID Pergunta
 app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
-let id = request.params.id;
+   let id = request.params.id;
 
-//Recebe os dados do controller
-let dadosCores = await controllerCor.getCorByID(id)
+   //Recebe os dados do controller
+   let dadosCores = await controllerCor.getCorByID(id)
 
-//Valida se existe registro
-response.json(dadosCores)
-response.status(dadosCores.status)
+   //Valida se existe registro
+   response.json(dadosCores)
+   response.status(dadosCores.status)
 })
 
 app.listen(8080, function () {

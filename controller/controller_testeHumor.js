@@ -131,10 +131,10 @@ const insertTeste = async function (dadosTeste) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-        let dateVerification = await teste_humorDAO.selectTesteByData(dadosTeste.data)
+        let dateVerification = await teste_humorDAO.selectTesteByData(dadosTeste.data, dadosTeste.id_paciente)
 
         console.log(dadosTeste.data);
-        
+
 
         if (dateVerification == false) {
             dadosTesteReal.observacao = dadosTeste.observacao

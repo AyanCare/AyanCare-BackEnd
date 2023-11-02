@@ -376,8 +376,11 @@ const selectLastId = async function () {
     }
 }
 
-const selectTesteByData = async function (data){
-    let sql = `select * from tbl_data_horario_observacao_humor where data = '${data}'`
+const selectTesteByData = async function (data, idPaciente){
+    let sql = `select * from tbl_data_horario_observacao_humor
+        inner join tbl_humor_resposta_exercicio_sintoma_paciente
+    on tbl_humor_resposta_exercicio_sintoma_paciente.id_data_horario_observacao_humor = tbl_data_horario_observacao_humor.id
+    where data = '${data}' and id_paciente = ${idPaciente}`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 

@@ -18,7 +18,7 @@ const selectAllContatos = async function () {
 
 
     //ScriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_contato.*, tbl_status.nome as statusContato
+    let sql = `SELECT tbl_contato.*, tbl_status_contato.nome as status
     FROM tbl_contato
     inner join tbl_status_contato
     on tbl_contato.id_status_contato = tbl_status_contato.id`
@@ -161,7 +161,7 @@ const updateContato = async function (dadosContato) {
             nome   = '${dadosContato.nome}',
             numero = '${dadosContato.numero}',
             local  = '${dadosContato.local}'
-        where id = ${dadosContato.id} `
+        where id = ${dadosContato.id}`
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
     if (resultStatus) {
@@ -171,8 +171,6 @@ const updateContato = async function (dadosContato) {
     }
 
 }
-
-
 
 /************************** Deletes ******************************/
 const deleteContato = async function (idContato) {

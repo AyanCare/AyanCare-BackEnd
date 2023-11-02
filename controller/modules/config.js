@@ -12,9 +12,10 @@ const ERROR_INVALID_ID = { status: 400, message: 'O ID informado não é válido
 const ERROR_INVALID_PACIENTE = { status: 400, message: 'O Paciente não é válido ou não foi encaminhado.' }
 const ERROR_INVALID_CUIDADOR = { status: 400, message: 'O Cuidador informado não é válido ou não foi encaminhado.' }
 const ERROR_UNAUTHORIZED_USER = { status: 401, message: 'Usuário não autorizado a fazer requisições.' }
+const ERROR_UNAUTHORIZED_PASSWORD_RECOVER = { status: 401, message: 'O token enviado está vencido.' }
 const ERROR_NOT_FOUND = { status: 404, message: 'O Item não foi encontrado.' }
 const ERROR_INVALID_CONTENT_TYPE = { status: 415, message: 'O tipo de mídia Content-Type da solicitação não é compatível com o servidor. Tipo Aceito: [application/json]' }
-const ERROR_INVALID_TOKEN = { status: 401, message: 'O token está errado ou expirou.' }
+const ERROR_INVALID_TOKEN = { status: 401, message: 'O token está errado.'}
 const ERROR_TEST_ALREADY_DONE_TODAY = { status: 400, message: 'Um teste de humor já foi feito hoje.' }
 const ERROR_EMAIL_ALREADY_EXISTS = {status: 409, message: 'Um usuário com esse email já está cadastrado.'}
 const ERROR_DISEASE_ALREADY_EXISTS = {status: 409, message: 'Você já registrou uma doença com o mesmo nome.'}
@@ -28,9 +29,10 @@ const SUCCESS_CREATED_ITEM = { status: 201, message: 'Item criado com sucesso.' 
 const SUCCESS_UPDATED_ITEM = { status: 200, message: 'Item atualizado com sucesso.' }
 const SUCCESS_DELETED_ITEM = { status: 200, message: 'Item deletado com sucesso.' }
 const SUCCESS_ITEM_FOUND = { status: 200, message: 'Item encontrado sucesso.' }
-const SUCCESS_USERS_CONNECTED = { status: 200, message: 'Cuidador e Paciente conectado com sucesso.' }
+const SUCCESS_USERS_CONNECTED = { status: 201, message: 'Cuidador e Paciente conectado com sucesso.' }
 const SUCCESS_ACTIVATED_CONNECTION = { status: 200, message: 'Conexão ativada com sucesso.' }
 const SUCCESS_DEACTIVATED_CONNECTION = { status: 200, message: 'Conexão desativada com sucesso.' }
+const SUCCESS_VALID_TOKEN = { status: 202, message: 'O token enviado é válido.' }
 
 module.exports = {
     ERROR_INTERNAL_SERVER,
@@ -55,5 +57,7 @@ module.exports = {
     ERROR_CONTACT_ALREADY_EXISTS,
     ERROR_DISEASE_ALREADY_EXISTS,
     ERROR_EMAIL_ALREADY_EXISTS,
-    ERROR_MEDICINE_ALREADY_EXISTS
+    ERROR_MEDICINE_ALREADY_EXISTS,
+    ERROR_UNAUTHORIZED_PASSWORD_RECOVER,
+    SUCCESS_VALID_TOKEN
 }

@@ -7,8 +7,10 @@
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
+const emailSender = require('../middleware/middlewareEmail.js')
+const crypto = require("crypto");
+const moment = require("moment");
 const jwt = require('../middleware/middlewareJWT.js')
-
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
 
 const getCuidadores = async function () {
@@ -50,7 +52,7 @@ const getCuidadorByID = async function (id) {
 const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
     if (dadosCuidador.email == '' || dadosCuidador.email == undefined ||
         dadosCuidador.senha == '' || dadosCuidador.senha == undefined
-        ){
+    ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
@@ -58,7 +60,7 @@ const getCuidadorByEmailAndSenhaAndNome = async function (dadosCuidador) {
 
         let rsCuidador = await cuidadorDAO.selectCuidadorByEmailAndSenhaAndNome(dadosCuidador)
 
-        if (rsCuidador ) {
+        if (rsCuidador) {
             let tokenUser = await jwt.createJWT(rsCuidador.id)
             dadosCuidadorJSON.token = tokenUser
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
@@ -81,10 +83,32 @@ const getCuidadorByEmail = async function (emailCuidador) {
 
         if (rsCuidador) {
             dadosCuidadorJSON.status = messages.SUCCESS_REQUEST.status
-            dadosCuidadorJSON.cuidador = rsCuidador
+            dadosCuidadorJSON.cuidador = rsCuidador[0]
             return dadosCuidadorJSON
         } else {
             return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const validateToken = async function (token) {
+    if (token == '' || token == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+        let rsCuidador = await cuidadorDAO.selectToken(token)
+
+        if (rsCuidador) {
+            let now = moment().format('DD/MM/YYYY HH:mm')
+
+            if (now > moment(rsCuidador.validade).add(3, 'hours').format('DD/MM/YYYY HH:mm')) {
+                return messages.ERROR_UNAUTHORIZED_PASSWORD_RECOVER
+            } else {
+                await cuidadorDAO.deleteToken(rsCuidador.id)
+
+                return messages.SUCCESS_VALID_TOKEN
+            }
+        } else {
+            return messages.ERROR_INVALID_TOKEN
         }
     }
 }
@@ -94,7 +118,7 @@ const insertCuidador = async function (dadosCuidador) {
     if (
         dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
         dadosCuidador.email == '' || dadosCuidador.email == undefined || dadosCuidador.email > 255 ||
-        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255 
+        dadosCuidador.senha == '' || dadosCuidador.senha == undefined || dadosCuidador.senha > 255
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -107,19 +131,19 @@ const insertCuidador = async function (dadosCuidador) {
 
             if (resultDadosCuidador) {
                 let novoCuidador = await cuidadorDAO.selectLastId()
-    
+
                 let dadosCuidadorJSON = {}
-    
+
                 let tokenUser = await jwt.createJWT(novoCuidador.id)
-    
+
                 dadosCuidadorJSON.token = tokenUser
                 dadosCuidadorJSON.status = messages.SUCCESS_CREATED_ITEM.status
                 dadosCuidadorJSON.cuidador = novoCuidador
-    
+
                 return dadosCuidadorJSON
             } else {
                 return messages.ERROR_INTERNAL_SERVER
-            }   
+            }
         }
     }
 }
@@ -127,7 +151,7 @@ const insertCuidador = async function (dadosCuidador) {
 const updateCuidador = async function (dadosCuidador) {
     if (
         dadosCuidador.nome == '' || dadosCuidador.nome == undefined || dadosCuidador.nome > 200 ||
-        dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined 
+        dadosCuidador.data_nascimento == '' || dadosCuidador.data_nascimento == undefined
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (dadosCuidador.id == null || dadosCuidador.id == undefined || isNaN(dadosCuidador.id)) {
@@ -188,6 +212,42 @@ const updateSenhaCuidador = async function (dadosCuidador, id) {
     }
 }
 
+const updateTokenCuidador = async function (idCuidador) {
+    if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+
+        let atualizacaoCuidador = await cuidadorDAO.selectCuidadorById(idCuidador)
+
+        if (atualizacaoCuidador) {
+            let token = crypto.randomBytes(3).toString('hex')
+            let expiration = moment().add(10, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+
+            let dadosCuidador = {
+                "id": idCuidador,
+                "token": token,
+                "expiration": expiration
+            }
+
+            let resultDadosCuidador = await cuidadorDAO.updateToken(dadosCuidador)
+
+            if (resultDadosCuidador) {
+                emailSender.enviarEmail(dadosCuidador.token, atualizacaoCuidador.email)
+
+                let dadosCuidadorJSON = {}
+                dadosCuidadorJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                dadosCuidadorJSON.message = messages.SUCCESS_UPDATED_ITEM.message
+
+                return dadosCuidadorJSON
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
+        } else {
+            return messages.ERROR_INVALID_ID
+        }
+    }
+}
+
 const deleteCuidador = async function (id) {
 
     if (id == null || id == undefined || id == '' || isNaN(id)) {
@@ -204,7 +264,7 @@ const deleteCuidador = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
     }
@@ -219,5 +279,7 @@ module.exports = {
     getCuidadorByID,
     getCuidadorByEmailAndSenhaAndNome,
     getCuidadorByEmail,
-    updateSenhaCuidador
+    updateSenhaCuidador,
+    updateTokenCuidador,
+    validateToken
 }

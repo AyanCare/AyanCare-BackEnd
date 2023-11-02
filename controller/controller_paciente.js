@@ -7,12 +7,14 @@
 
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
-
+const jwt = require('../middleware/middlewareJWT.js')
 const pacienteDAO = require('../model/DAO/pacienteDAO.js')
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
-const jwt = require('../middleware/middlewareJWT.js')
+const emailSender = require('../middleware/middlewareEmail.js')
+const crypto = require("crypto");
+const moment = require("moment");
 
-const definirGenero = function (genero){
+const definirGenero = function (genero) {
     let generoTraduzido = genero.toLowerCase();
 
     switch (generoTraduzido) {
@@ -36,6 +38,7 @@ const definirGenero = function (genero){
 }
 
 const getPacientes = async function () {
+
     let dadosPacientesJSON = {}
 
     let dadosPacientes = await pacienteDAO.selectAllPacientes()
@@ -72,8 +75,8 @@ const getPacienteByID = async function (id) {
 
 const getPacienteByEmailAndSenhaAndNome = async function (dadosPaciente) {
     if (dadosPaciente.email == '' || dadosPaciente.email == undefined ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined 
-       ) {
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined
+    ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
@@ -105,7 +108,7 @@ const getPacienteByEmail = async function (emailPaciente) {
 
         if (rsPaciente) {
             dadosPacienteJSON.status = messages.SUCCESS_REQUEST.status
-            dadosPacienteJSON.paciente = rsPaciente
+            dadosPacienteJSON.paciente = rsPaciente[0]
             return dadosPacienteJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -113,8 +116,30 @@ const getPacienteByEmail = async function (emailPaciente) {
     }
 }
 
+const validateToken = async function (token) {
+    if (token == '' || token == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+        let rsPaciente = await pacienteDAO.selectToken(token)
+
+        if (rsPaciente) {
+            let now = moment().format()
+
+            if (now > moment(rsPaciente.validade).add(3, 'hours').format('DD/MM/YYYY HH:mm')) {
+                return messages.ERROR_UNAUTHORIZED_PASSWORD_RECOVER
+            } else {
+                await pacienteDAO.deleteToken(rsPaciente.id)
+
+                return messages.SUCCESS_VALID_TOKEN
+            }
+        } else {
+            return messages.ERROR_INVALID_TOKEN
+        }
+    }
+}
+
 const getCuidadoresConectados = async function (idPaciente) {
-    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente) ) {
+    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
     } else {
         let dadosPacienteJSON = {}
@@ -131,20 +156,12 @@ const getCuidadoresConectados = async function (idPaciente) {
     }
 }
 
-// '${dadosPaciente.nome}',
-//         '${dadosPaciente.data_nascimento}',
-//         '${dadosPaciente.email}',
-//         '${dadosPaciente.senha}',
-//         '${dadosPaciente.cpf}',
-//         ${dadosPaciente.id_endereco_paciente},
-//         ${dadosPaciente.id_genero}
-
 const insertPaciente = async function (dadosPaciente) {
 
     if (
         dadosPaciente.nome == '' || dadosPaciente.nome == undefined || dadosPaciente.nome > 80 ||
         dadosPaciente.email == '' || dadosPaciente.email == undefined || dadosPaciente.email > 255 ||
-        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255 
+        dadosPaciente.senha == '' || dadosPaciente.senha == undefined || dadosPaciente.senha > 255
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
@@ -155,28 +172,28 @@ const insertPaciente = async function (dadosPaciente) {
         if (verificateEmail.length > 0) {
             return messages.ERROR_EMAIL_ALREADY_EXISTS
         } else {
-           let resultDadosPaciente = await pacienteDAO.insertPaciente(dadosPaciente)
+            let resultDadosPaciente = await pacienteDAO.insertPaciente(dadosPaciente)
 
             if (resultDadosPaciente) {
                 let novoPaciente = await pacienteDAO.selectLastId()
-    
+
                 let dadosPacienteJSON = {}
                 let tokenUser = await jwt.createJWT(novoPaciente.id)
-    
+
                 dadosPacienteJSON.token = tokenUser
                 dadosPacienteJSON.status = messages.SUCCESS_CREATED_ITEM.status
                 dadosPacienteJSON.paciente = novoPaciente
-    
+
                 return dadosPacienteJSON
             } else {
                 return messages.ERROR_INTERNAL_SERVER
-            }   
+            }
         }
     }
 }
 
-const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
-    if(
+const connectCuidadorAndPaciente = async function (idPaciente, idCuidador) {
+    if (
         idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)
     ) {
         return messages.ERROR_INVALID_PACIENTE
@@ -185,13 +202,13 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador){
     } else {
         let validatePaciente = await pacienteDAO.selectPacienteById(idPaciente)
 
-        if(validatePaciente){
+        if (validatePaciente) {
             let validateCuidador = await cuidadorDAO.selectCuidadorById(idCuidador)
 
             if (validateCuidador) {
                 let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
 
-                if (connectionResult){
+                if (connectionResult) {
                     return messages.SUCCESS_USERS_CONNECTED
                 } else {
                     return messages.ERROR_INTERNAL_SERVER
@@ -271,6 +288,46 @@ const updateSenhaPaciente = async function (dadosPaciente, id) {
     }
 }
 
+const updateTokenPaciente = async function (idPaciente) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+
+        let atualizacaoPaciente = await pacienteDAO.selectPacienteById(idPaciente)
+
+        if (atualizacaoPaciente) {
+            let token = crypto.randomBytes(3).toString('hex')
+            let expiration = moment().add(10, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+
+            let dadosPaciente = {
+                "id": idPaciente,
+                "token": token,
+                "expiration": expiration
+            }
+
+            let resultDadosPaciente = await pacienteDAO.updateToken(dadosPaciente)
+
+            if (resultDadosPaciente) {
+                let emailEnviado = emailSender.enviarEmail(dadosPaciente.token, atualizacaoPaciente.email)
+
+                if (emailEnviado) {
+                    let dadosPacienteJSON = {}
+                    dadosPacienteJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                    dadosPacienteJSON.message = messages.SUCCESS_UPDATED_ITEM.message
+
+                    return dadosPacienteJSON
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
+            } else {
+                return messages.ERROR_INTERNAL_SERVER
+            }
+        } else {
+            return messages.ERROR_INVALID_ID
+        }
+    }
+}
+
 const deletePaciente = async function (id) {
 
     if (id == null || id == undefined || id == '' || isNaN(id)) {
@@ -287,7 +344,7 @@ const deletePaciente = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else{
+        } else {
             return messages.ERROR_INVALID_ID
         }
 
@@ -306,5 +363,7 @@ module.exports = {
     getPacienteByEmail,
     updateSenhaPaciente,
     connectCuidadorAndPaciente,
-    getCuidadoresConectados
+    getCuidadoresConectados,
+    updateTokenPaciente,
+    validateToken
 }

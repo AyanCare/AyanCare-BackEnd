@@ -254,6 +254,18 @@ const selectCuidadoresConectados = async function (idPaciente){
     }
 }
 
+const selectToken = async function (token) {
+    let sql = `SELECT tbl_paciente.id, tbl_paciente.nome, tbl_paciente.token, tbl_paciente.tokenExpiration as validade from tbl_paciente where token = '${token}'`
+
+    let rsPaciente = await prisma.$queryRawUnsafe(sql)
+
+    if (rsPaciente.length > 0) {
+        return rsPaciente[0]
+    } else {
+        return false
+    }
+}
+
 /************************** Inserts ******************************/
 const insertPaciente = async function (dadosPaciente) {
     let sql = `insert into tbl_paciente(
@@ -359,6 +371,36 @@ const updateEnderecoPaciente = async function (idEndereco, idPaciente) {
     }
 } 
 
+const updateToken = async function (dadosPaciente) {
+    let sql = `update tbl_paciente set
+            token = '${dadosPaciente.token}',
+            tokenExpiration = '${dadosPaciente.expiration}'
+        where id = ${dadosPaciente.id}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
+const deleteToken = async function (idPaciente) {
+    let sql = `update tbl_paciente set
+            token = null,
+            tokenExpiration = null
+        where id = ${idPaciente}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true
+    } else {
+        return false
+    }
+} 
+
 /************************** Deletes ******************************/
 const deletePaciente = async function (idPaciente) {
     let sql = `delete from tbl_paciente where id = ${idPaciente}`
@@ -384,5 +426,8 @@ module.exports = {
     selectPacienteByEmail,
     connectCuidadorAndPaciente,
     updateEnderecoPaciente,
-    selectCuidadoresConectados
+    selectCuidadoresConectados,
+    updateToken,
+    deleteToken,
+    selectToken
 }

@@ -16,12 +16,6 @@ const createJWT = async function (payLoad){
     return token;
 }
 
-const createJWTRecover = async function (payLoad){
-    const token = jwt.sign({userID: payLoad}, SECRET, {expiresIn: EXPIRES_RECOVER})
-
-    return token;
-}
-
 const validateJWT = async function (token){
     let status;
 
@@ -38,6 +32,5 @@ const validateJWT = async function (token){
 
 module.exports = {
     createJWT,
-    validateJWT,
-    createJWTRecover
+    validateJWT
 }
