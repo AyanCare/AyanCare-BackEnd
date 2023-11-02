@@ -19,7 +19,8 @@ const selectAllEventos = async function () {
     let sql = `select tbl_evento_unitario.id as id,
     tbl_paciente.nome as paciente,
     tbl_cuidador.nome as cuidador,
-    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia
+    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes,
+    tbl_cor.hex as cor
 from tbl_evento_unitario
     left join tbl_paciente_evento_unitario
 on tbl_evento_unitario.id = tbl_paciente_evento_unitario.id_evento_unitario
@@ -28,7 +29,9 @@ on tbl_evento_unitario.id = tbl_cuidador_evento_unitario.id_evento_unitario
     left join tbl_paciente
 on tbl_paciente_evento_unitario.id_paciente = tbl_paciente.id
     left join tbl_cuidador
-on tbl_cuidador.id = tbl_cuidador_evento_unitario.id_cuidador`
+on tbl_cuidador.id = tbl_cuidador_evento_unitario.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_evento_unitario.id_cor`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
 
@@ -43,7 +46,8 @@ const selectEventoById = async function (idEvento) {
     let sql = `select tbl_evento_unitario.id as id,
     tbl_paciente.nome as paciente,
     tbl_cuidador.nome as cuidador,
-    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes_unico
+    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes,
+    tbl_cor.hex as cor
 from tbl_evento_unitario
     left join tbl_paciente_evento_unitario
 on tbl_evento_unitario.id = tbl_paciente_evento_unitario.id_evento_unitario
@@ -53,6 +57,8 @@ on tbl_evento_unitario.id = tbl_cuidador_evento_unitario.id_evento_unitario
 on tbl_paciente_evento_unitario.id_paciente = tbl_paciente.id
     left join tbl_cuidador
 on tbl_cuidador.id = tbl_cuidador_evento_unitario.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_evento_unitario.id_cor
     where tbl_evento_unitario.id = ${idEvento}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -68,7 +74,8 @@ const selectEventoByCuidador = async function (idCuidador) {
     let sql = `select tbl_evento_unitario.id as id,
     tbl_paciente.nome as paciente,
     tbl_cuidador.nome as cuidador,
-    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia
+    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes,
+    tbl_cor.hex as cor
 from tbl_evento_unitario
     left join tbl_paciente_evento_unitario
 on tbl_evento_unitario.id = tbl_paciente_evento_unitario.id_evento_unitario
@@ -78,6 +85,8 @@ on tbl_evento_unitario.id = tbl_cuidador_evento_unitario.id_evento_unitario
 on tbl_paciente_evento_unitario.id_paciente = tbl_paciente.id
     left join tbl_cuidador
 on tbl_cuidador.id = tbl_cuidador_evento_unitario.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_evento_unitario.id_cor
     where tbl_cuidador.id = ${idCuidador}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -93,7 +102,8 @@ const selectEventoByPaciente = async function (idPaciente) {
     let sql = `select tbl_evento_unitario.id as id,
     tbl_paciente.nome as paciente,
     tbl_cuidador.nome as cuidador,
-    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia
+    tbl_evento_unitario.nome as nome, tbl_evento_unitario.descricao as descricao, tbl_evento_unitario.local as local, time_format(tbl_evento_unitario.horario, '%T') as horario, DATE_FORMAT(tbl_evento_unitario.dia,'%d/%m/%Y') as dia, DATE_FORMAT(tbl_evento_unitario.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento_unitario.dia,'%m') as mes,
+    tbl_cor.hex as cor
 from tbl_evento_unitario
     left join tbl_paciente_evento_unitario
 on tbl_evento_unitario.id = tbl_paciente_evento_unitario.id_evento_unitario
@@ -103,6 +113,8 @@ on tbl_evento_unitario.id = tbl_cuidador_evento_unitario.id_evento_unitario
 on tbl_paciente_evento_unitario.id_paciente = tbl_paciente.id
     left join tbl_cuidador
 on tbl_cuidador.id = tbl_cuidador_evento_unitario.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_evento_unitario.id_cor
     where tbl_paciente.id = ${idPaciente}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
