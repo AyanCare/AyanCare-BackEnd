@@ -18,7 +18,8 @@ const selectAllEventos = async function () {
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
-    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
+    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id,
+    tbl_cor.hex as cor
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
 on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
@@ -29,7 +30,9 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
     inner join tbl_paciente
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
-on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
+on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
 
@@ -53,6 +56,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
                 eventoJSON.descricao = evento.descricao
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
+                eventoJSON.cor = evento.cor
 
                 rsEvento.forEach(repeticao => {
                     if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
@@ -93,7 +97,8 @@ const selectEventoById = async function (idEvento) {
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
-    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
+    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id,
+    tbl_cor.hex as cor
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
 on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
@@ -105,6 +110,8 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
 on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor
     WHERE tbl_nome_descricao_local_evento.id = ${idEvento}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -124,6 +131,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
             eventoJSON.descricao = evento.descricao
             eventoJSON.local = evento.local
             eventoJSON.horario = evento.horario
+            eventoJSON.cor = evento.cor
 
             if (!arrayIDDia.includes(evento.dia_id)) {
                 let dia = {}
@@ -156,7 +164,8 @@ const selectEventoByCuidador = async function (idCuidador) {
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
-    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
+    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id,
+    tbl_cor.hex as cor
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
 on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
@@ -168,6 +177,8 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
 on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor
     WHERE tbl_cuidador.id = ${idCuidador}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -192,6 +203,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                 eventoJSON.descricao = evento.descricao
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
+                eventoJSON.cor = evento.cor
 
                 rsEvento.forEach(repeticao => {
                     if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
@@ -232,7 +244,8 @@ const selectEventoByPaciente = async function (idPaciente) {
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, tbl_dia_semana_evento.id as id_status,
-    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id
+    tbl_dia_semana.dia as dia, tbl_dia_semana.id as dia_id,
+    tbl_cor.hex as cor
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
 on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
@@ -244,6 +257,8 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
 on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor
     WHERE tbl_paciente.id = ${idPaciente}`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -268,6 +283,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
                 eventoJSON.descricao = evento.descricao
                 eventoJSON.local = evento.local
                 eventoJSON.horario = evento.horario
+                eventoJSON.cor = evento.cor
 
                 rsEvento.forEach(repeticao => {
                     if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && evento.id == repeticao.id) {
@@ -308,7 +324,8 @@ const selectLastId = async function () {
     tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, 
-    tbl_dia_semana.dia as dia,tbl_dia_semana.id as dia_id
+    tbl_dia_semana.dia as dia,tbl_dia_semana.id as dia_id,
+    tbl_cor.hex as cor
 FROM tbl_dia_semana_evento
     inner join tbl_nome_descricao_local_evento
 on tbl_nome_descricao_local_evento.id = tbl_dia_semana_evento.id_nome_descricao_local_evento
@@ -320,6 +337,8 @@ on tbl_paciente_cuidador.id = tbl_dia_semana_evento.id_paciente_cuidador
 on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
     inner join tbl_cuidador
 on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    inner join tbl_cor
+on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor
 order by tbl_nome_descricao_local_evento.id desc limit 7`
 
     let rsEvento = await prisma.$queryRawUnsafe(sql)
@@ -338,6 +357,7 @@ order by tbl_nome_descricao_local_evento.id desc limit 7`
             eventoJSON.descricao = evento.descricao
             eventoJSON.local = evento.local
             eventoJSON.horario = evento.horario
+            eventoJSON.cor = evento.cor
 
             if (!arrayIDDia.includes(evento.dia_id)) {
                 let dia = {}
@@ -384,6 +404,7 @@ const insertEvento = async function (dadosEvento) {
         '${dadosEvento.nome}',
         '${dadosEvento.descricao}',
         '${dadosEvento.local}',
+        ${dadosEvento.cor_id},
         '${dadosEvento.hora}',
         ${dadosEvento.id_paciente_cuidador},
         1,
@@ -418,6 +439,7 @@ const updateEvento = async function (dadosEvento) {
         '${dadosEvento.nome}', 
         '${dadosEvento.descricao}', 
         '${dadosEvento.local}', 
+        ${dadosEvento.cor_id},
         '${dadosEvento.hora}', 
         ${dadosEvento.id_paciente_cuidador}, 
         ${dadosEvento.sabado_id}, 
