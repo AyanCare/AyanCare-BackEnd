@@ -65,7 +65,11 @@ const converterMes = function (numeroMes) {
     return mes;
 }
 
+const converterData = function (dataEmString) {
+    let dataCortada = dataEmString.split('/')
 
+    return `${dataCortada[2]}-${dataCortada[1]}-${dataCortada[0]}`
+}
 
 const getAllEventos = async function(){
     let dadosEventoJSON = {};
@@ -179,6 +183,8 @@ const insertEvento = async function (dadosEvento) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
+        dadosEvento.dia = converterData(dadosEvento.dia)
+
         let resultDadosEvento = await eventoDAO.insertEvento(dadosEvento)
 
         if (resultDadosEvento) {
