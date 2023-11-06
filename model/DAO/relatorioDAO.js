@@ -41,7 +41,7 @@ const selectAllRelatorios = async function () {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
@@ -134,7 +134,7 @@ const selectByIDRelatorio = async function (idRelatorio) {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
@@ -216,7 +216,7 @@ const selectByIDPaciente = async function (idPaciente) {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
@@ -312,7 +312,7 @@ const selectByIDCuidador = async function (idCuidador) {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
@@ -407,7 +407,7 @@ const selectByIDCuidadorAndPaciente = async function (idCuidador, idPaciente) {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
@@ -501,7 +501,7 @@ const selectByData = async function (idCuidador, idPaciente, data) {
     let sql = `SELECT tbl_relatorio.id as id,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento_paciente, Cast(TIMESTAMPDIFF(YEAR, tbl_paciente.data_nascimento, CURDATE()) as char) AS idade_paciente, tbl_paciente.foto as foto_paciente, tbl_paciente.id_genero as genero_paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, DATE_FORMAT(tbl_cuidador.data_nascimento,'%d/%m/%Y') as data_nascimento_cuidador, Cast(TIMESTAMPDIFF(YEAR, tbl_cuidador.data_nascimento, CURDATE()) as char) AS idade_cuidador, tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id_genero as genero_cuidador,
-    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i:%s') as horario, tbl_relatorio.texto_relatorio as texto,
+    DATE_FORMAT(tbl_relatorio.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_relatorio.horario, '%H:%i') as horario, tbl_relatorio.texto_relatorio as texto,
     tbl_pergunta.id as id_pergunta, tbl_pergunta.pergunta as pergunta,
     tbl_questionario.resposta as resposta, tbl_questionario.id as id_resposta
     from tbl_relatorio
