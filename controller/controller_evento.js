@@ -10,6 +10,63 @@ const messages = require('./modules/config.js')
 
 const eventoDAO = require('../model/DAO/eventoDAO.js')
 
+const converterMes = function (numeroMes) {
+    let mes = numeroMes;
+
+    switch (mes) {
+        case "01":
+            mes = 'Janeiro'
+            break;
+
+        case "02":
+            mes = 'Fevereiro'
+            break;
+
+        case "03":
+            mes = 'Março'
+            break;
+
+        case "04":
+            mes = 'Abril'
+            break;
+
+        case "05":
+            mes = 'Maio'
+            break;
+
+        case "06":
+            mes = 'Junho'
+            break;
+
+        case "07":
+            mes = 'Julho'
+            break;
+
+        case "08":
+            mes = 'Agosto'
+            break;
+
+        case "09":
+            mes = 'Setembro'
+            break;
+
+        case "10":
+            mes = 'Outubro'
+            break;
+
+        case "11":
+            mes = 'Novembro'
+            break;
+
+        case "12":
+            mes = 'Dezembro'
+            break;
+    }
+    return mes;
+}
+
+
+
 const getAllEventos = async function(){
     let dadosEventoJSON = {};
 
@@ -17,7 +74,10 @@ const getAllEventos = async function(){
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosEventoJSON.evento = dadosEvento
+            dadosEvento.forEach(evento => {
+                evento.mes = converterMes(evento.mes)
+            });
+            dadosEventoJSON.eventos = dadosEvento
             return dadosEventoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -35,6 +95,7 @@ const getEventoByID = async function (id) {
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEvento.mes = converterMes(dadosEvento.mes)
             dadosEventoJSON.evento = dadosEvento
             return dadosEventoJSON
         } else {
@@ -54,6 +115,9 @@ const getEventoByPaciente = async function (idPaciente) {
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEvento.forEach(evento => {
+                evento.mes = converterMes(evento.mes)
+            });
             dadosEventoJSON.evento = dadosEvento
             return dadosEventoJSON
         } else {
@@ -73,6 +137,9 @@ const getEventoByCuidador = async function (idCuidador) {
 
         if (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosEvento.forEach(evento => {
+                evento.mes = converterMes(evento.mes)
+            });
             dadosEventoJSON.evento = dadosEvento
             return dadosEventoJSON
         } else {
@@ -127,6 +194,7 @@ const insertEvento = async function (dadosEvento) {
 
             let dadosEventoJSON = {}
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
+            eventoCriado.mes = converterMes(eventoCriado.mes)
             dadosEventoJSON.evento = eventoCriado
 
             return dadosEventoJSON

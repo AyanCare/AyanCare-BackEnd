@@ -95,7 +95,7 @@ const selectContatoById = async function (idContato) {
      FROM tbl_contato 
         inner join tbl_status_contato
     on tbl_status_contato.id = tbl_contato.id_status_contato
-        where id = ${idContato}`
+        where tbl_contato.id = ${idContato}`
 
     let rsContato = await prisma.$queryRawUnsafe(sql)
 
