@@ -12,7 +12,6 @@ const bodyParserJSON = bodyParser.json()
 
 const messages = require('./controller/modules/config.js')
 const jwt = require('./middleware/middlewareJWT.js')
-const jwtRecover = require('./middleware/middlewareEmail.js')
 const controllerPaciente = require('./controller/controller_paciente.js');
 const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
@@ -21,6 +20,7 @@ const controllerDoenca = require('./controller/controller_doenca.js');
 const controllerMedicamento = require('./controller/controller_medicamento.js');
 const controllerMedida = require('./controller/controller_medida.js');
 const controllerAlarme = require('./controller/controller_alarme.js');
+const controllerAlarme_Unitario = require('./controller/controller_alarmeUnitario.js');
 const controllerEvento = require('./controller/controller_evento.js');
 const controllerSintoma = require('./controller/controller_sintoma');
 const controllerExercicio = require('./controller/controller_exercicio.js');
@@ -1886,6 +1886,87 @@ app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
    //Valida se existe registro
    response.json(dadosCores)
    response.status(dadosCores.status)
+})
+
+/*************************************************************************************
+ * Objetibo: API de controle de Alarmes Unitários.
+ * Autor: Lohannes da Silva Costa
+ * Data: 08/11/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
+ app.get('/v1/ayan/alarmes/unitario', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+   let idMedicamento = request.query.idMedicmento
+
+   if (idPaciente != undefined) {
+      let dadosAlarme = await controllerAlarme_Unitario.getAlarmeByIdPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
+   } else if (idMedicamento != undefined) {
+      let dadosAlarme = await controllerAlarme_Unitario.getAlarmeByIdMedicamento(idMedicamento);
+
+      //Valida se existe registro
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosAlarme = await controllerAlarme_Unitario.getHistoricos();
+
+      //Valida se existe registro
+      response.json(dadosAlarme)
+      response.status(dadosAlarme.status)
+   }
+})
+
+//Get  por ID
+app.get('/v1/ayan/alarme/unitario/:id', cors(), async (request, response) => {
+   let id = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosAlarme = await controllerAlarme_Unitario.getAlarmeById(id);
+
+   //Valida se existe registro
+   response.json(dadosAlarme)
+   response.status(dadosAlarme.status)
+})
+
+//Insert 
+app.post('/v1/ayan/alarme/unitario', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosAlarme = await controllerAlarme_Unitario.insertAlarme(dadosBody)
+
+      response.status(resultDadosAlarme.status)
+      response.json(resultDadosAlarme)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+//Update 
+app.put('/v1/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let id = request.params.id;
+      let dadosBody = request.body
+
+      let resultDadosAlarme = await controllerAlarme_Unitario.updateAlarme(dadosBody, id)
+
+      response.status(resultDadosAlarme.status)
+      response.json(resultDadosAlarme)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
 })
 
 app.listen(8080, function () {

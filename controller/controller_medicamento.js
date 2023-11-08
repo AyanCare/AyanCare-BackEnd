@@ -108,12 +108,9 @@ const insertMedicamento = async function (dadosMedicamento) {
 
 const updateMedicamento = async function (dadosMedicamento, id) {
     if (
-        dadosMedicamento.nome === '' || dadosMedicamento.nome === undefined || dadosMedicamento.nome > 80 ||
-        dadosMedicamento.data_validade === '' || dadosMedicamento.data_validade === undefined ||
         dadosMedicamento.estocado === '' || dadosMedicamento.estocado === undefined || (dadosMedicamento.estocado != 0 && dadosMedicamento.estocado != 1) || isNaN(dadosMedicamento.estocado) ||
         dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
-        dadosMedicamento.id_paciente === '' || dadosMedicamento.id_paciente === undefined || isNaN(dadosMedicamento.id_paciente) ||
-        dadosMedicamento.id_medida === '' || dadosMedicamento.id_medida === undefined || isNaN(dadosMedicamento.id_medida)
+        dadosMedicamento.limite === '' || dadosMedicamento.limite === undefined || isNaN(dadosMedicamento.limite) 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (id === null || id === undefined || isNaN(id)) {

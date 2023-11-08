@@ -93,15 +93,17 @@ const insertMedicamento = async function (dadosMedicamento) {
     let sql = `insert into tbl_medicamento(
         nome,
         quantidade,
+        limite,
         data_validade,
         estocado,
         id_paciente,
         id_medida
     ) values (
         '${dadosMedicamento.nome}',
-        '${dadosMedicamento.quantidade}',
+        1,
+        1,
         '${dadosMedicamento.data_validade}',
-        '${dadosMedicamento.estocado}',
+        false,
         ${dadosMedicamento.id_paciente},
         ${dadosMedicamento.id_medida}
     )`
@@ -119,9 +121,8 @@ const insertMedicamento = async function (dadosMedicamento) {
 /************************** Updates ******************************/
 const updateMedicamento = async function (dadosMedicamento) {
     let sql = `update tbl_medicamento set
-            nome = '${dadosMedicamento.nome}',
             quantidade = '${dadosMedicamento.quantidade}',
-            data_validade = '${dadosMedicamento.data_validade}',
+            limite = '${dadosMedicamento.limite},
             estocado = '${dadosMedicamento.estocado}'
         where id = ${dadosMedicamento.id}`
 
