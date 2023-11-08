@@ -11,11 +11,11 @@ const message = require('./modules/config.js')
 
 const alarmeDAO = require('../model/DAO/alarme_unitarioDAO.js');
 
-const getAlarmeById = async function () {
+const getAlarmeById = async function (idAlarme) {
 
     let dadosAlarmeJSON = {};
 
-    let dadosAlarmes = await alarmeDAO.selectAlarmeById()
+    let dadosAlarmes = await alarmeDAO.selectAlarmeById(idAlarme)
 
 
     if (dadosAlarmes) {
