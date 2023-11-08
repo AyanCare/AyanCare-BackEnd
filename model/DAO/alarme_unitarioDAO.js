@@ -16,7 +16,7 @@ const selectAlarmeByIdPaciente = async function (idPaciente) {
     let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
 					  tbl_medicamento.id as id_medicamento,
                       tbl_medicamento.nome as medicamento,
-                      tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.dia as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, tbl_alarme_unitario_status.horario as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
                       tbl_status_alarme.nome as status,
                       tbl_paciente.id as id_paciente,
                       tbl_paciente.nome as paciente
@@ -46,7 +46,7 @@ const selectAlarmeById = async function (idAlarme) {
     let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
 					  tbl_medicamento.id as id_medicamento,
                       tbl_medicamento.nome as medicamento,
-                      tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.dia as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, tbl_alarme_unitario_status.horario as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_alarme_medicamento.id as id_alarme, DATE_FORMAT(tbl_alarme_medicamento.dia, '%d/%m/%Y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_unitario_status.horario, '%H:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
                       tbl_status_alarme.nome as status,
                       tbl_paciente.id as id_paciente,
                       tbl_paciente.nome as paciente
@@ -74,7 +74,7 @@ const selectAlarmeByIdMedicamento = async function (idMedicamento) {
     let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
 					  tbl_medicamento.id as id_medicamento,
                       tbl_medicamento.nome as medicamento,
-                      tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.dia as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, tbl_alarme_unitario_status.horario as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
                       tbl_status_alarme.nome as status,
                       tbl_paciente.id as id_paciente,
                       tbl_paciente.nome as paciente
@@ -102,7 +102,7 @@ const selectLastId = async function () {
     let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
 					  tbl_medicamento.id as id_medicamento,
                       tbl_medicamento.nome as medicamento,
-                      tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.dia as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, tbl_alarme_unitario_status.horario as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
                       tbl_status_alarme.nome as status,
                       tbl_paciente.id as id_paciente,
                       tbl_paciente.nome as paciente
