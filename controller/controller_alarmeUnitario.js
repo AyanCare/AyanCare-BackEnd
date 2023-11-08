@@ -7,9 +7,24 @@
 
 
 //Importe de arquivo 
-const message = require('./modules/config.js')
-
+const messages = require('./modules/config.js')
 const alarmeDAO = require('../model/DAO/alarme_unitarioDAO.js');
+
+const getAlarmes = async function () {
+    let dadosAlarmesJSON = {}
+
+    let dadosAlarmes = await alarmeDAO.selectAllAlarmes()
+
+    if (dadosAlarmes) {
+        //Criando um JSON com o atributo Alunos para encaminhar um Array de alunos
+        dadosAlarmesJSON.status = messages.SUCCESS_REQUEST.status
+        dadosAlarmesJSON.quantidade = dadosAlarmes.length
+        dadosAlarmesJSON.alarmes = dadosAlarmes
+        return dadosAlarmesJSON
+    } else {
+        return messages.ERROR_INTERNAL_SERVER
+    }
+}
 
 const getAlarmeById = async function (idAlarme) {
 
@@ -20,12 +35,12 @@ const getAlarmeById = async function (idAlarme) {
 
     if (dadosAlarmes) {
 
-        dadosAlarmeJSON.status = message.SUCCESS_REQUEST.status
+        dadosAlarmeJSON.status = messages.SUCCESS_REQUEST.status
         dadosAlarmeJSON.quantidade = dadosAlarmes.length
         dadosAlarmeJSON.alarmes = dadosAlarmes
         return dadosAlarmeJSON
     } else {
-        return message.ERROR_INTERNAL_SERVER
+        return messages.ERROR_INTERNAL_SERVER
     }
 }
 
@@ -34,19 +49,19 @@ const getAlarmeById = async function (idAlarme) {
 
 const getAlarmeByIdPaciente = async function (idPaciente) {
     if (idPaciente == '' || isNaN(idPaciente) || idPaciente == undefined) {
-        return message.ERROR_INVALID_ID
+        return messages.ERROR_INVALID_ID
     } else {
         let dadosAlarme = await alarmeDAO.selectAlarmeByIdPaciente(idPaciente)
         let dadosAlarmeJSON = {}
 
         if (dadosAlarme) {
-            dadosAlarmeJSON.status = message.SUCCESS_REQUEST.status
+            dadosAlarmeJSON.status = messages.SUCCESS_REQUEST.status
             dadosAlarmeJSON.quantidade = dadosAlarme.length
             dadosAlarmeJSON.alarme = dadosAlarme
 
             return dadosAlarmeJSON
         } else {
-            return message.ERROR_NOT_FOUND
+            return messages.ERROR_NOT_FOUND
         }
     }
 }
@@ -54,19 +69,19 @@ const getAlarmeByIdPaciente = async function (idPaciente) {
 const getAlarmeByIdMedicamento = async function (idMedicamento) {
 
     if (idMedicamento == '' || idMedicamento == undefined) {
-        return message.ERROR_REQUIRED_FIELDS
+        return messages.ERROR_REQUIRED_FIELDS
     } else {
         let resultDadosAlarmePaciente = await alarmeDAO.selectAlarmeByIdMedicamento(idMedicamento)
         let dadosAlarmeJSON = {}
 
         if (resultDadosAlarmePaciente) {
-            dadosAlarmeJSON.status = message.SUCCESS_REQUEST.status
+            dadosAlarmeJSON.status = messages.SUCCESS_REQUEST.status
             dadosAlarmeJSON.quantidade = resultDadosAlarmePaciente.length
             dadosAlarmeJSON.alarmes = resultDadosAlarmePaciente
 
             return dadosAlarmeJSON
         } else {
-            let erro = message.ERROR_NOT_FOUND
+            let erro = messages.ERROR_NOT_FOUND
             erro.alarme = []
 
             return erro
@@ -79,11 +94,13 @@ const getAlarmeByIdMedicamento = async function (idMedicamento) {
 /******************Insert**************************************** */
 const insertAlarme = async function (dadosAlarme) {
 
+    console.log(dadosAlarme);
+
     if (
         dadosAlarme.quantidade == undefined || dadosAlarme.quantidade == '' || isNaN(dadosAlarme.quantidade) ||
         dadosAlarme.id_alarme_medicamento == '' || dadosAlarme.id_alarme_medicamento == undefined || isNaN(dadosAlarme.id_alarme_medicamento)
     ) {
-        return message.ERROR_REQUIRED_FIELDS
+        return messages.ERROR_REQUIRED_FIELDS
     } else {
         let resultDadosAlarme = await alarmeDAO.insertAlarme(dadosAlarme)
 
@@ -92,12 +109,12 @@ const insertAlarme = async function (dadosAlarme) {
 
             let dadosAlarmeJSON = {}
 
-            dadosAlarmeJSON.status = message.SUCCESS_CREATED_ITEM.status
+            dadosAlarmeJSON.status = messages.SUCCESS_CREATED_ITEM.status
             dadosAlarmeJSON.alarme = novoAlarme
 
             return dadosAlarmeJSON
         } else {
-            return message.ERROR_INTERNAL_SERVER
+            return messages.ERROR_INTERNAL_SERVER
 
         }
     }
@@ -105,32 +122,33 @@ const insertAlarme = async function (dadosAlarme) {
 
 /******************UpdateAlarme**************************** */
 
-const updateAlarme = async function (dadosAlarme) {
+const updateAlarme = async function (dadosAlarme, id) {
 
     if (
         dadosAlarme.id_status_alarme == undefined || dadosAlarme.id_status_alarme == '' || isNaN(dadosAlarme.id_status_alarme)
     ) {
-        return message.ERROR_REQUIRED_FIELDS
+        return messages.ERROR_REQUIRED_FIELDS
     } else if (id == null || id == undefined || isNaN(id)) {
-        return message.ERROR_INVALID_ID
+        return messages.ERROR_INVALID_ID
     } else {
-        let atualizacaoAlarme = await alarmeDAO.selectAlarmeById(dadosAlarme.id)
+        let atualizacaoAlarme = await alarmeDAO.selectAlarmeById(id)
 
         if (atualizacaoAlarme) {
+            dadosAlarme.id = id
+
             let resultDadosAlarme = await alarmeDAO.updateAlarme(dadosAlarme)
 
             if (resultDadosAlarme) {
                 let dadosAlarmeJSON = {}
-                dadosAlarmeJSON.status = message.SUCCESS_UPDATED_ITEM.status
-                dadosAlarmeJSON.message = message.SUCCESS_UPDATED_ITEM.message
-                dadosAlarmeJSON.alarme = dadosAlarme
+                dadosAlarmeJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                dadosAlarmeJSON.messages = messages.SUCCESS_UPDATED_ITEM
 
                 return dadosAlarmeJSON
             } else {
-                return message.ERROR_INTERNAL_SERVER
+                return messages.ERROR_INTERNAL_SERVER
             }
         } else {
-            return message.ERROR_INVALID_ID
+            return messages.ERROR_INVALID_ID
         }
     }
 }
@@ -141,5 +159,6 @@ module.exports = {
     getAlarmeByIdMedicamento,
     getAlarmeByIdPaciente,
     insertAlarme,
-    updateAlarme
+    updateAlarme,
+    getAlarmes
 }

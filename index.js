@@ -488,7 +488,7 @@ app.post('/v1/ayan/paciente/endereco', cors(), bodyParserJSON, async (request, r
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
       let dadosBody = request.body
-      let resultDadosEndereco = await controllerEndereco_Paciente.insertEndereco(dadosBody)
+      let resultDadosEndereco = await controllerEndereco_Paciente.insertr(dadosBody)
 
       response.status(resultDadosEndereco.status)
       response.json(resultDadosEndereco)
@@ -1897,7 +1897,9 @@ app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
 
  app.get('/v1/ayan/alarmes/unitario', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente
-   let idMedicamento = request.query.idMedicmento
+   let idMedicamento = request.query.idMedicamento
+
+   console.log(idPaciente, idMedicamento);
 
    if (idPaciente != undefined) {
       let dadosAlarme = await controllerAlarme_Unitario.getAlarmeByIdPaciente(idPaciente);
@@ -1913,7 +1915,7 @@ app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
       response.status(dadosAlarme.status)
    } else {
       //Recebe os dados do controller
-      let dadosAlarme = await controllerAlarme_Unitario.getHistoricos();
+      let dadosAlarme = await controllerAlarme_Unitario.getAlarmes();
 
       //Valida se existe registro
       response.json(dadosAlarme)
@@ -1951,7 +1953,7 @@ app.post('/v1/ayan/alarme/unitario', cors(), bodyParserJSON, async (request, res
 })
 
 //Update 
-app.put('/v1/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON

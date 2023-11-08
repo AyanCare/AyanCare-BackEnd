@@ -11,6 +11,33 @@ var { PrismaClient } = require('@prisma/client');
 //Instância da classe PrismaClient
 var prisma = new PrismaClient()
 
+const selectAllAlarmes = async function (idPaciente) {
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
+    from tbl_alarme_unitario_status
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente`
+
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
+
+    if (rsAlarme.length > 0) {
+        return rsAlarme
+    } else {
+        return false
+    }
+}
+
 /******************Select pelo ID do paciente************************ */
 const selectAlarmeByIdPaciente = async function (idPaciente) {
     let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
@@ -156,7 +183,7 @@ const insertAlarme = async function (dadosAlarme) {
 
 const updateAlarme = async function (dadosAlarme) {
 
-    let sql = `update tbl_alarme set 
+    let sql = `update tbl_alarme_unitario_status set 
             id_status_alarme  = '${dadosAlarme.id_status_alarme}'
         where id = ${dadosAlarme.id}`
     let resultStatus = await prisma.$executeRawUnsafe(sql)
@@ -176,5 +203,6 @@ module.exports = {
     selectAlarmeByIdPaciente,
     updateAlarme,
     selectLastId,
-    selectAlarmeByIdMedicamento
+    selectAlarmeByIdMedicamento,
+    selectAllAlarmes
 }
