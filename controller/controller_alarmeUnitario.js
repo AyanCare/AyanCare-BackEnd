@@ -11,12 +11,11 @@ const message = require('./modules/config.js')
 
 const alarmeDAO = require('../model/DAO/alarme_unitarioDAO.js');
 
-/*******************Todos do Alarmes ****************************** */
 const getAlarmeById = async function () {
 
     let dadosAlarmeJSON = {};
 
-    let dadosAlarmes = await alarmeDAO.selectAllAlarmes()
+    let dadosAlarmes = await alarmeDAO.selectAlarmeById()
 
 
     if (dadosAlarmes) {
@@ -33,11 +32,11 @@ const getAlarmeById = async function () {
 
 /******************GET**************************************** */
 
-const getAlarmeByIdPaciente = async function (id) {
-    if (id == '' || isNaN(id) || id == undefined) {
+const getAlarmeByIdPaciente = async function (idPaciente) {
+    if (idPaciente == '' || isNaN(idPaciente) || idPaciente == undefined) {
         return message.ERROR_INVALID_ID
     } else {
-        let dadosAlarme = await alarmeDAO.selectAlarmeById(id)
+        let dadosAlarme = await alarmeDAO.selectAlarmeByIdPaciente(idPaciente)
         let dadosAlarmeJSON = {}
 
         if (dadosAlarme) {
@@ -52,12 +51,12 @@ const getAlarmeByIdPaciente = async function (id) {
     }
 }
 
-const getAlarmeByIdMedicamento = async function (id_paciente) {
+const getAlarmeByIdMedicamento = async function (idMedicamento) {
 
-    if (id_paciente == '' || id_paciente == undefined) {
+    if (idMedicamento == '' || idMedicamento == undefined) {
         return message.ERROR_REQUIRED_FIELDS
     } else {
-        let resultDadosAlarmePaciente = await alarmeDAO.selectAlarmeByIdPaciente(id_paciente)
+        let resultDadosAlarmePaciente = await alarmeDAO.selectAlarmeByIdMedicamento(idMedicamento)
         let dadosAlarmeJSON = {}
 
         if (resultDadosAlarmePaciente) {
