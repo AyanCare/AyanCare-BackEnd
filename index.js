@@ -32,6 +32,7 @@ const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
 const controllerContato = require('./controller/controller_contato.js');
+const controllerCalendario = require('./controller/controller_calendario.js');
 const controllerStatus_Contato = require('./controller/controller_statusContato.js');
 const controllerRelatorio = require('./controller/controller_relatorio.js');
 const controllerPergunta_Relatorio = require('./controller/controller_perguntaRelatorio.js')
@@ -1899,8 +1900,6 @@ app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idMedicamento = request.query.idMedicamento
 
-   console.log(idPaciente, idMedicamento);
-
    if (idPaciente != undefined) {
       let dadosAlarme = await controllerAlarme_Unitario.getAlarmeByIdPaciente(idPaciente);
 
@@ -1968,6 +1967,57 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    } else {
       response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
       response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+/*************************************************************************************
+ * Objetibo: API de controle de Calendário.
+ * Autor: Lohannes da Silva Costa
+ * Data: 08/11/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
+ app.get('/v1/ayan/calendario', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+   let idCuidador = request.query.idCuidador
+   let dia = request.query.dia
+   let mes = request.query.mes
+   let diaSemana = request.query.diaSemana
+
+   if (idCuidador != undefined && idPaciente != undefined && dia != undefined && diaSemana != undefined) {
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_paciente = idPaciente
+      dadosCalendarioJSON.id_cuidador = idCuidador
+      dadosCalendarioJSON.dia = dia
+      dadosCalendarioJSON.dia_semana = diaSemana
+
+      let dadosCalendario = await controllerCalendario.getEventosAndAlarmesByCuidadorAndPaciente(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
+   } else if (idPaciente != undefined && dia != undefined && diaSemana != undefined) {
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_paciente = idPaciente
+      dadosCalendarioJSON.dia = dia
+      dadosCalendarioJSON.dia_semana = diaSemana
+
+      let dadosCalendario = await controllerCalendario.getEventosAndAlarmesByPaciente(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
+   } else if (idPaciente != undefined && mes != undefined) {
+
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_paciente = idPaciente
+      dadosCalendarioJSON.mes = mes
+
+      let dadosCalendario = await controllerCalendario.getEventosByPaciente(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
    }
 })
 
