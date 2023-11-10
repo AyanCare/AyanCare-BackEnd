@@ -86,8 +86,36 @@ const getEventosByPaciente = async function (dadosCalendario) {
     }
 }
 
+const getEventosByCuidador = async function (dadosCalendario) {
+    if (
+        dadosCalendario.mes == '' || dadosCalendario.mes == undefined
+    ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else if (
+        dadosCalendario.id_paciente == '' || dadosCalendario.id_paciente == undefined || isNaN(dadosCalendario.id_paciente)
+    ) {
+        return messages.ERROR_INVALID_PACIENTE
+    } else if (
+        dadosCalendario.id_cuidador == '' || dadosCalendario.id_cuidador == undefined || isNaN(dadosCalendario.id_cuidador)
+    ) {
+        return messages.ERROR_INVALID_CUIDADOR
+    } else {
+        let dadosCalendarioJSON = {};
+
+        let resultCalendario = await calendarioDAO.selectAllEventosByCuidadorMonthly(dadosCalendario)
+        if (resultCalendario) {
+            dadosCalendarioJSON.status = messages.SUCCESS_REQUEST.status
+            dadosCalendarioJSON.calendario = resultCalendario
+            return dadosCalendarioJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 module.exports = {
     getEventosAndAlarmesByPaciente,
     getEventosAndAlarmesByCuidadorAndPaciente,
-    getEventosByPaciente
+    getEventosByPaciente,
+    getEventosByCuidador
 }

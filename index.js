@@ -2007,6 +2007,18 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       //Valida se existe registro
       response.json(dadosCalendario)
       response.status(dadosCalendario.status)
+   } else if (idPaciente != undefined && idCuidador != undefined && mes != undefined) {
+
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_paciente = idPaciente
+      dadosCalendarioJSON.id_cuidador = idCuidador
+      dadosCalendarioJSON.mes = mes
+
+      let dadosCalendario = await controllerCalendario.getEventosByCuidador(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
    } else if (idPaciente != undefined && mes != undefined) {
 
       let dadosCalendarioJSON = {}
@@ -2018,6 +2030,9 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       //Valida se existe registro
       response.json(dadosCalendario)
       response.status(dadosCalendario.status)
+   } else {
+      response.json(messages.ERROR_NOT_FOUND)
+      response.json(messages.ERROR_NOT_FOUND.status)
    }
 })
 
