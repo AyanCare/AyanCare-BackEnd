@@ -16,7 +16,7 @@ var prisma = new PrismaClient()
 const selectAllMedicamentos = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = 'select DISTINCT tbl_medicamento.nome from tbl_medicamento;'
+    let sql = 'select * from tbl_medicamento;'
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -30,6 +30,24 @@ const selectAllMedicamentos = async function () {
     }
 
 }
+
+const selectMedicamentosNomes = async function () {
+
+    //scriptSQL para buscar todos os itens do BD
+    let sql = 'select DISTINCT tbl_medicamento.nome from tbl_medicamento;'
+
+    //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
+    //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
+    let rsMedicamento = await prisma.$queryRawUnsafe(sql)
+
+    //Valida se o BD retornou algum registro
+    if (rsMedicamento.length > 0) {
+        return rsMedicamento
+    } else {
+        return false
+    }
+
+        }
 
 const selectMedicamentoByNameAndMedidaAndPaciente = async function (nomeMedicamento, idPaciente, idMedida) {
     let sql = ` select * from tbl_medicamento
@@ -156,5 +174,6 @@ module.exports = {
     selectMedicamentoById,
     selectAllMedicamentosByPaciente,
     updateMedicamento,
-    selectMedicamentoByNameAndMedidaAndPaciente
+    selectMedicamentoByNameAndMedidaAndPaciente,
+    selectMedicamentosNomes
 }
