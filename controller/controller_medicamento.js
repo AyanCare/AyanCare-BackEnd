@@ -184,5 +184,6 @@ module.exports = {
     updateMedicamento,
     deleteMedicamento,
     getMedicamentoByID,
-    getMedicamentosByPaciente
+    getMedicamentosByPaciente,
+    getNomesMedicamentos
 }
