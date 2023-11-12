@@ -946,6 +946,15 @@ app.get('/v1/ayan/medicamentos', cors(), async (request, response) => {
    }
 })
 
+app.get('/v2/ayan/medicamentos', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+
+   let dadosMedicamento = await controllerMedicamento.getNomesMedicamentos(idPaciente)
+
+   response.json(dadosMedicamento)
+   response.status(dadosMedicamento.status)
+})
+
 //Medicamento específico
 app.get('/v1/ayan/medicamento/:id', cors(), async (request, response) => {
    let id = request.params.id;
