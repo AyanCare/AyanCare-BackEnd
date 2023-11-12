@@ -28,6 +28,23 @@ const getMedicamentos = async function () {
 
 }
 
+const getNomesMedicamentos = async function (idPaciente) {
+    let dadosMedicamentosJSON = {}
+
+    let dadosMedicamentos = await medicamentoDAO.selectMedicamentosNomes(idPaciente)
+
+    if (dadosMedicamentos) {
+        //Criando um JSON com o atributo Alunos para encaminhar um Array de alunos
+        dadosMedicamentosJSON.status = messages.SUCCESS_REQUEST.status
+        dadosMedicamentosJSON.quantidade = dadosMedicamentos.length
+        dadosMedicamentosJSON.medicamentos = dadosMedicamentos
+        return dadosMedicamentosJSON
+    } else {
+        return messages.ERROR_INTERNAL_SERVER
+    }
+
+}
+
 const getMedicamentoByID = async function (id) {
     if (id === '' || isNaN(id) || id === undefined) {
         return messages.ERROR_INVALID_ID
