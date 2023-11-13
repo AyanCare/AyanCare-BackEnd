@@ -34,7 +34,7 @@ const selectAllMedicamentos = async function () {
 const selectMedicamentosNomes = async function (idPaciente) {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `select DISTINCT tbl_medicamento.nome from tbl_medicamento where id_paciente = ${idPaciente};`
+    let sql = `select DISTINCT tbl_medicamento.nome, tbl_medicamento.id from tbl_medicamento where id_paciente = ${idPaciente};`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
