@@ -2045,6 +2045,13 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    }
 })
 
+/*************************************************************************************
+ * Objetibo: API de controle de Notificações.
+ * Autor: Lohannes da Silva Costa
+ * Data: 08/11/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
 app.listen(8080, function () {
    ('Aguardando requisições na porta 8080...');
 })
