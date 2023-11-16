@@ -140,7 +140,7 @@ const selectConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeD
 
 const desativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
-            status = false
+            status = 0
         where id_paciente = ${idPaciente} and id_cuidador = ${idCuidador}
     `
 
@@ -155,7 +155,7 @@ const desativarConexao = async function (idPaciente, idCuidador) {
 
 const ativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
-            status = true
+            status = 1
             where id_paciente = ${idPaciente} and id_cuidador = ${idCuidador}
     `
 

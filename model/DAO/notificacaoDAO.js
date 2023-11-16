@@ -73,6 +73,7 @@ const selectAllNotificacoesByPaciente = async function (idPaciente) {
 }
 
 const selectAllNotificacoesByCuidador = async function (idCuidador) {
+    console.log('dao funcionou');
     let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_notificacao
@@ -87,7 +88,7 @@ const selectAllNotificacoesByCuidador = async function (idCuidador) {
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
     if (rsNotificacao.length > 0) {
-        return rsNotificacao[0]
+        return rsNotificacao
     } else {
         return false
     }

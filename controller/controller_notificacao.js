@@ -64,6 +64,8 @@ const getNotificacoesByPaciente = async function (idPaciente) {
 }
 
 const getNotificacoesByCuidador = async function (idCuidador) {
+    console.log('controller funcionou');
+
     if (idCuidador === '' || idCuidador === undefined || isNaN(idCuidador)) {
         return messages.ERROR_INVALID_ID
     } else {

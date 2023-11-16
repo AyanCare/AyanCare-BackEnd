@@ -2084,6 +2084,8 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       response.json(dadosNotificacoes)
       response.status(dadosNotificacoes.status)
    } else if (idCuidador != undefined) {
+      console.log('index funcionou');
+
       //Recebe os dados do controller
       let dadosNotificacoes = await controllerNotificacao.getNotificacoesByCuidador(idCuidador);
 
