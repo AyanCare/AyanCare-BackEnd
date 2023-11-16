@@ -2057,7 +2057,7 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
  * Versão: 1.0
  *************************************************************************************/
 
- app.get('/v1/ayan/notifacoes', cors(), async (request, response) => {
+ app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente;
    let idCuidador = request.query.idCuidador;
    let horario = request.query.idCuidador;
@@ -2100,7 +2100,7 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    }
  })
 
- app.get('/v1/ayan/notificao/:id', cors(), async (request, response) => {
+ app.get('/v1/ayan/notificacao/:id', cors(), async (request, response) => {
    let id = request.params.id;
 
    //Recebe os dados do controller
