@@ -1989,7 +1989,7 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    let idCuidador = request.query.idCuidador
    let dia = request.query.dia
    let mes = request.query.mes
-   let diaSemana = request.query.diaSemana
+   let diaSemana = request.query.diaSemana.charAt(0).toUpperCase() + request.query.diaSemana.slice(1);
 
    if (idCuidador != undefined && idPaciente != undefined && dia != undefined && diaSemana != undefined) {
       let dadosCalendarioJSON = {}
