@@ -2062,6 +2062,8 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    let idCuidador = request.query.idCuidador;
    let horario = request.query.idCuidador;
 
+   console.log(idPaciente, idCuidador, horario);
+
    if (idPaciente != undefined && horario != undefined) {
       //Recebe os dados do controller
       let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndHorario(idPaciente, horario);
@@ -2071,21 +2073,21 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       response.status(dadosNotificacoes.status)
    } else if (idCuidador != undefined && horario != undefined) {
       //Recebe os dados do controller
-      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idCuidador, horario);
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByCuidadorAndHorario(idCuidador, horario);
 
       //Valida se existe registro
       response.json(dadosNotificacoes)
       response.status(dadosNotificacoes.status)
    } else if (idPaciente != undefined) {
       //Recebe os dados do controller
-      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idPaciente);
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPaciente(idPaciente);
 
       //Valida se existe registro
       response.json(dadosNotificacoes)
       response.status(dadosNotificacoes.status)
    } else if (idCuidador != undefined) {
       //Recebe os dados do controller
-      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idCuidador);
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByCuidador(idCuidador);
 
       //Valida se existe registro
       response.json(dadosNotificacoes)
