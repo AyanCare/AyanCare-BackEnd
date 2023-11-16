@@ -28,31 +28,30 @@ const getNotificacoes = async function () {
 
 }
 
-const getsNotificacaoById = async function (idPaciente) {
-    let dadosNotificacoesJSON = {}
+const getNotificacaoById = async function (idNotificacao) {
+    let dadosNotificacaoJSON = {}
 
-    let dadosNotificacoes = await notificacaoDAO.selectNotificacoesNomes(idPaciente)
+    let dadosNotificacao = await notificacaoDAO.selectNotificacaoById(idNotificacao)
 
-    if (dadosNotificacoes) {
+    if (dadosNotificacao) {
         //Criando um JSON com o atributo Alunos para encaminhar um Array de alunos
-        dadosNotificacoesJSON.status = messages.SUCCESS_REQUEST.status
-        dadosNotificacoesJSON.quantidade = dadosNotificacoes.length
-        dadosNotificacoesJSON.notificacoes = dadosNotificacoes
-        return dadosNotificacoesJSON
+        dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
+        dadosNotificacaoJSON.notificacao = dadosNotificacao
+        return dadosNotificacaoJSON
     } else {
         return messages.ERROR_INTERNAL_SERVER
     }
 
 }
 
-const getNotificacaoByPaciente = async function (id) {
-    if (id === '' || isNaN(id) || id === undefined) {
+const getNotificacoesByPaciente = async function (idPaciente) {
+    if (idPaciente === '' || isNaN(idPaciente) || idPaciente === undefined) {
         return messages.ERROR_INVALID_ID
     } else {
 
         let dadosNotificacaoJSON = {};
 
-        let dadosNotificacao = await notificacaoDAO.selectNotificacaoById(id)
+        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByPaciente(idPaciente)
 
         if (dadosNotificacao) {
             dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -127,11 +126,13 @@ const insertNotificacao = async function (dadosNotificacao) {
         dadosNotificacao.id_cuidador === '' 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
+    
     } else {
 
             if (dadosNotificacao.id_paciente == undefined) {
                 dadosNotificacao.id_paciente = 0
             } 
+
             if (dadosNotificacao.id_cuidador == undefined) {
                 dadosNotificacao.id_cuidador = 0
             } 
@@ -154,5 +155,8 @@ const insertNotificacao = async function (dadosNotificacao) {
 }
 
 module.exports = {
-    
+    insertNotificacao,
+    getNotificacoes,
+    getNotificacaoById,
+    getNotificacoesByPaciente
 }

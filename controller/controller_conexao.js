@@ -130,7 +130,7 @@ const getConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCu
     }
 }
 
-const deactivateConnection = async function (id) {
+const deactivateConnection = async function (idPaciente, idCuidador) {
     if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_PACIENTE
     } else if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)) {
