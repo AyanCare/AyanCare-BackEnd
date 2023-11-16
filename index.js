@@ -2063,9 +2063,9 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
 
 //    if (idPaciente != undefined && horario != undefined) {
       
-//    } else if () {
+//    } else if (idCuidador != undefined && horario != undefined) {
       
-//    } else if () {
+//    } else if (idPaciente != undefined) {
       
 //    } else if () {
       
