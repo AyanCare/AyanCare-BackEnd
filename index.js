@@ -2062,8 +2062,6 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    let idCuidador = request.query.idCuidador;
    let horario = request.query.idCuidador;
 
-   console.log(idPaciente, idCuidador, horario);
-
    if (idPaciente != undefined && horario != undefined) {
       //Recebe os dados do controller
       let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndHorario(idPaciente, horario);

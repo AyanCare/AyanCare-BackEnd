@@ -48,7 +48,7 @@ const selectAllNotificacoes = async function () {
 const selectAllNotificacoesByPaciente = async function (idPaciente) {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     FROM tbl_notificacao
         left join tbl_paciente_notificacao
@@ -73,7 +73,7 @@ const selectAllNotificacoesByPaciente = async function (idPaciente) {
 }
 
 const selectAllNotificacoesByCuidador = async function (idCuidador) {
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_notificacao
         left join tbl_paciente_notificacao
@@ -94,7 +94,7 @@ const selectAllNotificacoesByCuidador = async function (idCuidador) {
 }
 
 const selectAllNotificacoesByCuidadorAndHorario = async function (idCuidador, horario) {
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_notificacao
         left join tbl_paciente_notificacao
@@ -115,7 +115,7 @@ const selectAllNotificacoesByCuidadorAndHorario = async function (idCuidador, ho
 }
 
 const selectAllNotificacoesByPacienteAndHorario = async function (idPaciente, horario) {
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     FROM tbl_notificacao
         left join tbl_paciente_notificacao
@@ -164,7 +164,7 @@ const selectNotificacaoById = async function (idNotificacao) {
 }
 
 const selectLastId = async function () {
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao
     FROM tbl_notificacao
     order by id desc limit 1`
 
