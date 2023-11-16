@@ -8,7 +8,7 @@
 
 //Importe de arquivo 
 const messages = require('./modules/config.js')
-const alarmeDAO = require('../model/DAO/alarme_unitarioDAO.js');
+const alarmeDAO = require('../model/DAO/alarme_UnitarioDAO.js');
 
 const getAlarmes = async function () {
     let dadosAlarmesJSON = {}
