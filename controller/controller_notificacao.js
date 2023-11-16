@@ -63,13 +63,13 @@ const getNotificacoesByPaciente = async function (idPaciente) {
     }
 }
 
-const getNotificacoesByCuidador = async function (idPaciente) {
-    if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
+const getNotificacoesByCuidador = async function (idCuidador) {
+    if (idCuidador === '' || idCuidador === undefined || isNaN(idCuidador)) {
         return messages.ERROR_INVALID_ID
     } else {
         let dadosNotificacaoJSON = {};
 
-        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByPaciente(idPaciente)
+        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByCuidador(idCuidador)
 
         if (dadosNotificacao) {
             dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -81,13 +81,15 @@ const getNotificacoesByCuidador = async function (idPaciente) {
     }
 }
 
-const getNotificacoesByPacienteAndHorario = async function (idPaciente) {
+const getNotificacoesByPacienteAndHorario = async function (idPaciente, horario) {
     if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
+    } else if (horario == '' || horario == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
     } else {
         let dadosNotificacaoJSON = {};
 
-        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByPaciente(idPaciente)
+        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByPacienteAndHorario(idPaciente, horario)
 
         if (dadosNotificacao) {
             dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -99,13 +101,15 @@ const getNotificacoesByPacienteAndHorario = async function (idPaciente) {
     }
 }
 
-const getNotificacoesByCuidadorAndHorario = async function (idPaciente) {
-    if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
+const getNotificacoesByCuidadorAndHorario = async function (idCuidador, horario) {
+    if (idCuidador === '' || idCuidador === undefined || isNaN(idCuidador)) {
         return messages.ERROR_INVALID_ID
+    } else if (horario == '' || horario == undefined) {
+        return messages.ERROR_REQUIRED_FIELDS
     } else {
         let dadosNotificacaoJSON = {};
 
-        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByPaciente(idPaciente)
+        let dadosNotificacao = await notificacaoDAO.selectAllNotificacoesByCuidadorAndHorario(idCuidador, horario)
 
         if (dadosNotificacao) {
             dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -158,5 +162,8 @@ module.exports = {
     insertNotificacao,
     getNotificacoes,
     getNotificacaoById,
-    getNotificacoesByPaciente
+    getNotificacoesByPaciente,
+    getNotificacoesByCuidador,
+    getNotificacoesByPacienteAndHorario,
+    getNotificacoesByCuidadorAndHorario
 }

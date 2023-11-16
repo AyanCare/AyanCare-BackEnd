@@ -2056,6 +2056,24 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
  * Versão: 1.0
  *************************************************************************************/
 
+ app.get('/v1/ayan/notifacoes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
+   let horario = request.query.idCuidador;
+
+   if (idPaciente != undefined && horario != undefined) {
+      
+   } else if () {
+      
+   } else if () {
+      
+   } else if () {
+      
+   } else {
+
+   }
+ })
+
 app.listen(8080, function () {
    ('Aguardando requisições na porta 8080...');
 })
