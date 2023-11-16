@@ -55,8 +55,8 @@ const selectAllNotificacoesByPaciente = async function (idPaciente) {
     on tbl_paciente_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_cuidador_notificacao
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
-        left join tbl_cuidador
-    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
+        left join tbl_paciente
+    on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
     where tbl_paciente.id = ${idPaciente}`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
@@ -80,8 +80,8 @@ const selectAllNotificacoesByCuidador = async function (idCuidador) {
     on tbl_paciente_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_cuidador_notificacao
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
-        left join tbl_paciente
-    on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
+        left join tbl_cuidador
+    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
     where tbl_cuidador.id = ${idCuidador}`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
