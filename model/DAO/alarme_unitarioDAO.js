@@ -1,7 +1,7 @@
 /**************************************************************************************
- * Objetivo: Responsável pela manipulação de dados dos  Alarme unitario no Banco de Dados.
- * Data: 02/11/2023
- * Autor: Gustavo Souza Tenorio de Barros
+ * Objetivo: Responsável pela manipulação de dados dos Alarmes no Banco de Dados.
+ * Data: 08/11/2023
+ * Autor: Lohannes da Silva Costa
  * Versão: 1.0
  **************************************************************************************/
 
@@ -11,109 +11,164 @@ var { PrismaClient } = require('@prisma/client');
 //Instância da classe PrismaClient
 var prisma = new PrismaClient()
 
-/************************** Selects ******************************/
-const selectAllAlarmeUnitarios = async function () {
+const selectAllAlarmes = async function (idPaciente) {
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
+    from tbl_alarme_unitario_status
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente`
 
-    //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_alarme_unitario_status.id as id, tbl_alarme_unitario_status.nome as nome, tbl_alarme_unitario_status.foto as foto, DATE_FORMAT(tbl_alarme_unitario_status.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_alarme_unitario_status.descricao_experiencia,
-    tbl_genero.nome as genero
-    FROM tbl_alarme_unitario_status
-    inner join tbl_genero
-    on tbl_genero.id = tbl_alarme_unitario_status.id_genero`
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
 
-    //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
-    //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
-    let rsAlarmeUnitario = await prisma.$queryRawUnsafe(sql)
-
-    //Valida se o BD retornou algum registro
-    if (rsAlarmeUnitario.length > 0) {
-        return rsAlarmeUnitario
+    if (rsAlarme.length > 0) {
+        return rsAlarme
     } else {
         return false
     }
-
 }
 
-const selectAlarmeUnitarioById = async function (idAlarmeUnitario) {
-    let sql = `SELECT tbl_alarme_unitario_status.id as id, tbl_alarme_unitario_status.nome as nome, tbl_alarme_unitario_status.email as email, tbl_alarme_unitario_status.foto as foto, DATE_FORMAT(tbl_alarme_unitario_status.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_alarme_unitario_status.descricao_experiencia,
-    tbl_genero.nome as genero,
-    tbl_endereco_alarmeunitario.id as endereco_id, tbl_endereco_alarmeunitario.logradouro as logradouro, tbl_endereco_alarmeunitario.bairro as bairro, tbl_endereco_alarmeunitario.numero as numero, tbl_endereco_alarmeunitario.cep as cep, tbl_endereco_alarmeunitario.cidade as cidade, tbl_endereco_alarmeunitario.estado as estado
+/******************Select pelo ID do paciente************************ */
+const selectAlarmeByIdPaciente = async function (idPaciente) {
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
     from tbl_alarme_unitario_status
-    inner join tbl_genero
-    on tbl_genero.id = tbl_alarme_unitario_status.id_genero
-    inner join tbl_endereco_alarmeunitario
-    on tbl_endereco_alarmeunitario.id = tbl_alarme_unitario_status.id_endereco_alarmeunitario
-    where tbl_alarme_unitario_status.id = ${idAlarmeUnitario}`
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente
+    where tbl_paciente.id = ${idPaciente};`
 
-    let rsAlarmeUnitario = await prisma.$queryRawUnsafe(sql)
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
 
-    if (rsAlarmeUnitario.length > 0) {
-        return rsAlarmeUnitario[0]
+    if (rsAlarme.length > 0) {
+        return rsAlarme
+    } else {
+        return false
+    }
+}
+
+/******************Select pelo ID************************ */
+
+const selectAlarmeById = async function (idAlarme) {
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, DATE_FORMAT(tbl_alarme_medicamento.dia, '%d/%m/%Y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, TIME_FORMAT(tbl_alarme_unitario_status.horario, '%H:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
+    from tbl_alarme_unitario_status
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente
+    where tbl_alarme_unitario_status.id = ${idAlarme}`
+
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
+
+    if (rsAlarme.length > 0) {
+        return rsAlarme[0]
+    } else {
+        return false
+    }
+}
+
+const selectAlarmeByIdMedicamento = async function (idMedicamento) {
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
+    from tbl_alarme_unitario_status
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente
+    where tbl_medicamento.id = ${idMedicamento}`
+
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
+
+    if (rsAlarme.length > 0) {
+        return rsAlarme
     } else {
         return false
     }
 }
 
 const selectLastId = async function () {
-    let sql = `SELECT tbl_alarme_unitario_status.id as id, tbl_alarme_unitario_status.nome as nome, tbl_alarme_unitario_status.foto as foto, DATE_FORMAT(tbl_alarme_unitario_status.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_alarme_unitario_status.email as email, tbl_alarme_unitario_status.senha as senha, tbl_alarme_unitario_status.descricao_experiencia,
-    tbl_genero.nome as genero
+    let sql = `select tbl_alarme_unitario_status.id as id_alarme_unitario,
+					  tbl_medicamento.id as id_medicamento,
+                      tbl_medicamento.nome as medicamento,
+                      tbl_alarme_medicamento.id as id_alarme, date_format(tbl_alarme_medicamento.dia, '%d/%m/%y') as data_criacao, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_unitario_status.horario, '%h:%i:%s') as horario_inicial, tbl_alarme_unitario_status.quantidade as quantidade_retirada,
+                      tbl_status_alarme.nome as status,
+                      tbl_paciente.id as id_paciente,
+                      tbl_paciente.nome as paciente
     from tbl_alarme_unitario_status
-    inner join tbl_genero
-    on tbl_genero.id = tbl_alarme_unitario_status.id_genero
+        inner join tbl_status_alarme
+    on tbl_status_alarme.id = tbl_alarme_unitario_status.id_status_alarme
+        inner join tbl_alarme_medicamento
+    on tbl_alarme_medicamento.id = tbl_alarme_unitario_status.id_alarme_medicamento
+        inner join tbl_medicamento
+    on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
+		inner join tbl_paciente
+	on tbl_paciente.id = tbl_medicamento.id_paciente
     order by tbl_alarme_unitario_status.id desc limit 1;`
 
-    let rsAlarmeUnitario = await prisma.$queryRawUnsafe(sql)
+    let rsAlarme = await prisma.$queryRawUnsafe(sql)
 
-    if (rsAlarmeUnitario.length > 0) {
-        return rsAlarmeUnitario[0]
-    } else {
-        return false
-    }
-    
-    //retorna o ultimo id inserido no banco de dados
-}
-
-
-const selectAlarmeUnitarioByEmailAndSenhaAndNome = async function (dadosAlarmeUnitario) {
-    let sql = `select tbl_alarme_unitario_status.id as id, tbl_alarme_unitario_status.nome as nome, tbl_alarme_unitario_status.email as email, DATE_FORMAT(tbl_alarme_unitario_status.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_alarme_unitario_status.foto as foto, tbl_alarme_unitario_status.descricao_experiencia as experiencia,
-	tbl_genero.nome as genero
-    from tbl_alarme_unitario_status 
-        inner join tbl_genero 
-    on tbl_genero.id = tbl_alarme_unitario_status.id_genero
-    where tbl_alarme_unitario_status.email = '${dadosAlarmeUnitario.email}' and tbl_alarme_unitario_status.senha = '${dadosAlarmeUnitario.senha}'`
-
-    let rsAlarmeUnitario = await prisma.$queryRawUnsafe(sql)
-
-    if (rsAlarmeUnitario.length > 0) {
-        return rsAlarmeUnitario[0]
+    if (rsAlarme.length > 0) {
+        return rsAlarme[0]
     } else {
         return false
     }
 }
 
+/***********************Inserte***************************** */
 
-/************************** Inserts ******************************/
-const insertAlarmeUnitario = async function (dadosAlarmeUnitario) {
+const insertAlarme = async function (dadosAlarme) {
     let sql = `insert into tbl_alarme_unitario_status(
-        nome,
-        data_nascimento,
-        email,
-        senha,
-        foto,
-        descricao_experiencia,
-        id_endereco_alarmeunitario,
-        id_genero
-    ) values (
-        '${dadosAlarmeUnitario.nome}',
-        '2005-01-21',
-        '${dadosAlarmeUnitario.email}',
-        '${dadosAlarmeUnitario.senha}',
-        '${dadosAlarmeUnitario.foto}',
-        '${dadosAlarmeUnitario.descricao_experiencia}',
-        1,
-        1
+        dia,
+        horario,
+        id_status_alarme,
+        quantidade,
+        id_alarme_medicamento
+    ) values(
+        curdate(),
+        curtime(),
+        3,
+        '${dadosAlarme.quantidade}',
+        ${dadosAlarme.id_alarme_medicamento}
     )`
-    //talvez ID de endereco e de genero mudem de nome
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -124,15 +179,13 @@ const insertAlarmeUnitario = async function (dadosAlarmeUnitario) {
     }
 }
 
-/************************** Updates ******************************/
-const updateAlarmeUnitario = async function (dadosAlarmeUnitario) {
-    let sql = `update tbl_alarme_unitario_status set
-            nome = '${dadosAlarmeUnitario.nome}',
-            data_nascimento = '${dadosAlarmeUnitario.data_nascimento}',
-            foto = '${dadosAlarmeUnitario.foto}',
-            descricao_experiencia = '${dadosAlarmeUnitario.descricao_experiencia}'
-        where id = ${dadosAlarmeUnitario.id}`
+/****************** Updates  *********************************** */
 
+const updateAlarme = async function (dadosAlarme) {
+
+    let sql = `update tbl_alarme_unitario_status set 
+            id_status_alarme  = '${dadosAlarme.id_status_alarme}'
+        where id = ${dadosAlarme.id}`
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
     if (resultStatus) {
@@ -140,28 +193,16 @@ const updateAlarmeUnitario = async function (dadosAlarmeUnitario) {
     } else {
         return false
     }
+
 }
 
-/************************** Deletes ******************************/
-const deleteAlarmeUnitario = async function (idAlarmeUnitario) {
-    let sql = `delete from tbl_alarme_unitario_status where id = ${idAlarmeUnitario}`
-
-    let resultStatus = await prisma.$executeRawUnsafe(sql)
-
-    if (resultStatus) {
-        return true
-    } else {
-        return false
-    }
-}
 
 module.exports = {
-    selectAlarmeUnitarioByEmailAndSenhaAndNome,
-    selectAlarmeUnitarioById,
-    selectAllAlarmeUnitarios,
+    insertAlarme,
+    selectAlarmeById,
+    selectAlarmeByIdPaciente,
+    updateAlarme,
     selectLastId,
-    insertAlarmeUnitario,
-    updateAlarmeUnitario,
-    deleteAlarmeUnitario
-    
+    selectAlarmeByIdMedicamento,
+    selectAllAlarmes
 }
