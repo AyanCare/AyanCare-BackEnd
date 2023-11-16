@@ -60,7 +60,7 @@ const selectLastId = async function () {
 }
 
 const selectAlarmeByPaciente = async function (idPaciente) {
-    let sql = `SELECT  tbl_paciente.nome as paciente, tbl_alarme_medicamento.id as id, date_format(tbl_alarme_medicamento.dia, '%d/%m/%Y') as dia, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_medicamento.horario, '%H/%i') as horario, tbl_alarme_medicamento.id_medicamento as id_medicamento, tbl_medicamento.nome as medicamento
+    let sql = `SELECT  tbl_paciente.nome as paciente, tbl_alarme_medicamento.id as id, date_format(tbl_alarme_medicamento.dia, '%d/%m/%Y') as dia, tbl_alarme_medicamento.intervalo as intervalo, time_format(tbl_alarme_medicamento.horario, '%H:%i') as horario, tbl_alarme_medicamento.id_medicamento as id_medicamento, tbl_medicamento.nome as medicamento
     FROM tbl_paciente
         left join tbl_medicamento on tbl_medicamento.id_paciente = tbl_paciente.id
         left join tbl_alarme_medicamento on tbl_alarme_medicamento.id_medicamento = tbl_medicamento.id
