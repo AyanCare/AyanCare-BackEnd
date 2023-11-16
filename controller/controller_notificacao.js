@@ -28,7 +28,7 @@ const getNotificacoes = async function () {
 
 }
 
-const getNomesNotificacoes = async function (idPaciente) {
+const getsNotificacaoById = async function (idPaciente) {
     let dadosNotificacoesJSON = {}
 
     let dadosNotificacoes = await notificacaoDAO.selectNotificacoesNomes(idPaciente)
@@ -45,7 +45,7 @@ const getNomesNotificacoes = async function (idPaciente) {
 
 }
 
-const getNotificacaoByID = async function (id) {
+const getNotificacaoByPaciente = async function (id) {
     if (id === '' || isNaN(id) || id === undefined) {
         return messages.ERROR_INVALID_ID
     } else {
@@ -64,7 +64,7 @@ const getNotificacaoByID = async function (id) {
     }
 }
 
-const getNotificacoesByPaciente = async function (idPaciente) {
+const getNotificacoesByCuidador = async function (idPaciente) {
     if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
     } else {
@@ -82,7 +82,7 @@ const getNotificacoesByPaciente = async function (idPaciente) {
     }
 }
 
-const getNotificacoesByPaciente = async function (idPaciente) {
+const getNotificacoesByPacienteAndHorario = async function (idPaciente) {
     if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
     } else {
@@ -100,7 +100,7 @@ const getNotificacoesByPaciente = async function (idPaciente) {
     }
 }
 
-const getNotificacoesByPaciente = async function (idPaciente) {
+const getNotificacoesByCuidadorAndHorario = async function (idPaciente) {
     if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
     } else {
@@ -117,26 +117,24 @@ const getNotificacoesByPaciente = async function (idPaciente) {
         }
     }
 }
-
-// '${dadosNotificacao.nome}'
-// '${dadosNotificacao.quantidade}',
-// '${dadosNotificacao.data_validade}',
-// '${dadosNotificacao.estocado}',
-// ${dadosNotificacao.id_paciente},
-// ${dadosNotificacao.id_medida}
 
 const insertNotificacao = async function (dadosNotificacao) {
 
     if (
         dadosNotificacao.nome === '' || dadosNotificacao.nome === undefined || dadosNotificacao.nome > 80 ||
-        dadosNotificacao.data_validade === '' || dadosNotificacao.data_validade === undefined ||
-        dadosNotificacao.estocado === '' || dadosNotificacao.estocado === undefined || (dadosNotificacao.estocado != 0 && dadosNotificacao.estocado != 1) || isNaN(dadosNotificacao.estocado) ||
-        dadosNotificacao.quantidade === '' || dadosNotificacao.quantidade === undefined || isNaN(dadosNotificacao.quantidade) ||
-        dadosNotificacao.id_paciente === '' || dadosNotificacao.id_paciente === undefined || isNaN(dadosNotificacao.id_paciente) ||
-        dadosNotificacao.id_medida === '' || dadosNotificacao.id_medida === undefined || isNaN(dadosNotificacao.id_medida)
+        dadosNotificacao.descricao === '' || dadosNotificacao.descricao === undefined ||
+        dadosNotificacao.id_paciente === '' || 
+        dadosNotificacao.id_cuidador === '' 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
+
+            if (dadosNotificacao.id_paciente == undefined) {
+                dadosNotificacao.id_paciente = 0
+            } 
+            if (dadosNotificacao.id_cuidador == undefined) {
+                dadosNotificacao.id_cuidador = 0
+            } 
         
             let resultDadosNotificacao = await notificacaoDAO.insertNotificacao(dadosNotificacao)
 
