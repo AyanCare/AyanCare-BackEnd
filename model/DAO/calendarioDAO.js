@@ -301,7 +301,7 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_dia_evento.status = 1;`
 
     let sqlAlarme = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
-		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico,
+		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, concat(tbl_alarme_unico.quantidade, ' ', tbl_medida.sigla) as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
 		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
@@ -314,6 +314,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
 	on tbl_alarme_unico.id_alarme_medicamento = tbl_alarme_medicamento.id
 		left join tbl_status_alarme
 	on tbl_status_alarme.id = tbl_alarme_unico.id_status_alarme
+        left join tbl_medida
+    on tbl_medida.id = tbl_medicamento.id_medida
     WHERE tbl_paciente.id = ${dadosCalendario.id_paciente} AND 
     (
 		tbl_alarme_unico.dia IS NOT NULL AND 
@@ -378,6 +380,7 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             alarmeJSON.medicamento = alarme.medicamento
             alarmeJSON.horario = alarme.horario_alarme_unitario
             alarmeJSON.intervalo = conversaoDeMilissegundos(alarme.intervalo_alarme)
+            alarmeJSON.quantidade = alarme.quantidade
             alarmeJSON.id_status = alarme.id_status_alarme
             alarmeJSON.status = alarme.status_alarme
 
@@ -436,7 +439,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_cuidador.id = ${dadosCalendario.id_cuidador} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_dia_evento.status = 1;`
 
     let sqlAlarme = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
-		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico,
+		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, concat(tbl_alarme_unico.quantidade, ' ', tbl_medida.sigla) as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
 		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
@@ -449,6 +452,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
 	on tbl_alarme_unico.id_alarme_medicamento = tbl_alarme_medicamento.id
 		left join tbl_status_alarme
 	on tbl_status_alarme.id = tbl_alarme_unico.id_status_alarme
+        left join tbl_medida
+    on tbl_medida.id = tbl_medicamento.id_medida
     WHERE tbl_paciente.id = ${dadosCalendario.id_paciente} AND 
     (
 		tbl_alarme_unico.dia IS NOT NULL AND 
@@ -513,6 +518,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             alarmeJSON.medicamento = alarme.medicamento
             alarmeJSON.horario = alarme.horario_alarme_unitario
             alarmeJSON.intervalo = conversaoDeMilissegundos(alarme.intervalo_alarme)
+            alarmeJSON.quantidade = alarme.quantidade
             alarmeJSON.id_status = alarme.id_status_alarme
             alarmeJSON.status = alarme.status_alarme
 
