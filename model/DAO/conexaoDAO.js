@@ -15,7 +15,7 @@ var prisma = new PrismaClient()
 const selectAllConexoes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
@@ -39,7 +39,7 @@ const selectAllConexoes = async function () {
 }
 
 const selectConexaoById = async function (idConexao) {
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
@@ -59,7 +59,7 @@ const selectConexaoById = async function (idConexao) {
 }
 
 const selectConexaoByPaciente = async function (idPaciente) {
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
@@ -79,7 +79,7 @@ const selectConexaoByPaciente = async function (idPaciente) {
 }
 
 const selectConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCuidador) {
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
@@ -99,7 +99,7 @@ const selectConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeD
 }
 
 const selectConexaoByCuidador = async function (idCuidador) {
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
@@ -119,7 +119,7 @@ const selectConexaoByCuidador = async function (idCuidador) {
 }
 
 const selectConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPaciente) {
-    let sql = `SELECT tbl_paciente_cuidador.id as id,
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
     FROM tbl_paciente_cuidador
