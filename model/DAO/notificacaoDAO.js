@@ -15,8 +15,22 @@ var prisma = new PrismaClient()
 const selectAllNotificacoes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao
-    FROM tbl_notificacao`
+    let sql = `SELECT tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+                      COALESCE(
+                            CONCAT(tbl_paciente.nome, " - Paciente", 
+                            IF(tbl_cuidador.nome IS NOT NULL, CONCAT(", ", tbl_cuidador.nome, " - Cuidador"), "")
+                              ),
+        CONCAT(tbl_cuidador.nome, " - Cuidador")
+    ) as usuario
+    FROM tbl_notificacao
+        left join tbl_paciente_notificacao
+    on tbl_paciente_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_cuidador_notificacao
+    on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_paciente
+    on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
+        left join tbl_cuidador
+    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw(`SELECT * FROM tbl_aluno`) - Executa diretamente o script dentro do método
@@ -122,9 +136,22 @@ const selectAllNotificacoesByPacienteAndHorario = async function (idPaciente, ho
 }
 
 const selectNotificacaoById = async function (idNotificacao) {
-    let sql = `SELECT tbl_notificao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao
+    let sql = `SELECT tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+                      COALESCE(
+                            CONCAT(tbl_paciente.nome, " - Paciente", 
+                            IF(tbl_cuidador.nome IS NOT NULL, CONCAT(", ", tbl_cuidador.nome, " - Cuidador"), "")
+                              ),
+        CONCAT(tbl_cuidador.nome, " - Cuidador"), null
+    ) as usuario
     FROM tbl_notificacao
-    where id = ${idNotificacao}`
+        left join tbl_paciente_notificacao
+    on tbl_paciente_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_cuidador_notificacao
+    on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_paciente
+    on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
+        left join tbl_cuidador
+    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 

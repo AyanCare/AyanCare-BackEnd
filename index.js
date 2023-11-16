@@ -1638,8 +1638,6 @@ app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, respon
       let dadosBody = request.body
       let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario(dadosBody)
 
-         ();
-
       response.status(resultDadosQuestionario.status)
       response.json(resultDadosQuestionario)
    } else {
