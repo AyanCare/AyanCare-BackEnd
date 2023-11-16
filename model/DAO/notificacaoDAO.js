@@ -103,7 +103,7 @@ const selectAllNotificacoesByCuidadorAndHorario = async function (idCuidador, ho
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_cuidador
     on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
-    where tbl_cuidador.id = ${idCuidador} and tbl_notificacao.hora_criacao = "${horario}"`
+    where tbl_cuidador.id = ${idCuidador} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
@@ -124,7 +124,7 @@ const selectAllNotificacoesByPacienteAndHorario = async function (idPaciente, ho
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_paciente
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
-    where tbl_paciente.id = ${idPaciente} and tbl_notificacao.hora_criacao = "${horario}"`
+    where tbl_paciente.id = ${idPaciente} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
