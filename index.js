@@ -28,6 +28,7 @@ const controllerHumor = require('./controller/controller_humor.js');
 const controllerHistorico = require('./controller/controller_historicoMedico.js');
 const controllerConexao = require('./controller/controller_conexao.js');
 const controllerCor = require('./controller/controller_cor.js');
+const controllerNotificacao = require('./controller/controller_notificacao.js');
 const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
@@ -2056,23 +2057,48 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
  * Versão: 1.0
  *************************************************************************************/
 
-//  app.get('/v1/ayan/notifacoes', cors(), async (request, response) => {
-//    let idPaciente = request.query.idPaciente;
-//    let idCuidador = request.query.idCuidador;
-//    let horario = request.query.idCuidador;
+ app.get('/v1/ayan/notifacoes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
+   let horario = request.query.idCuidador;
 
-//    if (idPaciente != undefined && horario != undefined) {
-      
-//    } else if (idCuidador != undefined && horario != undefined) {
-      
-//    } else if (idPaciente != undefined) {
-      
-//    } else if () {
-      
-//    } else {
+   if (idPaciente != undefined && horario != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndHorario(idPaciente, horario);
 
-//    }
-//  })
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idCuidador != undefined && horario != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idCuidador, horario);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idPaciente != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idCuidador != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoes(idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoes();
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   }
+ })
 
 app.listen(8080, function () {
    ('Aguardando requisições na porta 8080...');
