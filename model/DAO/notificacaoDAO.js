@@ -177,37 +177,17 @@ const selectLastId = async function () {
     }
 }
 
-const insertNotificacaoInPaciente = async function (idCor) {
-    let sql = `SELECT * FROM tbl_notificacao where id = ${idCor}`
+const insertNotificacao = async function (dadosNotificacao) {
+    let sql = `call procInsertNotificacao(
+        "${dadosNotificacao.nome}", 
+        "${dadosNotificacao.descricao}", 
+        ${dadosNotificacao.idCuidador}, 
+        ${dadosNotificacao.idPaciente});`
 
-    let rsNotificacao = await prisma.$queryRawUnsafe(sql)
+    let rsNotificacao = await prisma.$executeRawUnsafe(sql)
 
-    if (rsNotificacao.length > 0) {
-        return rsNotificacao[0]
-    } else {
-        return false
-    }
-}
-
-const insertNotificacaoInCuidador = async function (idCor) {
-    let sql = `SELECT * FROM tbl_notificacao where id = ${idCor}`
-
-    let rsNotificacao = await prisma.$queryRawUnsafe(sql)
-
-    if (rsNotificacao.length > 0) {
-        return rsNotificacao[0]
-    } else {
-        return false
-    }
-}
-
-const insertNotificacaoInCuidadorAndPaciente = async function (idCor) {
-    let sql = `SELECT * FROM tbl_notificacao where id = ${idCor}`
-
-    let rsNotificacao = await prisma.$queryRawUnsafe(sql)
-
-    if (rsNotificacao.length > 0) {
-        return rsNotificacao[0]
+    if (rsNotificacao) {
+        return true
     } else {
         return false
     }
@@ -219,5 +199,7 @@ module.exports = {
     selectAllNotificacoesByPaciente,
     selectAllNotificacoesByCuidadorAndHorario,
     selectAllNotificacoesByPacienteAndHorario,
-    selectNotificacaoById
+    selectNotificacaoById,
+    selectLastId,
+    insertNotificacao
 }
