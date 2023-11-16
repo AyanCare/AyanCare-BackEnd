@@ -1850,19 +1850,21 @@ app.get('/v1/ayan/conexao/:id', cors(), async (request, response) => {
 })
 
 //Update 
-app.put('/v1/ayan/conexao/ativar/:id', cors(), async (request, response) => {
-   let id = request.params.id;
+app.put('/v1/ayan/conexao/ativar', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
 
-   let resultDadosConexao = await controllerConexao.activateConnection(id)
+   let resultDadosConexao = await controllerConexao.activateConnection(idPaciente, idCuidador)
 
    response.status(resultDadosConexao.status)
    response.json(resultDadosConexao)
 })
 
-app.put('/v1/ayan/conexao/desativar/:id', cors(), async (request, response) => {
-   let id = request.params.id;
+app.put('/v1/ayan/conexao/desativar', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
 
-   let resultDadosConexao = await controllerConexao.deactivateConnection(id)
+   let resultDadosConexao = await controllerConexao.deactivateConnection(idPaciente, idCuidador)
 
    response.status(resultDadosConexao.status)
    response.json(resultDadosConexao)

@@ -138,10 +138,10 @@ const selectConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeD
     }
 }
 
-const desativarConexao = async function (idConexao) {
+const desativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
             status = false
-        where id = ${idConexao}
+        where id_paciente = ${idPaciente} and id_cuidador = ${idCuidador}
     `
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
@@ -153,10 +153,10 @@ const desativarConexao = async function (idConexao) {
     }
 }
 
-const ativarConexao = async function (idConexao) {
+const ativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
             status = true
-        where id = ${idConexao}
+            where id_paciente = ${idPaciente} and id_cuidador = ${idCuidador}
     `
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)

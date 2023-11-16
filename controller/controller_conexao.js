@@ -131,13 +131,12 @@ const getConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCu
 }
 
 const deactivateConnection = async function (id) {
-    if (id == null || id == undefined || isNaN(id)) {
-        return messages.ERROR_INVALID_ID
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)) {
+        return messages.ERROR_INVALID_PACIENTE
+    } else if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_CUIDADOR
     } else {
-        let atualizacaoConexao = await conexaoDAO.selectConexaoById(id)
-
-        if (atualizacaoConexao) {
-            let resultDadosConexao = await conexaoDAO.desativarConexao(id)
+            let resultDadosConexao = await conexaoDAO.desativarConexao(idPaciente, idCuidador)
 
             if (resultDadosConexao) {
                 let dadosConexaoJSON = {}
@@ -149,20 +148,16 @@ const deactivateConnection = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else {
-            return messages.ERROR_INVALID_ID
-        }
     }
 }
 
-const activateConnection = async function (id) {
-    if (id == null || id == undefined || isNaN(id)) {
-        return messages.ERROR_INVALID_ID
+const activateConnection = async function (idPaciente, idCuidador) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)) {
+        return messages.ERROR_INVALID_PACIENTE
+    } else if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_CUIDADOR
     } else {
-        let atualizacaoConexao = await conexaoDAO.selectConexaoById(id)
-
-        if (atualizacaoConexao) {
-            let resultDadosConexao = await conexaoDAO.ativarConexao(id)
+            let resultDadosConexao = await conexaoDAO.ativarConexao(idPaciente, idCuidador)
 
             if (resultDadosConexao) {
                 let dadosConexaoJSON = {}
@@ -174,9 +169,6 @@ const activateConnection = async function (id) {
             } else {
                 return messages.ERROR_INTERNAL_SERVER
             }
-        } else {
-            return messages.ERROR_INVALID_ID
-        }
     }
 }
 
