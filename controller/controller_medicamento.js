@@ -115,16 +115,27 @@ const insertMedicamento = async function (dadosMedicamento) {
 
                 let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosMedicamento.id_paciente)
 
-                checkConexoes.forEach(conexao => {
+                if (checkConexoes) {
+                    checkConexoes.forEach(conexao => {
+                        let dadosNotificacao = {
+                        "nome":"Modificação feita: Foi registrado um novo medicamento",
+                        "descricao":`Um novo medicamento foi registrado para ${novoMedicamento.paciente}!`,
+                        "id_cuidador":conexao.id_cuidador,
+                        "id_paciente":dadosMedicamento.id_paciente
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                    });
+                } else {
                     let dadosNotificacao = {
-                    "nome":"Modificação feita: Foi registrado um novo medicamento",
-                    "descricao":`Um novo medicamento foi registrado para ${novoMedicamento.paciente}!`,
-                    "id_cuidador":conexao.id_cuidador,
-                    "id_paciente":dadosMedicamento.id_paciente
-                    }
-    
-                    notificacaoDAO.insertNotificacao(dadosNotificacao)
-                });
+                        "nome":"Modificação feita: Foi registrado um novo medicamento",
+                        "descricao":`Um novo medicamento foi registrado para ${novoMedicamento.paciente}!`,
+                        "id_cuidador":0,
+                        "id_paciente":dadosMedicamento.id_paciente
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                }
 
                 return dadosMedicamentoJSON
             } else {
@@ -175,8 +186,8 @@ const updateMedicamento = async function (dadosMedicamento, id) {
                     let dadosNotificacao = {
                         "nome":"Modificação feita: Um medicamento foi alterado",
                         "descricao":`O medicamento de ${medicamento.paciente} foi alterado!`,
-                        "id_cuidador":conexao.id_cuidador,
-                        "id_paciente":0
+                        "id_cuidador":0,
+                        "id_paciente":medicamento.id_paciente
                         }
         
                         notificacaoDAO.insertNotificacao(dadosNotificacao)
