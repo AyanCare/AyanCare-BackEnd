@@ -159,16 +159,27 @@ const insertTeste = async function (dadosTeste) {
 
                 let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosTeste.id_paciente)
 
-                checkConexoes.forEach(conexao => {
+                if (checkConexoes) {
+                    checkConexoes.forEach(conexao => {
+                        let dadosNotificacao = {
+                        "nome":"Modificação feita: Teste de Humor feito",
+                        "descricao":`O paciente ${novoTeste.paciente} fez seu teste de humor de hoje!`,
+                        "id_cuidador":conexao.id_cuidador,
+                        "id_paciente":dadosTeste.id_paciente
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                    });
+                } else {
                     let dadosNotificacao = {
-                    "nome":"Modificação feita: Teste de Humor feito",
-                    "descricao":`O paciente ${novoTeste.paciente} fez seu teste de humor de hoje!`,
-                    "id_cuidador":conexao.id_cuidador,
-                    "id_paciente":dadosTeste.id_paciente
-                    }
-    
-                    notificacaoDAO.insertNotificacao(dadosNotificacao)
-                });
+                        "nome":"Modificação feita: Teste de Humor feito",
+                        "descricao":`O paciente ${novoTeste.paciente} fez seu teste de humor de hoje!`,
+                        "id_cuidador":0,
+                        "id_paciente":dadosTeste.id_paciente
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                }
 
                 return dadosTesteJSON
             } else {

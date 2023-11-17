@@ -157,6 +157,31 @@ const updateMedicamento = async function (dadosMedicamento, id) {
                 dadosMedicamentoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
                 dadosMedicamentoJSON.medicamento = dadosMedicamento
 
+                let medicamento = await medicamentoDAO.selectMedicamentoById(id)
+                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosMedicamento.id_paciente)
+
+                if (checkConexoes) {
+                    checkConexoes.forEach(conexao => {
+                        let dadosNotificacao = {
+                        "nome":"Modificação feita: Um medicamento foi alterado",
+                        "descricao":`O medicamento de ${medicamento.paciente} foi alterado!`,
+                        "id_cuidador":conexao.id_cuidador,
+                        "id_paciente":medicamento.id_paciente
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                    });
+                } else {
+                    let dadosNotificacao = {
+                        "nome":"Modificação feita: Um medicamento foi alterado",
+                        "descricao":`O medicamento de ${medicamento.paciente} foi alterado!`,
+                        "id_cuidador":conexao.id_cuidador,
+                        "id_paciente":0
+                        }
+        
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+                }
+
                 return dadosMedicamentoJSON
 
             } else {
