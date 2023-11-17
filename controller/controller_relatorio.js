@@ -9,6 +9,7 @@
 const message = require('./modules/config.js')
 
 const relatorioDAO = require('../model/DAO/relatorioDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 const jwt = require('../middleware/middlewareJWT.js')
 
 /************************** GET ******************************/
@@ -190,6 +191,15 @@ const insertRelatorio = async function (dadosRelatorio) {
 
             dadosRelatorioJSON.status = message.SUCCESS_CREATED_ITEM.status
             dadosRelatorioJSON.relatorio = novoRelatorio
+
+            let dadosNotificacao = {
+                "nome":"Um relatório foi inserido",
+                "descricao":`O cuidador ${novoRelatorio.cuidador} escreveu um relatório sobre o dia!`,
+                "id_cuidador":dadosRelatorio.id_cuidador,
+                "id_paciente":dadosRelatorio.id_paciente
+            }
+
+            notificacaoDAO.insertNotificacao(dadosNotificacao)
 
             return dadosRelatorioJSON
         } else {

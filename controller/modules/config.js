@@ -23,6 +23,7 @@ const ERROR_COMORBIDITY_ALREADY_EXISTS = {status: 409, message: 'Você já regis
 const ERROR_MEDICINE_ALREADY_EXISTS = {status: 409, message: 'Você já registrou um medicamento com o mesmo nome.'}
 const ERROR_CONTACT_ALREADY_EXISTS = {status: 409, message: 'Você já registrou um contato com o mesmo nome.'}
 const ERROR_CONNECTION_ALREADY_EXISTS = {status: 409, message: 'Esses dois usuários já estão conectados.'}
+const ERROR_CONNECTION_DOESNT_EXISTS = {status: 409, message: 'Esses dois usuários não estão conectados.'}
 
 /***************************************** MENSAGENS DE SUCESSO *****************************************/
 const SUCCESS_REQUEST = { status: 200, message: 'Requisição realizada com sucesso.' }
@@ -61,5 +62,6 @@ module.exports = {
     ERROR_MEDICINE_ALREADY_EXISTS,
     ERROR_UNAUTHORIZED_PASSWORD_RECOVER,
     SUCCESS_VALID_TOKEN,
-    ERROR_CONNECTION_ALREADY_EXISTS
+    ERROR_CONNECTION_ALREADY_EXISTS,
+    ERROR_CONNECTION_DOESNT_EXISTS
 }

@@ -159,6 +159,27 @@ const selectConexaoByPacienteAndCuidador = async function (idPaciente, idCuidado
     }
 }
 
+const selectActiveConexaoByPacienteAndCuidador = async function (idPaciente, idCuidador) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 1 and tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao[0]
+    } else {
+        return false
+    }
+}
+
 const desativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
             status = 0
@@ -198,5 +219,6 @@ module.exports = {
     selectConexaoByPacienteAndNomeCuidador,
     desativarConexao,
     ativarConexao,
-    selectConexaoByPacienteAndCuidador
+    selectConexaoByPacienteAndCuidador,
+    selectActiveConexaoByPacienteAndCuidador
 }

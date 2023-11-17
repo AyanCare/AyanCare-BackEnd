@@ -68,6 +68,8 @@ const removerAcentos = function (string) {
 }
 
 const teste_humorDAO = require('../model/DAO/teste_humorDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
+const conexaoDAO = require('../model/DAO/conexaoDAO.js')
 
 const getTestes = async function () {
     let dadosTestesJSON = {}
@@ -154,6 +156,19 @@ const insertTeste = async function (dadosTeste) {
                 let dadosTesteJSON = {}
                 dadosTesteJSON.status = messages.SUCCESS_CREATED_ITEM.status
                 dadosTesteJSON.teste = novoTeste
+
+                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosTeste.id_paciente)
+
+                checkConexoes.forEach(conexao => {
+                    let dadosNotificacao = {
+                    "nome":"Modificação feita: Teste de Humor feito",
+                    "descricao":`O paciente ${novoTeste.paciente} fez seu teste de humor de hoje!`,
+                    "id_cuidador":conexao.id_cuidador,
+                    "id_paciente":dadosTeste.id_paciente
+                    }
+    
+                    notificacaoDAO.insertNotificacao(dadosNotificacao)
+                });
 
                 return dadosTesteJSON
             } else {

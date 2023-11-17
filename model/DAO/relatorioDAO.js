@@ -612,7 +612,7 @@ const selectAllDatas = async function (idCuidador, idPaciente) {
 
 /********************retorna o ultimo id inserido no banco de dados************************** */
 const selectLastId = async function () {
-    let sql = 'select * from tbl_relatorio order by id desc limit 1;'
+    let sql = 'select tbl_relatorio.*, tbl_cuidador.nome as cuidador from tbl_relatorio inner join tbl_cuidador on tbl_cuidador.id = tbl_relatorio.id_cuidador order by id desc limit 1;'
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
@@ -643,8 +643,7 @@ const insertRelatorio = async function (dadosRelatorio) {
         ${dadosRelatorio.id_paciente},
         ${dadosRelatorio.id_cuidador}
     )`
-
-    console.log(sql);
+    
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
 
 
