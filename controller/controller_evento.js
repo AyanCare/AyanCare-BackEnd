@@ -9,6 +9,7 @@
 const messages = require('./modules/config.js')
 
 const eventoDAO = require('../model/DAO/eventoDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 
 const converterMes = function (numeroMes) {
     let mes = numeroMes;
@@ -202,6 +203,15 @@ const insertEvento = async function (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
             eventoCriado.mes = converterMes(eventoCriado.mes)
             dadosEventoJSON.evento = eventoCriado
+
+            let dadosNotificacao = {
+                "nome":"Modificação feita: Evento inserido",
+                "descricao":"Um evento que envolve você foi criado!",
+                "id_cuidador":dadosEvento.idCuidador === undefined ? 0 : dadosEvento.idCuidador,
+                "id_paciente":dadosEvento.idPaciente
+            }
+
+            notificacaoDAO.insertNotificacao(dadosNotificacao)
 
             return dadosEventoJSON
         } else {

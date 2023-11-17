@@ -82,7 +82,7 @@ const selectMedicamentoById = async function (idMedicamento) {
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_medicamento order by id desc limit 1;'
+    let sql = 'select tbl_medicamento.*, tbl_paciente.nome as paciente from tbl_medicamento inner join tbl_paciente on tbl_paciente.id = tbl_medicamento.id_paciente order by id desc limit 1;'
 
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 

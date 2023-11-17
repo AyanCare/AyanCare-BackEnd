@@ -10,6 +10,8 @@
 const messages = require('./modules/config.js')
 
 const medicamentoDAO = require('../model/DAO/medicamentoDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
+const conexaoDAO = require('../model/DAO/conexaoDAO.js')
 
 const getMedicamentos = async function () {
     let dadosMedicamentosJSON = {}
@@ -110,6 +112,19 @@ const insertMedicamento = async function (dadosMedicamento) {
                 let dadosMedicamentoJSON = {}
                 dadosMedicamentoJSON.status = messages.SUCCESS_CREATED_ITEM.status
                 dadosMedicamentoJSON.medicamento = novoMedicamento
+
+                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosMedicamento.id_paciente)
+
+                checkConexoes.forEach(conexao => {
+                    let dadosNotificacao = {
+                    "nome":"Modificação feita: Foi registrado um novo medicamento",
+                    "descricao":`Um novo medicamento foi registrado para ${novoMedicamento.paciente}!`,
+                    "id_cuidador":conexao.id_cuidador,
+                    "id_paciente":dadosMedicamento.id_paciente
+                    }
+    
+                    notificacaoDAO.insertNotificacao(dadosNotificacao)
+                });
 
                 return dadosMedicamentoJSON
             } else {
