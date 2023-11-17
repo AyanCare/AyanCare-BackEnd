@@ -10,6 +10,8 @@ const messages = require('./modules/config.js')
 const jwt = require('../middleware/middlewareJWT.js')
 const pacienteDAO = require('../model/DAO/pacienteDAO.js')
 const cuidadorDAO = require('../model/DAO/cuidadorDAO.js')
+const conexaoDAO = require('../model/DAO/conexaoDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 const emailSender = require('../middleware/middlewareEmail.js')
 const crypto = require("crypto");
 const moment = require("moment");
@@ -204,14 +206,34 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador) {
 
         if (validatePaciente) {
             let validateCuidador = await cuidadorDAO.selectCuidadorById(idCuidador)
-
+            
             if (validateCuidador) {
-                let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
+                let validateConexao = await conexaoDAO.selectConexaoByPacienteAndCuidador(idPaciente, idCuidador)
 
-                if (connectionResult) {
-                    return messages.SUCCESS_USERS_CONNECTED
+                if (validateConexao.length < 1) {
+                    let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
+
+                    if (connectionResult) {
+                        let dadosNotificacao = {
+                            "nome":"Alguém se conectou a sua conta",
+                            "descricao":"Um usuário se conectou a sua conta!",
+                            "id_cuidador":idCuidador,
+                            "id_paciente":idPaciente
+                        }
+            
+                        notificacaoDAO.insertNotificacao(dadosNotificacao)
+    
+                        return messages.SUCCESS_USERS_CONNECTED
+                    } else {
+                        return messages.ERROR_INTERNAL_SERVER
+                    } 
                 } else {
-                    return messages.ERROR_INTERNAL_SERVER
+                    let dadosPacienteJSON = {}
+                    dadosPacienteJSON.status = messages.ERROR_CONNECTION_ALREADY_EXISTS.status
+                    dadosPacienteJSON.message = messages.ERROR_CONNECTION_ALREADY_EXISTS.message
+                    dadosPacienteJSON.conexao = validateConexao[0]
+
+                    return dadosPacienteJSON
                 }
             } else {
                 return messages.ERROR_INVALID_CUIDADOR

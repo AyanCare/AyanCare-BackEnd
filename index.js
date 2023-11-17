@@ -28,6 +28,7 @@ const controllerHumor = require('./controller/controller_humor.js');
 const controllerHistorico = require('./controller/controller_historicoMedico.js');
 const controllerConexao = require('./controller/controller_conexao.js');
 const controllerCor = require('./controller/controller_cor.js');
+const controllerNotificacao = require('./controller/controller_notificacao.js');
 const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
@@ -1638,8 +1639,6 @@ app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, respon
       let dadosBody = request.body
       let resultDadosQuestionario = await controllerQuestionario_Relatorio.insertQuestionario(dadosBody)
 
-         ();
-
       response.status(resultDadosQuestionario.status)
       response.json(resultDadosQuestionario)
    } else {
@@ -1852,19 +1851,21 @@ app.get('/v1/ayan/conexao/:id', cors(), async (request, response) => {
 })
 
 //Update 
-app.put('/v1/ayan/conexao/ativar/:id', cors(), async (request, response) => {
-   let id = request.params.id;
+app.put('/v1/ayan/conexao/ativar', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
 
-   let resultDadosConexao = await controllerConexao.activateConnection(id)
+   let resultDadosConexao = await controllerConexao.activateConnection(idPaciente, idCuidador)
 
    response.status(resultDadosConexao.status)
    response.json(resultDadosConexao)
 })
 
-app.put('/v1/ayan/conexao/desativar/:id', cors(), async (request, response) => {
-   let id = request.params.id;
+app.put('/v1/ayan/conexao/desativar', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
 
-   let resultDadosConexao = await controllerConexao.deactivateConnection(id)
+   let resultDadosConexao = await controllerConexao.deactivateConnection(idPaciente, idCuidador)
 
    response.status(resultDadosConexao.status)
    response.json(resultDadosConexao)
@@ -1993,6 +1994,10 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    let mes = request.query.mes
    let diaSemana = request.query.diaSemana
 
+   if (diaSemana != undefined) {  
+      diaSemana = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
+   }
+
    if (idCuidador != undefined && idPaciente != undefined && dia != undefined && diaSemana != undefined) {
       let dadosCalendarioJSON = {}
       dadosCalendarioJSON.id_paciente = idPaciente
@@ -2043,6 +2048,68 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       response.json(messages.ERROR_NOT_FOUND)
       response.json(messages.ERROR_NOT_FOUND.status)
    }
+})
+
+/*************************************************************************************
+ * Objetibo: API de controle de Notificações.
+ * Autor: Lohannes da Silva Costa
+ * Data: 08/11/2023
+ * Versão: 1.0
+ *************************************************************************************/
+
+ app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente;
+   let idCuidador = request.query.idCuidador;
+   let horario = request.query.horario;
+
+   if (idPaciente != undefined && horario != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndHorario(idPaciente, horario);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idCuidador != undefined && horario != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByCuidadorAndHorario(idCuidador, horario);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idPaciente != undefined) {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idCuidador != undefined) {
+
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByCuidador(idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoes();
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   }
+ })
+
+ app.get('/v1/ayan/notificacao/:id', cors(), async (request, response) => {
+   let id = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosNotificacao = await controllerNotificacao.getNotificacaoById(id);
+
+   //Valida se existe registro
+   response.json(dadosNotificacao)
+   response.status(dadosNotificacao.status)
 })
 
 app.listen(8080, function () {

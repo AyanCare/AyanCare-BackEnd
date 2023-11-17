@@ -34,7 +34,10 @@ const selectAllMedicamentos = async function () {
 const selectMedicamentosNomes = async function (idPaciente) {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `select DISTINCT tbl_medicamento.nome, tbl_medicamento.id from tbl_medicamento where id_paciente = ${idPaciente};`
+    let sql = `SELECT MIN(id) AS id, nome
+    FROM tbl_medicamento
+    WHERE id_paciente = ${idPaciente}
+    GROUP BY nome;`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -79,7 +82,7 @@ const selectMedicamentoById = async function (idMedicamento) {
 }
 
 const selectLastId = async function () {
-    let sql = 'select * from tbl_medicamento order by id desc limit 1;'
+    let sql = 'select tbl_medicamento.*, tbl_paciente.nome as paciente from tbl_medicamento inner join tbl_paciente on tbl_paciente.id = tbl_medicamento.id_paciente order by id desc limit 1;'
 
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
