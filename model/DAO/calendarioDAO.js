@@ -122,6 +122,7 @@ const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
                     id: repeticao.dia_semana_id,
                     status_id: repeticao.dia_evento_id,
                     dia: repeticao.dia,
+		    id_dia_semana: repeticao.id_dia,
                     cor_id: repeticao.id_cor,
                     cor: repeticao.cor,
                     status: repeticao.status_dia_status === 1
@@ -238,6 +239,7 @@ const selectAllEventosByCuidadorMonthly = async function (dadosCalendario) {
                     id: repeticao.dia_semana_id,
                     status_id: repeticao.dia_evento_id,
                     dia: repeticao.dia,
+		    id_dia_semana: repeticao.id_dia,
                     cor_id: repeticao.id_cor,
                     cor: repeticao.cor,
                     status: repeticao.status_dia_status === 1
