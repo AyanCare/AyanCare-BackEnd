@@ -42,7 +42,7 @@ const getNomesMedicamentos = async function (idPaciente) {
         dadosMedicamentosJSON.medicamentos = dadosMedicamentos
         return dadosMedicamentosJSON
     } else {
-        return messages.ERROR_INTERNAL_SERVER
+        return messages.ERROR_NOT_FOUND
     }
 
 }

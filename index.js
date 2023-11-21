@@ -2112,6 +2112,17 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
    response.status(dadosNotificacao.status)
 })
 
+app.get('/v1/ayan/notificacao/modificacoes/:id', cors(), async (request, response) => {
+   let idCuidador = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosNotificacao = await controllerNotificacao.getModificacoesDePacienteByCuidador(idCuidador);
+
+   //Valida se existe registro
+   response.json(dadosNotificacao)
+   response.status(dadosNotificacao.status)
+})
+
 app.listen(8080, function () {
    ('Aguardando requisições na porta 8080...');
 })

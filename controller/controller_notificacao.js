@@ -82,6 +82,25 @@ const getNotificacoesByCuidador = async function (idCuidador) {
     }
 }
 
+const getModificacoesDePacienteByCuidador = async function (idCuidador) {
+
+    if (idCuidador === '' || idCuidador === undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosNotificacaoJSON = {};
+
+        let dadosNotificacao = await notificacaoDAO.selectAllModificacoesDePaciente(idCuidador)
+
+        if (dadosNotificacao) {
+            dadosNotificacaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosNotificacaoJSON.notificacao = dadosNotificacao
+            return dadosNotificacaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const getNotificacoesByPacienteAndHorario = async function (idPaciente, horario) {
     if (idPaciente === '' || idPaciente === undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_ID
@@ -166,5 +185,6 @@ module.exports = {
     getNotificacoesByPaciente,
     getNotificacoesByCuidador,
     getNotificacoesByPacienteAndHorario,
-    getNotificacoesByCuidadorAndHorario
+    getNotificacoesByCuidadorAndHorario,
+    getModificacoesDePacienteByCuidador
 }

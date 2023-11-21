@@ -135,6 +135,30 @@ const selectAllNotificacoesByPacienteAndHorario = async function (idPaciente, ho
     }
 }
 
+const selectAllModificacoesDePaciente = async function (idCuidador) {
+    let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
+                      tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+                      tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
+    FROM tbl_notificacao
+        left join tbl_paciente_notificacao
+    on tbl_paciente_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_cuidador_notificacao
+    on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
+        left join tbl_cuidador
+    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
+		left join tbl_paciente
+    on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
+    where tbl_notificacao.nome like "Modificação feita:%" and tbl_cuidador.id = ${idCuidador};`
+
+    let rsNotificacao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsNotificacao.length > 0) {
+        return rsNotificacao
+    } else {
+        return false
+    }
+}
+
 const selectNotificacaoById = async function (idNotificacao) {
     let sql = `SELECT tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao,
                       COALESCE(
@@ -201,5 +225,6 @@ module.exports = {
     selectAllNotificacoesByPacienteAndHorario,
     selectNotificacaoById,
     selectLastId,
-    insertNotificacao
+    insertNotificacao,
+    selectAllModificacoesDePaciente
 }
