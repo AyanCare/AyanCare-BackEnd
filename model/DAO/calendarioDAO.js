@@ -425,7 +425,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
-	    eventoJSON.id_dia_semana = evento.id_dia
+	        eventoJSON.id_dia_semana = evento.id_dia
+	        eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)
         })
@@ -566,7 +567,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
-	    eventoJSON.id_dia_semana = evento.id_dia
+	        eventoJSON.id_dia_semana = evento.id_dia
+            eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)
         })
