@@ -185,6 +185,12 @@ const deleteTurnos = async function (idConexao) {
     }
 }
 
+async function log() {
+    console.log(await selectAllTurnos());
+}
+
+log()
+
 module.exports = {
    
 }
