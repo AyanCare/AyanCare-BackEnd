@@ -16,6 +16,7 @@ function formatarMesAno(mes) {
 }
 
 function converterData(ano) {
+    console.log(ano);
     let [dia, mes, anoF] = ano.split('/');
     return `${anoF}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
 }
