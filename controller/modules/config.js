@@ -27,6 +27,7 @@ const ERROR_CONNECTION_DOESNT_EXISTS = {status: 409, message: 'Esses dois usuár
 
 /***************************************** MENSAGENS DE SUCESSO *****************************************/
 const SUCCESS_REQUEST = { status: 200, message: 'Requisição realizada com sucesso.' }
+const SUCCESS_EMAIL_SENT = { status: 200, message: 'Email enviado com sucesso.' }
 const SUCCESS_CREATED_ITEM = { status: 201, message: 'Item criado com sucesso.' }
 const SUCCESS_UPDATED_ITEM = { status: 200, message: 'Item atualizado com sucesso.' }
 const SUCCESS_DELETED_ITEM = { status: 200, message: 'Item deletado com sucesso.' }
@@ -63,5 +64,6 @@ module.exports = {
     ERROR_UNAUTHORIZED_PASSWORD_RECOVER,
     SUCCESS_VALID_TOKEN,
     ERROR_CONNECTION_ALREADY_EXISTS,
-    ERROR_CONNECTION_DOESNT_EXISTS
+    ERROR_CONNECTION_DOESNT_EXISTS,
+    SUCCESS_EMAIL_SENT
 }
