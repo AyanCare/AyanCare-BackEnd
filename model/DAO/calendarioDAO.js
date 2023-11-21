@@ -26,6 +26,61 @@ function conversaoDeMilissegundos(milissegundos) {
     return horarioFormatado;
   }
 
+  const converterMes = function (numeroMes) {
+    let mes = numeroMes;
+
+    switch (mes) {
+        case "01":
+            mes = 'Janeiro'
+            break;
+
+        case "02":
+            mes = 'Fevereiro'
+            break;
+
+        case "03":
+            mes = 'Março'
+            break;
+
+        case "04":
+            mes = 'Abril'
+            break;
+
+        case "05":
+            mes = 'Maio'
+            break;
+
+        case "06":
+            mes = 'Junho'
+            break;
+
+        case "07":
+            mes = 'Julho'
+            break;
+
+        case "08":
+            mes = 'Agosto'
+            break;
+
+        case "09":
+            mes = 'Setembro'
+            break;
+
+        case "10":
+            mes = 'Outubro'
+            break;
+
+        case "11":
+            mes = 'Novembro'
+            break;
+
+        case "12":
+            mes = 'Dezembro'
+            break;
+    }
+    return mes;
+}
+
 /************************** Selects ******************************/
 const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
 
@@ -266,7 +321,7 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     //scriptSQL para buscar todos os itens do BD
     let sqlEvento_unico = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
 		   tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, 
-		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
+		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento.dia,'%m') as mes, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
            tbl_cor.id as id_cor, tbl_cor.hex as cor
     from tbl_paciente
 		left JOIN tbl_paciente_evento_unitario
@@ -349,6 +404,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventoJSON.descricao = evento.descricao_evento_unico
             eventoJSON.local = evento.local_evento_unico
             eventoJSON.dia = evento.dia_evento_unico
+            eventoJSON.dia_unico = evento.dia_unico
+            eventoJSON.mes = converterMes(evento.mes)
             eventoJSON.horario = evento.horario_evento_unico
             eventoJSON.cor = evento.cor
 
@@ -405,7 +462,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
     //scriptSQL para buscar todos os itens do BD
     let sqlEvento_unico = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
 		   tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, 
-		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
+		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento.dia,'%m') as mes, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
            tbl_cor.id as id_cor, tbl_cor.hex as cor
     from tbl_paciente
 		left JOIN tbl_paciente_evento_unitario
@@ -488,6 +545,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             eventoJSON.descricao = evento.descricao_evento_unico
             eventoJSON.local = evento.local_evento_unico
             eventoJSON.dia = evento.dia_evento_unico
+            eventoJSON.dia_unico = evento.dia_unico
+            eventoJSON.mes = converterMes(evento.mes)
             eventoJSON.horario = evento.horario_evento_unico
             eventoJSON.cor = evento.cor
 
