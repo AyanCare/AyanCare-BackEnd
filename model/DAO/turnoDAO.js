@@ -324,7 +324,7 @@ const selectTurnoByConexao = async function (idConexao) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_cuidador.id = ${idConexao}`
+    where tbl_paciente_cuidador.id = ${idConexao}`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
@@ -380,13 +380,13 @@ const selectTurnoByConexao = async function (idConexao) {
 /************************** Inserts ******************************/
 const insertTurno = async function (dadosTurnos) {
     let sql = `call procInsertTurnoDiaSemanaCor( 
-        1, '${dadosTurnos.domingo}', 
-        2, '${dadosTurnos.segunda}', 
-        3, '${dadosTurnos.terca}', 
-        4, '${dadosTurnos.quarta}', 
-        5, '${dadosTurnos.quinta}', 
-        6, '${dadosTurnos.sexta}', 
-        7, '${dadosTurnos.sabado}', 
+        1, ${dadosTurnos.domingo}, 
+        2, ${dadosTurnos.segunda}, 
+        3, ${dadosTurnos.terca}, 
+        4, ${dadosTurnos.quarta}, 
+        5, ${dadosTurnos.quinta}, 
+        6, ${dadosTurnos.sexta}, 
+        7, ${dadosTurnos.sabado}, 
         '${dadosTurnos.horario_comeco}', 
         '${dadosTurnos.horario_fim}', 
         ${dadosTurnos.idCor}, 
