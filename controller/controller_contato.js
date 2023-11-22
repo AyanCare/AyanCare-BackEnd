@@ -124,7 +124,7 @@ const insertContato = async function (dadosContato) {
     } else {
         let verifyContact = await contatoDAO.selectContatoByNomeAndNumeroAndPaciente(dadosContato.nome, dadosContato.numero, dadosContato.id_paciente)
 
-        if (verifyContact.length > 0) {
+        if (verifyContact) {
             return message.ERROR_CONTACT_ALREADY_EXISTS
         } else {
             let resultDadosContato = await contatoDAO.insertContato(dadosContato)

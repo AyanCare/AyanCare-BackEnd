@@ -202,11 +202,15 @@ const selectLastId = async function () {
 }
 
 const insertNotificacao = async function (dadosNotificacao) {
+    console.log(dadosNotificacao);
+
     let sql = `call procInsertNotificacao(
         "${dadosNotificacao.nome}", 
         "${dadosNotificacao.descricao}", 
         ${dadosNotificacao.id_cuidador}, 
         ${dadosNotificacao.id_paciente});`
+
+    console.log(sql);
 
     let rsNotificacao = await prisma.$executeRawUnsafe(sql)
 

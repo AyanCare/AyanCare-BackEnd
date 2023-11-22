@@ -145,6 +145,15 @@ const insertEvento = async function (dadosEvento) {
             dadosEventoJSON.status = messages.SUCCESS_CREATED_ITEM.status
             dadosEventoJSON.evento = novoEvento
 
+            let dadosNotificacao = {
+                "nome":"Evento recorrente inserido",
+                "descricao":`Um evento recorrente que envolve o Paciente ${novoEvento.paciente} e o Cuidador ${novoEvento.cuidador} foi criado!`,
+                "id_cuidador":novoEvento.id_cuidador,
+                "id_paciente":novoEvento.id_paciente
+            }
+
+            notificacaoDAO.insertNotificacao(dadosNotificacao)
+
             return dadosEventoJSON
         } else {
             return messages.ERROR_INTERNAL_SERVER
