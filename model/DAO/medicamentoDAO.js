@@ -185,8 +185,6 @@ const updateMedicamento = async function (dadosMedicamento) {
             estocado = 1
         where id = ${dadosMedicamento.id}`
 
-    console.log(sql);
-
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
     if (resultStatus) {

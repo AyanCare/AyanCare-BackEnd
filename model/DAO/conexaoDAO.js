@@ -69,6 +69,8 @@ const selectConexaoByPaciente = async function (idPaciente) {
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     where tbl_paciente_cuidador.status = 1 and tbl_paciente.id = ${idPaciente}`
 
+    console.log(sql);
+
     let rsConexao = await prisma.$queryRawUnsafe(sql)
 
     if (rsConexao.length > 0) {

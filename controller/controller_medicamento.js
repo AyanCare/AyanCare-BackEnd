@@ -163,8 +163,8 @@ const updateMedicamento = async function (dadosMedicamento) {
                 dadosMedicamentoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
                 dadosMedicamentoJSON.medicamento = dadosMedicamento
 
-                let medicamento = await medicamentoDAO.selectMedicamentoById(id)
-                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosMedicamento.id_paciente)
+                let medicamento = await medicamentoDAO.selectMedicamentoById(dadosMedicamento.id)
+                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(medicamento.id_paciente)
 
                 if (checkConexoes) {
                     checkConexoes.forEach(conexao => {
