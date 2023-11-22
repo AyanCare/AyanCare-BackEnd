@@ -1,6 +1,6 @@
 /**************************************************************************************
- * Objetivo: Responsável pela manipulação de dados dos TURNOSS ÚNICOS no Banco de Dados.
- * Data: 05/10/2023
+ * Objetivo: Responsável pela manipulação de dados dos TURNOS no Banco de Dados.
+ * Data: 21/11/2023
  * Autor: Lohannes da Silva Costa & Gustavo Souza Tenorio de Barros
  * Versão: 1.0
  **************************************************************************************/
@@ -163,7 +163,7 @@ const selectLastId = async function () {
 }
 
 
-const selectTurnosByPaciente = async function (idPaciente) {
+const selectTurnoByPaciente = async function (idPaciente) {
     let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
         tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
         tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
@@ -234,8 +234,25 @@ const selectTurnosByPaciente = async function (idPaciente) {
     }
 }
 
-const selectTurnosByCuidador = async function (emailTurnos) {
-    let sql = `select * from tbl_turnos where email = '${emailTurnos}'`
+const selectTurnoByCuidador = async function (idCuidador) {
+    let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_cuidador.id = ${idCuidador}`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
@@ -289,8 +306,25 @@ const selectTurnosByCuidador = async function (emailTurnos) {
 }
 
 
-const selectTurnosByConexao = async function (emailTurnos) {
-    let sql = `select * from tbl_turnos where email = '${emailTurnos}'`
+const selectTurnoByConexao = async function (idConexao) {
+    let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_cuidador.id = ${idConexao}`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
@@ -344,7 +378,7 @@ const selectTurnosByConexao = async function (emailTurnos) {
 }
 
 /************************** Inserts ******************************/
-const insertTurnos = async function (dadosTurnos) {
+const insertTurno = async function (dadosTurnos) {
     let sql = `call procInsertTurnoDiaSemanaCor( 
         1, '${dadosTurnos.domingo}', 
         2, '${dadosTurnos.segunda}', 
@@ -353,8 +387,8 @@ const insertTurnos = async function (dadosTurnos) {
         5, '${dadosTurnos.quinta}', 
         6, '${dadosTurnos.sexta}', 
         7, '${dadosTurnos.sabado}', 
-        '12:00', 
-        '17:00', 
+        '${dadosTurnos.horario_comeco}', 
+        '${dadosTurnos.horario_fim}', 
         ${dadosTurnos.idCor}, 
         ${dadosTurnos.idConexao}
     )`
@@ -371,7 +405,7 @@ const insertTurnos = async function (dadosTurnos) {
 
 
 /************************** Deletes ******************************/
-const deleteTurnos = async function (idConexao) {
+const deleteTurno = async function (idConexao) {
     let sql = `delete from tbl_turno_dia_semana where id_paciente_cuidador = ${idConexao}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
@@ -383,18 +417,12 @@ const deleteTurnos = async function (idConexao) {
     }
 }
 
-async function log() {
-    console.log(await selectLastId());
-}
-
-log()
-
 module.exports = {
-    deleteTurnos,
-    insertTurnos,
+    deleteTurno,
+    insertTurno,
     selectAllTurnos,
     selectLastId,
-    selectTurnosByCuidador,
-    selectTurnosByPaciente
-
+    selectTurnoByConexao,
+    selectTurnoByCuidador,
+    selectTurnoByPaciente 
 }

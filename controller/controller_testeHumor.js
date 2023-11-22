@@ -8,50 +8,46 @@
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
 
-var dadosTesteReal = {}
-
-const criadorDeDadosParaInsert = function () {
-    dadosTesteReal.observacao = ""
-    dadosTesteReal.id_paciente = ""
-    dadosTesteReal.caminhada = false
-    dadosTesteReal.natacao = false
-    dadosTesteReal.danca = false
-    dadosTesteReal.alongamento = false
-    dadosTesteReal.yoga = false
-    dadosTesteReal.volei = false
-    dadosTesteReal.tenis = false
-    dadosTesteReal.corrida = false
-    dadosTesteReal.ginastica = false
-    dadosTesteReal.futebol = false
-    dadosTesteReal.artesmarciais = false
-    dadosTesteReal.academia = false
-    dadosTesteReal.irritado = false
-    dadosTesteReal.culpado = false
-    dadosTesteReal.mudancasdehumor = false
-    dadosTesteReal.agitado = false
-    dadosTesteReal.confuso = false
-    dadosTesteReal.apatico = false
-    dadosTesteReal.energetico = false
-    dadosTesteReal.calmo = false
-    dadosTesteReal.feliz = false
-    dadosTesteReal.confiante = false
-    dadosTesteReal.confortavel = false
-    dadosTesteReal.desanimado = false
-    dadosTesteReal.apertonopeito = false
-    dadosTesteReal.doresabdominais = false
-    dadosTesteReal.faltadear = false
-    dadosTesteReal.tontura = false
-    dadosTesteReal.calafrios = false
-    dadosTesteReal.nauseaevomito = false
-    dadosTesteReal.cansaco = false
-    dadosTesteReal.poucoapetite = false
-    dadosTesteReal.dordecabeca = false
-    dadosTesteReal.visaoembacada = false
-    dadosTesteReal.dornobraco = false
-    dadosTesteReal.intestinopreso = false
+var dadosTesteReal = {
+    observacao: "",
+    id_paciente: "",
+    caminhada: false,
+    natacao: false,
+    danca: false,
+    alongamento: false,
+    yoga: false,
+    volei: false,
+    tenis: false,
+    corrida: false,
+    ginastica: false,
+    futebol: false,
+    artesmarciais: false,
+    academia: false,
+    irritado: false,
+    culpado: false,
+    mudancasdehumor: false,
+    agitado: false,
+    confuso: false,
+    apatico: false,
+    energetico: false,
+    calmo: false,
+    feliz: false,
+    confiante: false,
+    confortavel: false,
+    desanimado: false,
+    apertonopeito: false,
+    doresabdominais: false,
+    faltadear: false,
+    tontura: false,
+    calafrios: false,
+    nauseaevomito: false,
+    cansaco: false,
+    poucoapetite: false,
+    dordecabeca: false,
+    visaoembacada: false,
+    dornobraco: false,
+    intestinopreso: false,
 }
-
-criadorDeDadosParaInsert()
 
 const removerAcentos = function (string) {
     const acentos = {

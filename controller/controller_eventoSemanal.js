@@ -8,25 +8,21 @@
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
 
-var dadosEventoReal = {}
-
-const criadorDeDadosParaInsert = function (){
-    dadosEventoReal.nome = ""
-    dadosEventoReal.descricao = ""
-    dadosEventoReal.local = ""
-    dadosEventoReal.hora = ""
-    dadosEventoReal.cor_id = 0
-    dadosEventoReal.id_paciente_cuidador = 0
-    dadosEventoReal.domingo = false
-    dadosEventoReal.segunda = false
-    dadosEventoReal.terca = false
-    dadosEventoReal.quarta = false
-    dadosEventoReal.quinta = false
-    dadosEventoReal.sexta = false
-    dadosEventoReal.sabado = false
+var dadosEventoReal = {
+    nome: "",
+    descricao: "",
+    local: "",
+    hora: "",
+    cor_id: 0,
+    id_paciente_cuidador: 0,
+    domingo: false,
+    segunda: false,
+    terca: false,
+    quarta: false, 
+    quinta: false,
+    sexta: false,
+    sabado: false,
 }
-
-criadorDeDadosParaInsert()
 
 const removerAcentos = function (string) {
     const acentos = {
