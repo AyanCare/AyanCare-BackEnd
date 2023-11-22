@@ -145,18 +145,14 @@ const insertMedicamento = async function (dadosMedicamento) {
     }
 }
 
-const updateMedicamento = async function (dadosMedicamento, id) {
+const updateMedicamento = async function (dadosMedicamento) {
     if (
         dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
         dadosMedicamento.limite === '' || dadosMedicamento.limite === undefined || isNaN(dadosMedicamento.limite) 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id === null || id === undefined || isNaN(id)) {
-        return messages.ERROR_INVALID_ID
     } else {
-        dadosMedicamento.id = id
-
-        let atualizacaoMedicamento = await medicamentoDAO.selectMedicamentoById(id)
+        let atualizacaoMedicamento = await medicamentoDAO.selectMedicamentoById(dadosMedicamento.id)
 
         if (atualizacaoMedicamento) {
             let resultDadosMedicamento = await medicamentoDAO.updateMedicamento(dadosMedicamento)
