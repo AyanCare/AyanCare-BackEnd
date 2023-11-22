@@ -76,7 +76,7 @@ const getMedicamentosByPaciente = async function (idPaciente) {
 
         if (dadosMedicamento) {
             dadosMedicamentoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosMedicamentoJSON.medicamento = dadosMedicamento
+            dadosMedicamentoJSON.medicamentos = dadosMedicamento
             return dadosMedicamentoJSON
         } else {
             return messages.ERROR_NOT_FOUND

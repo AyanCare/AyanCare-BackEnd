@@ -82,7 +82,7 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
         });
     
         // Retorna o array de usuários processados
-        return usuarios;
+        return usuarios
     } else {
         return false
     }
@@ -90,17 +90,71 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
 }
 
 const selectLastId = async function () {
-    let sql = `SELECT tbl_turnos.id as id, tbl_turnos.nome as nome, tbl_turnos.foto as foto, DATE_FORMAT(tbl_turnos.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_turnos.email as email, tbl_turnos.senha as senha, tbl_turnos.descricao_experiencia,
-    tbl_genero.nome as genero
-    from tbl_turnos
-    inner join tbl_genero
-    on tbl_genero.id = tbl_turnos.id_genero
-    order by tbl_turnos.id desc limit 7;`
+    let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    order by tbl_turno_dia_semana.id desc limit 7;`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
     if (rsTurnos.length > 0) {
-        return rsTurnos
+        // Cria um array para armazenar os usuários processados
+        let usuarios = [];
+    
+        // Itera sobre os registros retornados do banco de dados
+        rsTurnos.forEach(usuario => {
+            // Verifica se o usuário já foi processado anteriormente
+            let usuarioExistente = usuarios.find(u => u.id_conexao === usuario.id_conexao);
+    
+            // Se o usuário já foi processado, adiciona o dia ao array existente
+            if (usuarioExistente) {
+                usuarioExistente.dias.push({
+                    id: usuario.id_dia_semana,
+                    dia: usuario.dia,
+                    turno_id: usuario.id,
+                    status: usuario.status === 1 
+                });
+            } else {
+                // Se o usuário não foi processado, cria um novo objeto de usuário
+                let novoUsuario = {
+                    id: usuario.id,
+                    id_paciente: usuario.id_paciente,
+                    paciente: usuario.paciente,
+                    id_cuidador: usuario.id_cuidador,
+                    cuidador: usuario.cuidador,
+                    id_conexao: usuario.id_conexao,
+                    // Cria um array para armazenar os dias do usuário
+                    dias: [
+                        {
+                            id: usuario.id_dia_semana,
+                            dia: usuario.dia,
+                            turno_id: usuario.id,
+                            status: usuario.status === 1 
+                        }
+                    ]
+                };
+    
+                // Adiciona o novo usuário ao array de usuários
+                usuarios.push(novoUsuario);
+            }
+        });
+    
+        // Retorna o array de usuários processados
+        return usuarios
     } else {
         return false
     }
@@ -120,7 +174,49 @@ const selectTurnosByPaciente = async function (dadosTurnos) {
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
     if (rsTurnos.length > 0) {
-        return rsTurnos[0]
+        // Cria um array para armazenar os usuários processados
+        let usuarios = [];
+    
+        // Itera sobre os registros retornados do banco de dados
+        rsTurnos.forEach(usuario => {
+            // Verifica se o usuário já foi processado anteriormente
+            let usuarioExistente = usuarios.find(u => u.id_conexao === usuario.id_conexao);
+    
+            // Se o usuário já foi processado, adiciona o dia ao array existente
+            if (usuarioExistente) {
+                usuarioExistente.dias.push({
+                    id: usuario.id_dia_semana,
+                    dia: usuario.dia,
+                    turno_id: usuario.id,
+                    status: usuario.status === 1 
+                });
+            } else {
+                // Se o usuário não foi processado, cria um novo objeto de usuário
+                let novoUsuario = {
+                    id: usuario.id,
+                    id_paciente: usuario.id_paciente,
+                    paciente: usuario.paciente,
+                    id_cuidador: usuario.id_cuidador,
+                    cuidador: usuario.cuidador,
+                    id_conexao: usuario.id_conexao,
+                    // Cria um array para armazenar os dias do usuário
+                    dias: [
+                        {
+                            id: usuario.id_dia_semana,
+                            dia: usuario.dia,
+                            turno_id: usuario.id,
+                            status: usuario.status === 1 
+                        }
+                    ]
+                };
+    
+                // Adiciona o novo usuário ao array de usuários
+                usuarios.push(novoUsuario);
+            }
+        });
+    
+        // Retorna o array de usuários processados
+        return usuarios
     } else {
         return false
     }
@@ -132,20 +228,104 @@ const selectTurnosByCuidador = async function (emailTurnos) {
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
     if (rsTurnos.length > 0) {
-        return rsTurnos
+        // Cria um array para armazenar os usuários processados
+        let usuarios = [];
+    
+        // Itera sobre os registros retornados do banco de dados
+        rsTurnos.forEach(usuario => {
+            // Verifica se o usuário já foi processado anteriormente
+            let usuarioExistente = usuarios.find(u => u.id_conexao === usuario.id_conexao);
+    
+            // Se o usuário já foi processado, adiciona o dia ao array existente
+            if (usuarioExistente) {
+                usuarioExistente.dias.push({
+                    id: usuario.id_dia_semana,
+                    dia: usuario.dia,
+                    turno_id: usuario.id,
+                    status: usuario.status === 1 
+                });
+            } else {
+                // Se o usuário não foi processado, cria um novo objeto de usuário
+                let novoUsuario = {
+                    id: usuario.id,
+                    id_paciente: usuario.id_paciente,
+                    paciente: usuario.paciente,
+                    id_cuidador: usuario.id_cuidador,
+                    cuidador: usuario.cuidador,
+                    id_conexao: usuario.id_conexao,
+                    // Cria um array para armazenar os dias do usuário
+                    dias: [
+                        {
+                            id: usuario.id_dia_semana,
+                            dia: usuario.dia,
+                            turno_id: usuario.id,
+                            status: usuario.status === 1 
+                        }
+                    ]
+                };
+    
+                // Adiciona o novo usuário ao array de usuários
+                usuarios.push(novoUsuario);
+            }
+        });
+    
+        // Retorna o array de usuários processados
+        return usuarios
     } else {
         return false
     }
 }
 
 
-const selectTurnosEmail = async function (emailTurnos) {
+const selectTurnosByConexao = async function (emailTurnos) {
     let sql = `select * from tbl_turnos where email = '${emailTurnos}'`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
     if (rsTurnos.length > 0) {
-        return rsTurnos
+        // Cria um array para armazenar os usuários processados
+        let usuarios = [];
+    
+        // Itera sobre os registros retornados do banco de dados
+        rsTurnos.forEach(usuario => {
+            // Verifica se o usuário já foi processado anteriormente
+            let usuarioExistente = usuarios.find(u => u.id_conexao === usuario.id_conexao);
+    
+            // Se o usuário já foi processado, adiciona o dia ao array existente
+            if (usuarioExistente) {
+                usuarioExistente.dias.push({
+                    id: usuario.id_dia_semana,
+                    dia: usuario.dia,
+                    turno_id: usuario.id,
+                    status: usuario.status === 1 
+                });
+            } else {
+                // Se o usuário não foi processado, cria um novo objeto de usuário
+                let novoUsuario = {
+                    id: usuario.id,
+                    id_paciente: usuario.id_paciente,
+                    paciente: usuario.paciente,
+                    id_cuidador: usuario.id_cuidador,
+                    cuidador: usuario.cuidador,
+                    id_conexao: usuario.id_conexao,
+                    // Cria um array para armazenar os dias do usuário
+                    dias: [
+                        {
+                            id: usuario.id_dia_semana,
+                            dia: usuario.dia,
+                            turno_id: usuario.id,
+                            status: usuario.status === 1 
+                        }
+                    ]
+                };
+    
+                // Adiciona o novo usuário ao array de usuários
+                usuarios.push(novoUsuario);
+            }
+        });
+    
+        // Retorna o array de usuários processados
+        return usuarios
     } else {
         return false
     }
@@ -192,7 +372,7 @@ const deleteTurnos = async function (idConexao) {
 }
 
 async function log() {
-    console.log(await selectAllTurnos());
+    console.log(await selectLastId());
 }
 
 log()
