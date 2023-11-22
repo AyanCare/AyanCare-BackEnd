@@ -38,43 +38,58 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
-
-
     //Valida se o BD retornou algum registro
     if (rsTurnos.length > 0) {
+        let dias = []
         let turnos = []
+        let usuarios = []
 
-        // Mapeia os eventos semanais por ID
-        let turnosMap = new Map()
-        rsTurnos.forEach(turno => {
-            if (!turnosMap.has(turno.id)) {
-                turnosMap.set(turno.id, {
-                    id: turno.id,
-                    id_paciente: turno.id_paciente,
-                    paciente: turno.paciente,
-                    id_cuidador: turno.id_cuidador,
-                    cuidador: turno.cuidador,
-                    dias: []
-                });
+        let arrayIDDia = []
+        let arrayIDTurno = []
+        let arrayIDUsuario = []
+        let arrayIDStatus = []
+
+        rsTurnos.forEach(usuario => {
+            if (!arrayIDUsuario.includes(usuario.id_conexao)) {
+                let conexaoJSON = {}
+
+                arrayIDEvento.push(usuario.id)
+                conexaoJSON.id = usuario.id
+                conexaoJSON.paciente = usuario.paciente
+                conexaoJSON.cuidador = usuario.cuidador
+                conexaoJSON.nome = usuario.nome
+                conexaoJSON.descricao = usuario.descricao
+                conexaoJSON.local = usuario.local
+                conexaoJSON.horario = usuario.horario
+                conexaoJSON.cor = usuario.cor
+
+                rsEvento.forEach(repeticao => {
+                    if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && usuario.id == repeticao.id) {
+                        let dia = {}
+
+                        arrayIDDia.push(repeticao.dia_id)
+                        arrayIDStatus.push(repeticao.id_status)
+                        dia.id = repeticao.dia_id
+                        dia.dia = repeticao.dia
+                        dia.status_id = repeticao.id_status
+
+                        if (repeticao.status === 1) {
+                            dia.status = true
+                        } else {
+                            dia.status = false
+                        }
+
+                        dias.push(dia)
+                    }
+                })
+
+                conexaoJSON.dias = dias
+                eventos.push(conexaoJSON)
             }
-        });
 
-        // Preenche os dias correspondentes para cada turno semanal
-        rsTurnos.forEach(repeticao => {
-            let turno = turnosMap.get(repeticao.id);
-            if (turno) {
-                let dia = {
-                    id: repeticao.id_dia_semana,
-                    dia: repeticao.dia,
-                    status_id: repeticao.id_turno,
-                    cor: repeticao.cor
-                };
-                turno.dias.push(dia);
-            }
+            arrayIDDia = []
+            dias = []
         });
-
-        // Converte o mapa para uma matriz
-        eventosSemanais = Array.from(turnosMap.values());
 
         return turnos
     } else {
@@ -98,7 +113,7 @@ const selectLastId = async function () {
     } else {
         return false
     }
-    
+
     //retorna o ultimo id inserido no banco de dados
 }
 
@@ -192,5 +207,11 @@ async function log() {
 log()
 
 module.exports = {
-   
+    deleteTurnos,
+    insertTurnos,
+    selectAllTurnos,
+    selectLastId,
+    selectTurnosByCuidador,
+    selectTurnosByPaciente
+
 }

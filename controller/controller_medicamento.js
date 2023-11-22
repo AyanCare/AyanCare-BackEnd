@@ -147,7 +147,6 @@ const insertMedicamento = async function (dadosMedicamento) {
 
 const updateMedicamento = async function (dadosMedicamento, id) {
     if (
-        dadosMedicamento.estocado === '' || dadosMedicamento.estocado === undefined || (dadosMedicamento.estocado != 0 && dadosMedicamento.estocado != 1) || isNaN(dadosMedicamento.estocado) ||
         dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
         dadosMedicamento.limite === '' || dadosMedicamento.limite === undefined || isNaN(dadosMedicamento.limite) 
     ) {
