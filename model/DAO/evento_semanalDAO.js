@@ -351,7 +351,9 @@ order by tbl_nome_descricao_local_evento.id desc limit 7`
 
         rsEvento.forEach(evento => {
             eventoJSON.id = evento.id
+            eventoJSON.id_paciente = evento.id_paciente
             eventoJSON.paciente = evento.paciente
+            eventoJSON.id_cuidador = evento.id_cuidador
             eventoJSON.cuidador = evento.cuidador
             eventoJSON.nome = evento.nome
             eventoJSON.descricao = evento.descricao

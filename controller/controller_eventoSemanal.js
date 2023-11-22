@@ -39,6 +39,7 @@ const removerAcentos = function (string) {
 }
 
 const evento_semanalDAO = require('../model/DAO/evento_semanalDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 
 const getAllEventos = async function(){
     let dadosEventoJSON = {};
