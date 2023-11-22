@@ -146,6 +146,8 @@ const insertMedicamento = async function (dadosMedicamento) {
 }
 
 const updateMedicamento = async function (dadosMedicamento) {
+    console.log(dadosMedicamento)
+
     if (
         dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
         dadosMedicamento.limite === '' || dadosMedicamento.limite === undefined || isNaN(dadosMedicamento.limite) 
