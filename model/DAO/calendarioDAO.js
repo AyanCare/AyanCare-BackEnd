@@ -26,6 +26,61 @@ function conversaoDeMilissegundos(milissegundos) {
     return horarioFormatado;
   }
 
+  const converterMes = function (numeroMes) {
+    let mes = numeroMes;
+
+    switch (mes) {
+        case "01":
+            mes = 'Janeiro'
+            break;
+
+        case "02":
+            mes = 'Fevereiro'
+            break;
+
+        case "03":
+            mes = 'Março'
+            break;
+
+        case "04":
+            mes = 'Abril'
+            break;
+
+        case "05":
+            mes = 'Maio'
+            break;
+
+        case "06":
+            mes = 'Junho'
+            break;
+
+        case "07":
+            mes = 'Julho'
+            break;
+
+        case "08":
+            mes = 'Agosto'
+            break;
+
+        case "09":
+            mes = 'Setembro'
+            break;
+
+        case "10":
+            mes = 'Outubro'
+            break;
+
+        case "11":
+            mes = 'Novembro'
+            break;
+
+        case "12":
+            mes = 'Dezembro'
+            break;
+    }
+    return mes;
+}
+
 /************************** Selects ******************************/
 const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
 
@@ -122,9 +177,10 @@ const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
                     id: repeticao.dia_semana_id,
                     status_id: repeticao.dia_evento_id,
                     dia: repeticao.dia,
+		    id_dia_semana: repeticao.id_dia,
                     cor_id: repeticao.id_cor,
                     cor: repeticao.cor,
-                    status: repeticao.status_dia_status === 1
+                    status: repeticao.status_dia_status === 1 ? true : false
                 };
                 evento.dias.push(dia);
             }
@@ -238,9 +294,10 @@ const selectAllEventosByCuidadorMonthly = async function (dadosCalendario) {
                     id: repeticao.dia_semana_id,
                     status_id: repeticao.dia_evento_id,
                     dia: repeticao.dia,
+		            id_dia_semana: repeticao.id_dia,
                     cor_id: repeticao.id_cor,
                     cor: repeticao.cor,
-                    status: repeticao.status_dia_status === 1
+                    status: repeticao.status_dia_status === 1 ? true : false
                 };
                 evento.dias.push(dia);
             }
@@ -264,7 +321,7 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     //scriptSQL para buscar todos os itens do BD
     let sqlEvento_unico = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
 		   tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, 
-		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
+		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento.dia,'%m') as mes, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
            tbl_cor.id as id_cor, tbl_cor.hex as cor
     from tbl_paciente
 		left JOIN tbl_paciente_evento_unitario
@@ -347,6 +404,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventoJSON.descricao = evento.descricao_evento_unico
             eventoJSON.local = evento.local_evento_unico
             eventoJSON.dia = evento.dia_evento_unico
+            eventoJSON.dia_unico = evento.dia_unico
+            eventoJSON.mes = converterMes(evento.mes)
             eventoJSON.horario = evento.horario_evento_unico
             eventoJSON.cor = evento.cor
 
@@ -366,6 +425,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
+	        eventoJSON.id_dia_semana = evento.id_dia
+	        eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)
         })
@@ -402,7 +463,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
     //scriptSQL para buscar todos os itens do BD
     let sqlEvento_unico = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
 		   tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador, 
-		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
+		   tbl_evento.id as id_evento, tbl_evento.nome as nome_evento_unico, tbl_evento.descricao as descricao_evento_unico, tbl_evento.local as local_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d/%m/%Y') as dia_evento_unico, DATE_FORMAT(tbl_evento.dia,'%d') as dia_unico, DATE_FORMAT(tbl_evento.dia,'%m') as mes, TIME_FORMAT(tbl_evento.horario, '%H:%i') as horario_evento_unico,
            tbl_cor.id as id_cor, tbl_cor.hex as cor
     from tbl_paciente
 		left JOIN tbl_paciente_evento_unitario
@@ -485,6 +546,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             eventoJSON.descricao = evento.descricao_evento_unico
             eventoJSON.local = evento.local_evento_unico
             eventoJSON.dia = evento.dia_evento_unico
+            eventoJSON.dia_unico = evento.dia_unico
+            eventoJSON.mes = converterMes(evento.mes)
             eventoJSON.horario = evento.horario_evento_unico
             eventoJSON.cor = evento.cor
 
@@ -504,6 +567,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
+	        eventoJSON.id_dia_semana = evento.id_dia
+            eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)
         })

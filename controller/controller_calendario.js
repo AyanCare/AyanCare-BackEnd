@@ -10,6 +10,17 @@ const messages = require('./modules/config.js')
 
 const calendarioDAO = require('../model/DAO/calendarioDAO.js')
 
+function formatarMesAno(mes) {
+    let [mesF, ano] = mes.split('/');
+    return `${ano}-${mesF.padStart(2, '0')}`;
+}
+
+function converterData(ano) {
+    console.log(ano);
+    let [dia, mes, anoF] = ano.split('/');
+    return `${anoF}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+}
+
 const getEventosAndAlarmesByPaciente = async function (dadosCalendario) {
     if (
         dadosCalendario.dia == '' || dadosCalendario.dia == undefined ||
@@ -21,6 +32,8 @@ const getEventosAndAlarmesByPaciente = async function (dadosCalendario) {
     ) {
         return messages.ERROR_INVALID_PACIENTE
     } else {
+        dadosCalendario.dia = converterData(dadosCalendario.dia)
+
         let dadosCalendarioJSON = {};
 
         let resultCalendario = await calendarioDAO.selectAllEventosAndAlarmesByPacienteDiary(dadosCalendario)
@@ -49,6 +62,8 @@ const getEventosAndAlarmesByCuidadorAndPaciente = async function (dadosCalendari
     ) {
         return messages.ERROR_INVALID_CUIDADOR
     } else {
+        dadosCalendario.dia = converterData(dadosCalendario.dia)
+
         let dadosCalendarioJSON = {};
 
         let resultCalendario = await calendarioDAO.selectAllEventosAndAlarmesByCuidadorDiary(dadosCalendario)
@@ -73,6 +88,8 @@ const getEventosByPaciente = async function (dadosCalendario) {
     ) {
         return messages.ERROR_INVALID_PACIENTE
     } else {
+        dadosCalendario.mes = formatarMesAno(dadosCalendario.mes)
+
         let dadosCalendarioJSON = {};
 
         let resultCalendario = await calendarioDAO.selectAllEventosByPacienteMonthly(dadosCalendario)
@@ -100,6 +117,8 @@ const getEventosByCuidador = async function (dadosCalendario) {
     ) {
         return messages.ERROR_INVALID_CUIDADOR
     } else {
+        dadosCalendario.mes = formatarMesAno(dadosCalendario.mes)
+
         let dadosCalendarioJSON = {};
 
         let resultCalendario = await calendarioDAO.selectAllEventosByCuidadorMonthly(dadosCalendario)

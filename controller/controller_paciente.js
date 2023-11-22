@@ -210,7 +210,7 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador) {
             if (validateCuidador) {
                 let validateConexao = await conexaoDAO.selectConexaoByPacienteAndCuidador(idPaciente, idCuidador)
 
-                if (validateConexao.length < 1) {
+                if (!validateConexao) {
                     let connectionResult = await pacienteDAO.connectCuidadorAndPaciente(idPaciente, idCuidador)
 
                     if (connectionResult) {

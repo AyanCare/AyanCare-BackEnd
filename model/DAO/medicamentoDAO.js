@@ -70,7 +70,7 @@ const selectMedicamentoByNameAndMedidaAndPaciente = async function (nomeMedicame
 }
 
 const selectMedicamentoById = async function (idMedicamento) {
-    let sql = `SELECT * FROM tbl_medicamento where id = ${idMedicamento}`
+    let sql = `SELECT tbl_medicamento.*, tbl_paciente.nome as paciente from tbl_medicamento inner join tbl_paciente on tbl_paciente.id = tbl_medicamento.id_paciente where tbl_medicamento.id = ${idMedicamento}`
 
     let rsMedicamento = await prisma.$queryRawUnsafe(sql)
 
@@ -141,11 +141,15 @@ const insertMedicamento = async function (dadosMedicamento) {
 
 /************************** Updates ******************************/
 const updateMedicamento = async function (dadosMedicamento) {
+    console.log(dadosMedicamento);
+
     let sql = `update tbl_medicamento set
             quantidade = '${dadosMedicamento.quantidade}',
-            limite = '${dadosMedicamento.limite},
-            estocado = '${dadosMedicamento.estocado}'
+            limite = ${dadosMedicamento.limite},
+            estocado = ${dadosMedicamento.estocado}
         where id = ${dadosMedicamento.id}`
+
+    console.log(sql);
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 

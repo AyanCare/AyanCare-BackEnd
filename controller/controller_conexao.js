@@ -9,6 +9,8 @@
 const messages = require('./modules/config.js')
 
 const conexaoDAO = require('../model/DAO/conexaoDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
+
 
 // selectAllConexoes,
 //     selectConexaoById,
@@ -136,17 +138,32 @@ const deactivateConnection = async function (idPaciente, idCuidador) {
     } else if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)) {
         return messages.ERROR_INVALID_CUIDADOR
     } else {
-            let resultDadosConexao = await conexaoDAO.desativarConexao(idPaciente, idCuidador)
+            let verifyConnection = await conexaoDAO.selectActiveConexaoByPacienteAndCuidador(idPaciente, idCuidador)
 
-            if (resultDadosConexao) {
-                let dadosConexaoJSON = {}
-                dadosConexaoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
-                dadosConexaoJSON.message = messages.SUCCESS_DEACTIVATED_CONNECTION.message
+            if (verifyConnection) {
+                let resultDadosConexao = await conexaoDAO.desativarConexao(idPaciente, idCuidador)
 
-                return dadosConexaoJSON
+                if (resultDadosConexao) {
+                    let dadosConexaoJSON = {}
+                    dadosConexaoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
+                    dadosConexaoJSON.message = messages.SUCCESS_DEACTIVATED_CONNECTION.message
 
+                    let dadosNotificacao = {
+                        "nome":"Alguém se desvinculou da sua conta",
+                        "descricao":`Um usuário se desvinculou a sua conta!`,
+                        "id_cuidador":idCuidador,
+                        "id_paciente":idPaciente
+                    }
+        
+                    notificacaoDAO.insertNotificacao(dadosNotificacao)
+
+                    return dadosConexaoJSON
+
+                } else {
+                    return messages.ERROR_INTERNAL_SERVER
+                }
             } else {
-                return messages.ERROR_INTERNAL_SERVER
+                return messages.ERROR_CONNECTION_DOESNT_EXISTS
             }
     }
 }
@@ -163,6 +180,15 @@ const activateConnection = async function (idPaciente, idCuidador) {
                 let dadosConexaoJSON = {}
                 dadosConexaoJSON.status = messages.SUCCESS_UPDATED_ITEM.status
                 dadosConexaoJSON.message = messages.SUCCESS_ACTIVATED_CONNECTION.message
+
+                let dadosNotificacao = {
+                    "nome":"Alguém se conectou a sua conta",
+                    "descricao":"Um usuário se conectou a sua conta!",
+                    "id_cuidador":idCuidador,
+                    "id_paciente":idPaciente
+                }
+    
+                notificacaoDAO.insertNotificacao(dadosNotificacao)
 
                 return dadosConexaoJSON
 

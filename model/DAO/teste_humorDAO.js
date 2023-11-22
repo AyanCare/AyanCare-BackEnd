@@ -267,7 +267,8 @@ const selectTesteByPaciente = async function (idPaciente) {
     on tbl_resposta_status.id_resposta = tbl_resposta.id
         inner join tbl_exercicio
     on tbl_exercicio_status.id_exercicio = tbl_exercicio.id
-    where tbl_paciente.id = ${idPaciente}`
+    where tbl_paciente.id = ${idPaciente}
+    order by tbl_data_horario_observacao_humor.id desc`
 
     let rsTeste = await prisma.$queryRawUnsafe(sql)
 

@@ -18,7 +18,7 @@ const selectAllTurnos = async function () {
     //scriptSQL para buscar todos os itens do BD
     let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
     tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
-    tbl_turno_dia_semana.id as id_turno, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+    tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
     tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
     tbl_cor.hex as cor,
     tbl_paciente_cuidador.id as id_conexao
@@ -42,52 +42,39 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
 
     //Valida se o BD retornou algum registro
     if (rsTurnos.length > 0) {
-        let dias = []
         let turnos = []
 
-        let arrayIDDia = []
-        let arrayIDTurnos = []
-        let arrayIDStatus = []
-
+        // Mapeia os eventos semanais por ID
+        let turnosMap = new Map()
         rsTurnos.forEach(turno => {
-            if (!arrayIDTurnos.includes(turno.id_conexao)) {
-                let turnosJSON = {}
-
-                arrayIDTurnos.push(turno.id)
-                turnosJSON.id = turno.id
-                turnosJSON.id_paciente = turno.id_paciente
-                turnosJSON.paciente = turno.paciente
-                turnosJSON.id_cuidador = turno.id_cuidador
-                turnosJSON.cuidador = turno.cuidador
-                
-
-                rsTurnos.forEach(repeticao => {
-                    if (!arrayIDDia.includes(repeticao.id_dia_semana) && !arrayIDStatus.includes(repeticao.id_turno) && turnos.id_conexao == repeticao.id_conexao) {
-                        let dia = {}
-
-                        arrayIDDia.push(repeticao.id_dia_semana)
-                        arrayIDStatus.push(repeticao.id_turno)
-                        dia.id = repeticao.id_dia_semana
-                        dia.dia = repeticao.dia
-                        dia.status_id = repeticao.id_turno
-
-                        if (repeticao.status === 1) {
-                            dia.status = true
-                        } else {
-                            dia.status = false
-                        }
-
-                        dias.push(dia)
-                    }
-                })
-
-                turnosJSON.dias = dias
-                turnos.push(turnosJSON)
+            if (!turnosMap.has(turno.id)) {
+                turnosMap.set(turno.id, {
+                    id: turno.id,
+                    id_paciente: turno.id_paciente,
+                    paciente: turno.paciente,
+                    id_cuidador: turno.id_cuidador,
+                    cuidador: turno.cuidador,
+                    dias: []
+                });
             }
-
-            arrayIDDia = []
-            dias = []
         });
+
+        // Preenche os dias correspondentes para cada turno semanal
+        rsTurnos.forEach(repeticao => {
+            let turno = turnosMap.get(repeticao.id);
+            if (turno) {
+                let dia = {
+                    id: repeticao.id_dia_semana,
+                    dia: repeticao.dia,
+                    status_id: repeticao.id_turno,
+                    cor: repeticao.cor
+                };
+                turno.dias.push(dia);
+            }
+        });
+
+        // Converte o mapa para uma matriz
+        eventosSemanais = Array.from(turnosMap.values());
 
         return turnos
     } else {
@@ -96,47 +83,18 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
 
 }
 
-const selectTurnosById = async function (idConexao) {
-    let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
-    tbl_turno_dia_semana.id as id_turno, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
-    tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
-    tbl_cor.hex as cor,
-    tbl_paciente_cuidador.id as id_conexao
-FROM tbl_paciente_cuidador
-    inner join tbl_turno_dia_semana
-on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
-    inner join tbl_dia_semana
-on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
-    inner join tbl_cor
-on tbl_cor.id = tbl_turno_dia_semana.id_cor
-    inner join tbl_paciente
-on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
-    inner join tbl_cuidador
-on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.id = ${idConexao}`
-
-    let rsTurnos = await prisma.$queryRawUnsafe(sql)
-
-    if (rsTurnos.length > 0) {
-        return rsTurnos[0]
-    } else {
-        return false
-    }
-}
-
 const selectLastId = async function () {
     let sql = `SELECT tbl_turnos.id as id, tbl_turnos.nome as nome, tbl_turnos.foto as foto, DATE_FORMAT(tbl_turnos.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_turnos.email as email, tbl_turnos.senha as senha, tbl_turnos.descricao_experiencia,
     tbl_genero.nome as genero
     from tbl_turnos
     inner join tbl_genero
     on tbl_genero.id = tbl_turnos.id_genero
-    order by tbl_turnos.id desc limit 1;`
+    order by tbl_turnos.id desc limit 7;`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
     if (rsTurnos.length > 0) {
-        return rsTurnos[0]
+        return rsTurnos
     } else {
         return false
     }
@@ -145,7 +103,7 @@ const selectLastId = async function () {
 }
 
 
-const selectTurnosByEmailAndSenhaAndNome = async function (dadosTurnos) {
+const selectTurnosByPaciente = async function (dadosTurnos) {
     let sql = `select tbl_turnos.id as id, tbl_turnos.nome as nome, tbl_turnos.email as email, DATE_FORMAT(tbl_turnos.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_turnos.foto as foto, tbl_turnos.descricao_experiencia as experiencia,
 	tbl_genero.nome as genero
     from tbl_turnos 
@@ -162,7 +120,7 @@ const selectTurnosByEmailAndSenhaAndNome = async function (dadosTurnos) {
     }
 }
 
-const selectTurnosByEmail = async function (emailTurnos) {
+const selectTurnosByCuidador = async function (emailTurnos) {
     let sql = `select * from tbl_turnos where email = '${emailTurnos}'`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
@@ -213,28 +171,10 @@ const insertTurnos = async function (dadosTurnos) {
     }
 }
 
-/************************** Updates ******************************/
-const updateTurnos = async function (dadosTurnos) {
-    let sql = `update tbl_turnos set
-            nome = '${dadosTurnos.nome}',
-            data_nascimento = '${dadosTurnos.data_nascimento}',
-            foto = '${dadosTurnos.foto}',
-            descricao_experiencia = '${dadosTurnos.descricao_experiencia}'
-        where id = ${dadosTurnos.id}`
-
-    let resultStatus = await prisma.$executeRawUnsafe(sql)
-
-    if (resultStatus) {
-        return true
-    } else {
-        return false
-    }
-}
-
 
 /************************** Deletes ******************************/
-const deleteTurnos = async function (idTurnos) {
-    let sql = `delete from tbl_turnos where id = ${idTurnos}`
+const deleteTurnos = async function (idConexao) {
+    let sql = `delete from tbl_turno_dia_semana where id_paciente_cuidador = ${idConexao}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -244,6 +184,12 @@ const deleteTurnos = async function (idTurnos) {
         return false
     }
 }
+
+async function log() {
+    console.log(await selectAllTurnos());
+}
+
+log()
 
 module.exports = {
    

@@ -12,6 +12,7 @@ const bodyParserJSON = bodyParser.json()
 
 const messages = require('./controller/modules/config.js')
 const jwt = require('./middleware/middlewareJWT.js')
+const email = require('./middleware/middlewareEmail.js')
 const controllerPaciente = require('./controller/controller_paciente.js');
 const controllerCuidador = require('./controller/controller_cuidador.js');
 const controllerGenero = require('./controller/controller_genero.js');
@@ -65,6 +66,22 @@ const validateJWT = async function (request, response, next) {
       return response.status(messages.ERROR_UNAUTHORIZED_USER.status).end();
    }
 }
+
+app.post('/v1/ayan/sugestao', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultSugestao = email.enviarSugestao(dadosBody)
+
+      response.status(messages.SUCCESS_EMAIL_SENT.status)
+      response.json(messages.SUCCESS_EMAIL_SENT)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
 
 //Validar email do usuário, criar token para relembrar a senha e enviar por email
 app.get('/v1/ayan/esqueciasenha/criartoken', cors(), async (request, response) => {
@@ -2106,6 +2123,17 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
 
    //Recebe os dados do controller
    let dadosNotificacao = await controllerNotificacao.getNotificacaoById(id);
+
+   //Valida se existe registro
+   response.json(dadosNotificacao)
+   response.status(dadosNotificacao.status)
+})
+
+app.get('/v1/ayan/notificacao/modificacoes/:id', cors(), async (request, response) => {
+   let idCuidador = request.params.id;
+
+   //Recebe os dados do controller
+   let dadosNotificacao = await controllerNotificacao.getModificacoesDePacienteByCuidador(idCuidador);
 
    //Valida se existe registro
    response.json(dadosNotificacao)
