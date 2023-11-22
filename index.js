@@ -1001,7 +1001,7 @@ app.post('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, respons
 })
 
 //Atualizar
-app.put('/v1/ayan/medicamento', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v2/ayan/medicamento', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas na formato JSON
