@@ -55,18 +55,18 @@ const getTurnos = async function () {
 
 }
 
-const getTurnoByConexao = async function (id) {
-    if (id == '' || isNaN(id) || id == undefined) {
+const getTurnoByConexao = async function (idConexao) {
+    if (idConexao == '' || isNaN(idConexao) || idConexao == undefined) {
         return messages.ERROR_INVALID_ID
     } else {
 
         let dadosTurnoJSON = {};
 
-        let dadosTurno = await turnoDAO.selectTurnoById(id)
+        let dadosTurno = await turnoDAO.selectTurnoByConexao(idConexao)
 
         if (dadosTurno) {
             dadosTurnoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosTurnoJSON.turno = dadosTurno
+            dadosTurnoJSON.turno = dadosTurno[0]
             return dadosTurnoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -74,20 +74,16 @@ const getTurnoByConexao = async function (id) {
     }
 }
 
-const getTurnoByCuidador = async function (dadosTurno) {
-    if (dadosTurno.email == '' || dadosTurno.email == undefined ||
-        dadosTurno.senha == '' || dadosTurno.senha == undefined
-    ) {
+const getTurnoByCuidador = async function (idCuidador) {
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosTurnoJSON = {};
 
-        let rsTurno = await turnoDAO.selectTurnoByEmailAndSenhaAndNome(dadosTurno)
+        let rsTurno = await turnoDAO.selectTurnoByCuidador(idCuidador)
 
         if (rsTurno) {
-            let tokenUser = await jwt.createJWT(rsTurno.id)
-            dadosTurnoJSON.token = tokenUser
             dadosTurnoJSON.status = messages.SUCCESS_REQUEST.status
             dadosTurnoJSON.turno = rsTurno
             return dadosTurnoJSON
@@ -97,18 +93,17 @@ const getTurnoByCuidador = async function (dadosTurno) {
     }
 }
 
-const getTurnoByPaciente = async function (emailTurno) {
-    if (emailTurno == '' || emailTurno == undefined) {
+const getTurnoByPaciente = async function (idPaciente) {
+    if (idPaciente == '' || idPaciente == undefined || isNaN(idPaciente)) {
         return messages.ERROR_REQUIRED_FIELDS
     } else {
-
         let dadosTurnoJSON = {};
 
-        let rsTurno = await turnoDAO.selectTurnoByEmail(emailTurno)
+        let rsTurno = await turnoDAO.selectTurnoByPaciente(idPaciente)
 
         if (rsTurno) {
             dadosTurnoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosTurnoJSON.turno = rsTurno[0]
+            dadosTurnoJSON.turno = rsTurno
             return dadosTurnoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -155,14 +150,14 @@ const insertTurno = async function (dadosTurno) {
 
 const deleteTurno = async function (idConexao) {
 
-    if (idConexao == null || idConexao == undefined || idConexao == '' || isNaN(id)) {
+    if (idConexao == null || idConexao == undefined || idConexao == '' || isNaN(idConexao)) {
         return messages.ERROR_INVALID_ID
     } else {
 
         let searchIdTurno = await conexaoDAO.selectConexaoById(idConexao)
 
         if (searchIdTurno) {
-            let dadosTurno = await turnoDAO.deleteTurno(id)
+            let dadosTurno = await turnoDAO.deleteTurno(idConexao)
 
             if (dadosTurno) {
                 return messages.SUCCESS_DELETED_ITEM

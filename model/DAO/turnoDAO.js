@@ -54,7 +54,8 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
                     id: usuario.id_dia_semana,
                     dia: usuario.dia,
                     turno_id: usuario.id,
-                    status: usuario.status === 1 
+                    status: usuario.status === 1,
+                    cor: usuario.cor 
                 });
             } else {
                 // Se o usuário não foi processado, cria um novo objeto de usuário
@@ -71,7 +72,8 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
                             id: usuario.id_dia_semana,
                             dia: usuario.dia,
                             turno_id: usuario.id,
-                            status: usuario.status === 1 
+                            status: usuario.status === 1,
+                            cor: usuario.cor 
                         }
                     ]
                 };
@@ -126,7 +128,8 @@ const selectLastId = async function () {
                     id: usuario.id_dia_semana,
                     dia: usuario.dia,
                     turno_id: usuario.id,
-                    status: usuario.status === 1 
+                    status: usuario.status === 1,
+                    cor: usuario.cor 
                 });
             } else {
                 // Se o usuário não foi processado, cria um novo objeto de usuário
@@ -143,7 +146,8 @@ const selectLastId = async function () {
                             id: usuario.id_dia_semana,
                             dia: usuario.dia,
                             turno_id: usuario.id,
-                            status: usuario.status === 1 
+                            status: usuario.status === 1,
+                            cor: usuario.cor 
                         }
                     ]
                 };
@@ -200,7 +204,8 @@ const selectTurnoByPaciente = async function (idPaciente) {
                     id: usuario.id_dia_semana,
                     dia: usuario.dia,
                     turno_id: usuario.id,
-                    status: usuario.status === 1 
+                    status: usuario.status === 1,
+                    cor: usuario.cor 
                 });
             } else {
                 // Se o usuário não foi processado, cria um novo objeto de usuário
@@ -217,7 +222,8 @@ const selectTurnoByPaciente = async function (idPaciente) {
                             id: usuario.id_dia_semana,
                             dia: usuario.dia,
                             turno_id: usuario.id,
-                            status: usuario.status === 1 
+                            status: usuario.status === 1,
+                            cor: usuario.cor 
                         }
                     ]
                 };
@@ -271,7 +277,8 @@ const selectTurnoByCuidador = async function (idCuidador) {
                     id: usuario.id_dia_semana,
                     dia: usuario.dia,
                     turno_id: usuario.id,
-                    status: usuario.status === 1 
+                    status: usuario.status === 1,
+                    cor: usuario.cor 
                 });
             } else {
                 // Se o usuário não foi processado, cria um novo objeto de usuário
@@ -288,7 +295,8 @@ const selectTurnoByCuidador = async function (idCuidador) {
                             id: usuario.id_dia_semana,
                             dia: usuario.dia,
                             turno_id: usuario.id,
-                            status: usuario.status === 1 
+                            status: usuario.status === 1,
+                            cor: usuario.cor 
                         }
                     ]
                 };
@@ -324,7 +332,7 @@ const selectTurnoByConexao = async function (idConexao) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_cuidador.id = ${idConexao}`
+    where tbl_paciente_cuidador.id = ${idConexao}`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
@@ -343,7 +351,8 @@ const selectTurnoByConexao = async function (idConexao) {
                     id: usuario.id_dia_semana,
                     dia: usuario.dia,
                     turno_id: usuario.id,
-                    status: usuario.status === 1 
+                    status: usuario.status === 1,
+                    cor: usuario.cor 
                 });
             } else {
                 // Se o usuário não foi processado, cria um novo objeto de usuário
@@ -360,7 +369,8 @@ const selectTurnoByConexao = async function (idConexao) {
                             id: usuario.id_dia_semana,
                             dia: usuario.dia,
                             turno_id: usuario.id,
-                            status: usuario.status === 1 
+                            status: usuario.status === 1,
+                            cor: usuario.cor 
                         }
                     ]
                 };
@@ -380,13 +390,13 @@ const selectTurnoByConexao = async function (idConexao) {
 /************************** Inserts ******************************/
 const insertTurno = async function (dadosTurnos) {
     let sql = `call procInsertTurnoDiaSemanaCor( 
-        1, '${dadosTurnos.domingo}', 
-        2, '${dadosTurnos.segunda}', 
-        3, '${dadosTurnos.terca}', 
-        4, '${dadosTurnos.quarta}', 
-        5, '${dadosTurnos.quinta}', 
-        6, '${dadosTurnos.sexta}', 
-        7, '${dadosTurnos.sabado}', 
+        1, ${dadosTurnos.domingo}, 
+        2, ${dadosTurnos.segunda}, 
+        3, ${dadosTurnos.terca}, 
+        4, ${dadosTurnos.quarta}, 
+        5, ${dadosTurnos.quinta}, 
+        6, ${dadosTurnos.sexta}, 
+        7, ${dadosTurnos.sabado}, 
         '${dadosTurnos.horario_comeco}', 
         '${dadosTurnos.horario_fim}', 
         ${dadosTurnos.idCor}, 

@@ -30,6 +30,7 @@ const controllerHistorico = require('./controller/controller_historicoMedico.js'
 const controllerConexao = require('./controller/controller_conexao.js');
 const controllerCor = require('./controller/controller_cor.js');
 const controllerNotificacao = require('./controller/controller_notificacao.js');
+const controllerTurno = require('./controller/controller_turno.js');
 const controllerTeste_Humor = require('./controller/controller_testeHumor.js');
 const controllerEndereco_Paciente = require('./controller/controller_enderecoPaciente.js');
 const controllerEndereco_Cuidador = require('./controller/controller_enderecoCuidador.js');
@@ -1389,7 +1390,64 @@ app.put('/v1/ayan/cuidador/endereco/:id', validateJWT, cors(), bodyParserJSON, a
  * Data: 04/09/2023
  * Versão: 1.0
  *************************************************************************************/
+app.get('/v1/ayan/turnos', cors(), async (request, response) => {
+   let idPaciente = request.query.idPaciente
+   let idCuidador = request.query.idCuidador
+   let idConexao = request.query.idConexao
 
+   if (idPaciente != undefined) {
+      let dadosTurnos = await controllerTurno.getTurnoByPaciente(idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosTurnos)
+      response.status(dadosTurnos.status)
+   } else if (idConexao != undefined) {
+      let dadosTurnos = await controllerTurno.getTurnoByConexao(idConexao);
+
+      //Valida se existe registro
+      response.json(dadosTurnos)
+      response.status(dadosTurnos.status)
+   } else if (idCuidador != undefined) {
+      let dadosTurnos = await controllerTurno.getTurnoByCuidador(idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosTurnos)
+      response.status(dadosTurnos.status)
+   } else {
+      //Recebe os dados do controller
+      let dadosTurnos = await controllerTurno.getTurnos();
+
+      //Valida se existe registro
+      response.json(dadosTurnos)
+      response.status(dadosTurnos.status)
+   }
+})
+
+//Insert 
+app.post('/v1/ayan/turno', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+      let resultDadosTurnos = await controllerTurno.insertTurno(dadosBody)
+
+      response.status(resultDadosTurnos.status)
+      response.json(resultDadosTurnos)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
+app.delete('/v1/ayan/turno/:id', cors(), async function (request, response) {
+   let id = request.params.id;
+
+   let resultDadosTurno = await controllerTurno.deleteTurno(id)
+
+   response.status(resultDadosTurno.status)
+   response.json(resultDadosTurno)
+})
 
 
 /*************************************************************************************
@@ -1923,7 +1981,7 @@ app.get('/v1/ayan/cor/:id', cors(), async (request, response) => {
  * Versão: 1.0
  *************************************************************************************/
 
- app.get('/v1/ayan/alarmes/unitario', cors(), async (request, response) => {
+app.get('/v1/ayan/alarmes/unitario', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idMedicamento = request.query.idMedicamento
 
@@ -2004,14 +2062,14 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
  * Versão: 1.0
  *************************************************************************************/
 
- app.get('/v1/ayan/calendario', cors(), async (request, response) => {
+app.get('/v1/ayan/calendario', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente
    let idCuidador = request.query.idCuidador
    let dia = request.query.dia
    let mes = request.query.mes
    let diaSemana = request.query.diaSemana
 
-   if (diaSemana != undefined) {  
+   if (diaSemana != undefined) {
       diaSemana = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
    }
 
@@ -2074,7 +2132,7 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
  * Versão: 1.0
  *************************************************************************************/
 
- app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
+app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente;
    let idCuidador = request.query.idCuidador;
    let horario = request.query.horario;
@@ -2116,9 +2174,9 @@ app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, 
       response.json(dadosNotificacoes)
       response.status(dadosNotificacoes.status)
    }
- })
+})
 
- app.get('/v1/ayan/notificacao/:id', cors(), async (request, response) => {
+app.get('/v1/ayan/notificacao/:id', cors(), async (request, response) => {
    let id = request.params.id;
 
    //Recebe os dados do controller
