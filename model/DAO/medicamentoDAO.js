@@ -16,7 +16,7 @@ var prisma = new PrismaClient()
 const selectAllMedicamentos = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, concat(tbl_medicamento.quantidade, " ", COALESCE(tbl_medida.sigla, tbl_medida.tipo)) as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.quantidade as quantidade_separada, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
+    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, tbl_medicamento.quantidade as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
     tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
 from tbl_medicamento
 inner join tbl_paciente
@@ -68,7 +68,7 @@ const selectMedicamentosNomes = async function (idPaciente) {
 //             "limite": 20
 
 const selectMedicamentoByNameAndMedidaAndPaciente = async function (nomeMedicamento, idPaciente, idMedida) {
-    let sql = ` select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, concat(tbl_medicamento.quantidade, " ", COALESCE(tbl_medida.sigla, tbl_medida.tipo)) as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.quantidade as quantidade_separada, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
+    let sql = ` select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, tbl_medicamento.quantidade as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
                        tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     from tbl_medicamento
         inner join tbl_paciente
@@ -87,7 +87,7 @@ const selectMedicamentoByNameAndMedidaAndPaciente = async function (nomeMedicame
 }
 
 const selectMedicamentoById = async function (idMedicamento) {
-    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, concat(tbl_medicamento.quantidade, " ", COALESCE(tbl_medida.sigla, tbl_medida.tipo)) as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.quantidade as quantidade_separada, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
+    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, tbl_medicamento.quantidade as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
                       tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     from tbl_medicamento
         inner join tbl_paciente
@@ -106,7 +106,7 @@ const selectMedicamentoById = async function (idMedicamento) {
 }
 
 const selectLastId = async function () {
-    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, concat(tbl_medicamento.quantidade, " ", COALESCE(tbl_medida.sigla, tbl_medida.tipo)) as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.quantidade as quantidade_separada, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
+    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, tbl_medicamento.quantidade as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
                       tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     from tbl_medicamento
         inner join tbl_paciente
@@ -127,7 +127,7 @@ const selectLastId = async function () {
 }
 
 const selectAllMedicamentosByPaciente =  async function (idPaciente) {
-    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, concat(tbl_medicamento.quantidade, " ", COALESCE(tbl_medida.sigla, tbl_medida.tipo)) as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.quantidade as quantidade_separada, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
+    let sql = `select tbl_medicamento.id as id_medicamento, tbl_medicamento.nome, tbl_medicamento.quantidade as quantidade, date_format(tbl_medicamento.data_validade, '%d/%m/%Y') as data_validade, tbl_medicamento.estocado as estocado, tbl_medicamento.limite as limite,
                       tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente
     from tbl_medicamento
         inner join tbl_paciente

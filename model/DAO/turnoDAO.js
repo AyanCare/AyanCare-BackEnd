@@ -163,13 +163,25 @@ const selectLastId = async function () {
 }
 
 
-const selectTurnosByPaciente = async function (dadosTurnos) {
-    let sql = `select tbl_turnos.id as id, tbl_turnos.nome as nome, tbl_turnos.email as email, DATE_FORMAT(tbl_turnos.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_turnos.foto as foto, tbl_turnos.descricao_experiencia as experiencia,
-	tbl_genero.nome as genero
-    from tbl_turnos 
-        inner join tbl_genero 
-    on tbl_genero.id = tbl_turnos.id_genero
-    where tbl_turnos.email = '${dadosTurnos.email}' and tbl_turnos.senha = '${dadosTurnos.senha}'`
+const selectTurnosByPaciente = async function (idPaciente) {
+    let sql = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente.id = ${idPaciente}`
 
     let rsTurnos = await prisma.$queryRawUnsafe(sql)
 
