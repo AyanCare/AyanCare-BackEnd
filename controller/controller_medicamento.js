@@ -76,7 +76,7 @@ const getMedicamentosByPaciente = async function (idPaciente) {
 
         if (dadosMedicamento) {
             dadosMedicamentoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosMedicamentoJSON.medicamento = dadosMedicamento
+            dadosMedicamentoJSON.medicamentos = dadosMedicamento
             return dadosMedicamentoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -145,19 +145,16 @@ const insertMedicamento = async function (dadosMedicamento) {
     }
 }
 
-const updateMedicamento = async function (dadosMedicamento, id) {
+const updateMedicamento = async function (dadosMedicamento) {
+    console.log(dadosMedicamento)
+
     if (
-        dadosMedicamento.estocado === '' || dadosMedicamento.estocado === undefined || (dadosMedicamento.estocado != 0 && dadosMedicamento.estocado != 1) || isNaN(dadosMedicamento.estocado) ||
         dadosMedicamento.quantidade === '' || dadosMedicamento.quantidade === undefined || isNaN(dadosMedicamento.quantidade) ||
         dadosMedicamento.limite === '' || dadosMedicamento.limite === undefined || isNaN(dadosMedicamento.limite) 
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id === null || id === undefined || isNaN(id)) {
-        return messages.ERROR_INVALID_ID
     } else {
-        dadosMedicamento.id = id
-
-        let atualizacaoMedicamento = await medicamentoDAO.selectMedicamentoById(id)
+        let atualizacaoMedicamento = await medicamentoDAO.selectMedicamentoById(dadosMedicamento.id)
 
         if (atualizacaoMedicamento) {
             let resultDadosMedicamento = await medicamentoDAO.updateMedicamento(dadosMedicamento)
@@ -168,8 +165,8 @@ const updateMedicamento = async function (dadosMedicamento, id) {
                 dadosMedicamentoJSON.message = messages.SUCCESS_UPDATED_ITEM.message
                 dadosMedicamentoJSON.medicamento = dadosMedicamento
 
-                let medicamento = await medicamentoDAO.selectMedicamentoById(id)
-                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(dadosMedicamento.id_paciente)
+                let medicamento = await medicamentoDAO.selectMedicamentoById(dadosMedicamento.id)
+                let checkConexoes = await conexaoDAO.selectConexaoByPaciente(medicamento.id_paciente)
 
                 if (checkConexoes) {
                     checkConexoes.forEach(conexao => {
