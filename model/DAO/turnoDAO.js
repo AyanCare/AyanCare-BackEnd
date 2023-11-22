@@ -40,58 +40,49 @@ on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador`
 
     //Valida se o BD retornou algum registro
     if (rsTurnos.length > 0) {
-        let dias = []
-        let turnos = []
-        let usuarios = []
-
-        let arrayIDDia = []
-        let arrayIDTurno = []
-        let arrayIDUsuario = []
-        let arrayIDStatus = []
-
+        // Cria um array para armazenar os usuários processados
+        let usuarios = [];
+    
+        // Itera sobre os registros retornados do banco de dados
         rsTurnos.forEach(usuario => {
-            if (!arrayIDUsuario.includes(usuario.id_conexao)) {
-                let conexaoJSON = {}
-
-                arrayIDEvento.push(usuario.id)
-                conexaoJSON.id = usuario.id
-                conexaoJSON.paciente = usuario.paciente
-                conexaoJSON.cuidador = usuario.cuidador
-                conexaoJSON.nome = usuario.nome
-                conexaoJSON.descricao = usuario.descricao
-                conexaoJSON.local = usuario.local
-                conexaoJSON.horario = usuario.horario
-                conexaoJSON.cor = usuario.cor
-
-                rsEvento.forEach(repeticao => {
-                    if (!arrayIDDia.includes(repeticao.dia_id) && !arrayIDStatus.includes(repeticao.id_status) && usuario.id == repeticao.id) {
-                        let dia = {}
-
-                        arrayIDDia.push(repeticao.dia_id)
-                        arrayIDStatus.push(repeticao.id_status)
-                        dia.id = repeticao.dia_id
-                        dia.dia = repeticao.dia
-                        dia.status_id = repeticao.id_status
-
-                        if (repeticao.status === 1) {
-                            dia.status = true
-                        } else {
-                            dia.status = false
+            // Verifica se o usuário já foi processado anteriormente
+            let usuarioExistente = usuarios.find(u => u.id_conexao === usuario.id_conexao);
+    
+            // Se o usuário já foi processado, adiciona o dia ao array existente
+            if (usuarioExistente) {
+                usuarioExistente.dias.push({
+                    id: usuario.id_dia_semana,
+                    dia: usuario.dia,
+                    turno_id: usuario.id,
+                    status: usuario.status === 1 
+                });
+            } else {
+                // Se o usuário não foi processado, cria um novo objeto de usuário
+                let novoUsuario = {
+                    id: usuario.id,
+                    id_paciente: usuario.id_paciente,
+                    paciente: usuario.paciente,
+                    id_cuidador: usuario.id_cuidador,
+                    cuidador: usuario.cuidador,
+                    id_conexao: usuario.id_conexao,
+                    // Cria um array para armazenar os dias do usuário
+                    dias: [
+                        {
+                            id: usuario.id_dia_semana,
+                            dia: usuario.dia,
+                            turno_id: usuario.id,
+                            status: usuario.status === 1 
                         }
-
-                        dias.push(dia)
-                    }
-                })
-
-                conexaoJSON.dias = dias
-                eventos.push(conexaoJSON)
+                    ]
+                };
+    
+                // Adiciona o novo usuário ao array de usuários
+                usuarios.push(novoUsuario);
             }
-
-            arrayIDDia = []
-            dias = []
         });
-
-        return turnos
+    
+        // Retorna o array de usuários processados
+        return usuarios;
     } else {
         return false
     }
