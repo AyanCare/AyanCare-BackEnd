@@ -149,7 +149,7 @@ const selectAllModificacoesDePaciente = async function (idCuidador) {
 		left join tbl_paciente
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
     where tbl_notificacao.nome like "Modificação feita:%" and tbl_cuidador.id = ${idCuidador}
-    order by tbl_notificacao.id desc;`
+    order by tbl_notificacao.id asc;`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
