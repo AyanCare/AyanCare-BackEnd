@@ -321,7 +321,7 @@ on tbl_cor.id = tbl_nome_descricao_local_evento.id_cor
 
 const selectLastId = async function () {
     let sql = `SELECT tbl_nome_descricao_local_evento.id as id, 
-    tbl_paciente.nome as paciente, tbl_cuidador.nome as cuidador,
+    tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
     tbl_nome_descricao_local_evento.nome as nome, tbl_nome_descricao_local_evento.descricao as descricao, tbl_nome_descricao_local_evento.local as local,
     time_format(tbl_dia_semana_evento.horario, '%T') as horario, tbl_dia_semana_evento.status as status, 
     tbl_dia_semana.dia as dia,tbl_dia_semana.id as dia_id,
@@ -351,7 +351,9 @@ order by tbl_nome_descricao_local_evento.id desc limit 7`
 
         rsEvento.forEach(evento => {
             eventoJSON.id = evento.id
+            eventoJSON.id_paciente = evento.id_paciente
             eventoJSON.paciente = evento.paciente
+            eventoJSON.id_cuidador = evento.id_cuidador
             eventoJSON.cuidador = evento.cuidador
             eventoJSON.nome = evento.nome
             eventoJSON.descricao = evento.descricao

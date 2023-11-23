@@ -158,7 +158,7 @@ const selectLastId = async function () {
         });
     
         // Retorna o array de usuários processados
-        return usuarios
+        return usuarios[0]
     } else {
         return false
     }
@@ -381,7 +381,7 @@ const selectTurnoByConexao = async function (idConexao) {
         });
     
         // Retorna o array de usuários processados
-        return usuarios
+        return usuarios[0]
     } else {
         return false
     }

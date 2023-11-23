@@ -8,7 +8,7 @@
 //Import do arquivo de configuração das variáveis, constantes e globais.
 const messages = require('./modules/config.js')
 const turnoDAO = require('../model/DAO/turnoDAO.js')
-const conexaoDAO = require('../model/DAO/conexaoDAO.js')
+const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 
 var dadosTurnoReal = {
     horario_comeco: "",
@@ -66,7 +66,7 @@ const getTurnoByConexao = async function (idConexao) {
 
         if (dadosTurno) {
             dadosTurnoJSON.status = messages.SUCCESS_REQUEST.status
-            dadosTurnoJSON.turno = dadosTurno[0]
+            dadosTurnoJSON.turno = dadosTurno
             return dadosTurnoJSON
         } else {
             return messages.ERROR_NOT_FOUND
@@ -130,16 +130,25 @@ const insertTurno = async function (dadosTurno) {
             dadosTurnoReal[`${escolhaCorrigida}`] = true
         });
 
-        console.log(dadosTurnoReal);
-
         let resultDadosTurno = await turnoDAO.insertTurno(dadosTurnoReal)
 
         if (resultDadosTurno) {
             let novoTurno = await turnoDAO.selectLastId()
 
+            console.log(novoTurno);
+
             let dadosTurnoJSON = {}
             dadosTurnoJSON.status = messages.SUCCESS_CREATED_ITEM.status
             dadosTurnoJSON.turno = novoTurno
+
+            let dadosNotificacao = {
+                "nome":"Turno inserido",
+                "descricao":`Uma nova rotina de turnos que envolve o Paciente ${novoTurno.paciente} e o Cuidador ${novoTurno.cuidador} foi criado!`,
+                "id_cuidador":novoTurno.id_cuidador,
+                "id_paciente":novoTurno.id_paciente
+            }
+
+            notificacaoDAO.insertNotificacao(dadosNotificacao)
 
             return dadosTurnoJSON
         } else {
@@ -154,12 +163,21 @@ const deleteTurno = async function (idConexao) {
         return messages.ERROR_INVALID_ID
     } else {
 
-        let searchIdTurno = await conexaoDAO.selectConexaoById(idConexao)
+        let searchIdTurno = await turnoDAO.selectTurnoByConexao(idConexao)
 
         if (searchIdTurno) {
             let dadosTurno = await turnoDAO.deleteTurno(idConexao)
 
             if (dadosTurno) {
+                let dadosNotificacao = {
+                    "nome":"Turno deletado",
+                    "descricao":`Uma rotina de turnos que envolvia o Paciente ${searchIdTurno.paciente} e o Cuidador ${searchIdTurno.cuidador} foi apagada!`,
+                    "id_cuidador":searchIdTurno.id_cuidador,
+                    "id_paciente":searchIdTurno.id_paciente
+                }
+    
+                notificacaoDAO.insertNotificacao(dadosNotificacao)
+
                 return messages.SUCCESS_DELETED_ITEM
             } else {
                 return messages.ERROR_INTERNAL_SERVER
