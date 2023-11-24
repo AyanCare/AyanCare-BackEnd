@@ -159,7 +159,7 @@ const juncaoDeTurnosMensal = function (arraySQL) {
         // Se o usuário já foi processado, adiciona o dia ao array existente
         if (usuarioExistente) {
             usuarioExistente.dias.push({
-                id: usuario.id_dia_semana,
+                id_dia_semana: usuario.id_dia_semana,
                 dia: usuario.dia,
                 turno_id: usuario.id,
                 status: usuario.status === 1,
@@ -177,7 +177,7 @@ const juncaoDeTurnosMensal = function (arraySQL) {
                 // Cria um array para armazenar os dias do usuário
                 dias: [
                     {
-                        id: usuario.id_dia_semana,
+                        id_dia_semana: usuario.id_dia_semana,
                         dia: usuario.dia,
                         turno_id: usuario.id,
                         status: usuario.status === 1,
