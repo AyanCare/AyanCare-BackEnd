@@ -31,7 +31,7 @@ function conversaoDeMilissegundos(milissegundos) {
 const selectAllPacientes = async function () {
 
     //scriptSQL para buscar todos os itens do BD
-    let sql = `SELECT tbl_paciente.id as id, tbl_paciente.nome as nome, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.cpf as cpf FROM tbl_paciente`
+    let sql = `SELECT tbl_paciente.id as id, tbl_paciente.nome as paciente, DATE_FORMAT(tbl_paciente.data_nascimento,'%d/%m/%Y') as data_nascimento, tbl_paciente.foto as foto, tbl_paciente.cpf as cpf FROM tbl_paciente`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -244,7 +244,7 @@ const selectCuidadoresConectados = async function (idPaciente){
         from tbl_paciente_cuidador
 	inner join tbl_paciente on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-	where tbl_paciente.id = ${idPaciente}`
+	where tbl_paciente.id = ${idPaciente} and tbl_paciente_cuidador.status = 1`
 
     let rsPaciente = await prisma.$queryRawUnsafe(sql)
 
