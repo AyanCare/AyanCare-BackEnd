@@ -78,7 +78,6 @@ const insertPergunta = async function (dadosPergunta) {
 
       if (resultDadosPergunta) {
         let novaPergunta = await perguntasDAO.selectLastId();
-        console.log(await perguntasDAO.selectLastId());
          let conectar = await perguntasDAO.connectPerguntaAndCuidador(novaPergunta.id, dadosPergunta.id_cuidador);
         
         let dadosPerguntaJSON = {};
