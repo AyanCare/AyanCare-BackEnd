@@ -21,6 +21,12 @@ const notificacaoDAO = require('../model/DAO/notificacaoDAO.js')
 //     desativarConexao,
 //     ativarConexao
 
+// selectInactiveConexaoByPacienteAndCuidador,
+//     selectInactiveConexaoByCuidadorAndNomePaciente,
+//     selectInactiveConexaoByCuidador,
+//     selectInactiveConexaoByPacienteAndNomeCuidador,
+//     selectInactiveConexaoByPaciente,
+
 const getConexoes = async function () {
     let dadosConexoesJSON = {}
 
@@ -74,6 +80,24 @@ const getConexaoByCuidador = async function (idCuidador) {
     }
 }
 
+const getConexaoInativaByCuidador = async function (idCuidador) {
+    if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)){
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectInactiveConexaoByCuidador(idCuidador)
+
+        if (rsConexao ) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const getConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPaciente) {
     if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)){
         return messages.ERROR_INVALID_ID
@@ -83,6 +107,26 @@ const getConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPa
         let dadosConexaoJSON = {};
 
         let rsConexao = await conexaoDAO.selectConexaoByCuidadorAndNomePaciente(idCuidador, nomeDoPaciente)
+
+        if (rsConexao) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getConexaoInativaByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPaciente) {
+    if (idCuidador == null || idCuidador == undefined || isNaN(idCuidador)){
+        return messages.ERROR_INVALID_ID
+    } else if(nomeDoPaciente == '' || nomeDoPaciente == undefined || !isNaN(nomeDoPaciente)) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectInactiveConexaoByCuidadorAndNomePaciente(idCuidador, nomeDoPaciente)
 
         if (rsConexao) {
             dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -112,6 +156,24 @@ const getConexaoByPaciente = async function (idPaciente) {
     }
 }
 
+const getConexaoInativaByPaciente = async function (idPaciente) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)){
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectInactiveConexaoByPaciente(idPaciente)
+
+        if (rsConexao ) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const getConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCuidador) {
     if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)){
         return messages.ERROR_INVALID_ID
@@ -121,6 +183,26 @@ const getConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCu
         let dadosConexaoJSON = {};
 
         let rsConexao = await conexaoDAO.selectConexaoByPacienteAndNomeCuidador(idPaciente, nomeDoCuidador)
+
+        if (rsConexao ) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getConexaoInativaByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCuidador) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)){
+        return messages.ERROR_INVALID_ID
+    } else if(nomeDoCuidador == '' || nomeDoCuidador == undefined || !isNaN(nomeDoCuidador)) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectInactiveConexaoByPacienteAndNomeCuidador(idPaciente, nomeDoCuidador)
 
         if (rsConexao ) {
             dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
@@ -206,5 +288,9 @@ module.exports = {
     getConexaoByID,
     getConexaoByPaciente,
     getConexaoByPacienteAndNomeCuidador,
-    getConexoes
+    getConexoes,
+    getConexaoInativaByCuidador,
+    getConexaoInativaByCuidadorAndNomePaciente,
+    getConexaoInativaByPaciente,
+    getConexaoInativaByPacienteAndNomeCuidador
 }
