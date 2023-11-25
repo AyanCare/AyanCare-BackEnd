@@ -14,19 +14,19 @@ var prisma = new PrismaClient()
 function conversaoDeMilissegundos(milissegundos) {
     // Crie um objeto Date com base nos milissegundos
     const data = new Date(milissegundos);
-  
+
     // Extraia as horas, minutos e segundos
     const horas = data.getHours().toString().padStart(2, '0');
     const minutos = data.getMinutes().toString().padStart(2, '0');
     const segundos = data.getSeconds().toString().padStart(2, '0');
-  
+
     // Crie a string de horário formatada
     const horarioFormatado = `${horas}:${minutos}:${segundos}`;
-  
-    return horarioFormatado;
-  }
 
-  const converterMes = function (numeroMes) {
+    return horarioFormatado;
+}
+
+const converterMes = function (numeroMes) {
     let mes = numeroMes;
 
     switch (mes) {
@@ -81,6 +81,119 @@ function conversaoDeMilissegundos(milissegundos) {
     return mes;
 }
 
+const juncaoDeEventosUnicosMensal = function (arraySQL) {
+    let eventosUnicos = []
+
+    arraySQL.forEach(evento => {
+        let eventoJSON = {}
+
+        eventoJSON.id = evento.id_evento
+        eventoJSON.id_paciente = evento.id_paciente
+        eventoJSON.paciente = evento.paciente
+        eventoJSON.id_cuidador = evento.id_cuidador
+        eventoJSON.cuidador = evento.cuidador
+        eventoJSON.nome = evento.nome_evento_unico
+        eventoJSON.descricao = evento.descricao_evento_unico
+        eventoJSON.local = evento.local_evento_unico
+        eventoJSON.dia = evento.dia_evento_unico
+        eventoJSON.horario = evento.horario_evento_unico
+        eventoJSON.cor = evento.cor
+
+        eventosUnicos.push(eventoJSON)
+    });
+
+    return eventosUnicos
+}
+
+const juncaoDeEventosSemanaisMensal = function (arraySQL) {
+    let eventosSemanais = []
+
+    // Mapeia os eventos semanais por ID
+    let eventosSemanaisMap = new Map()
+    arraySQL.forEach(evento => {
+        if (!eventosSemanaisMap.has(evento.id_evento_semanal)) {
+            eventosSemanaisMap.set(evento.id_evento_semanal, {
+                id: evento.id_evento_semanal,
+                id_paciente: evento.id_paciente,
+                paciente: evento.paciente,
+                id_cuidador: evento.id_cuidador,
+                cuidador: evento.cuidador,
+                nome: evento.nome_evento_semanal,
+                descricao: evento.descricao_evento_semanal,
+                local: evento.local_evento_semanal,
+                horario: evento.horario_evento_semanal,
+                dias: []
+            });
+        }
+    });
+
+    // Preenche os dias correspondentes para cada evento semanal
+    arraySQL.forEach(repeticao => {
+        let evento = eventosSemanaisMap.get(repeticao.id_evento_semanal);
+        if (evento) {
+            let dia = {
+                id: repeticao.dia_semana_id,
+                status_id: repeticao.dia_evento_id,
+                dia: repeticao.dia,
+                id_dia_semana: repeticao.id_dia,
+                cor_id: repeticao.id_cor,
+                cor: repeticao.cor,
+                status: repeticao.status_dia_status === 1 ? true : false
+            };
+            evento.dias.push(dia);
+        }
+    });
+
+    eventosSemanais = Array.from(eventosSemanaisMap.values());
+
+    return eventosSemanais
+}
+
+const juncaoDeTurnosMensal = function (arraySQL) {
+    let turnos = []
+
+    arraySQL.forEach(usuario => {
+        // Verifica se o usuário já foi processado anteriormente
+        let usuarioExistente = turnos.find(u => u.id_conexao === usuario.id_conexao);
+
+        // Se o usuário já foi processado, adiciona o dia ao array existente
+        if (usuarioExistente) {
+            usuarioExistente.dias.push({
+                id_dia_semana: usuario.id_dia_semana,
+                dia: usuario.dia,
+                turno_id: usuario.id,
+                status: usuario.status === 1,
+                cor: usuario.cor
+            });
+        } else {
+            // Se o usuário não foi processado, cria um novo objeto de usuário
+            let novoUsuario = {
+                id: usuario.id,
+                id_paciente: usuario.id_paciente,
+                paciente: usuario.paciente,
+                id_cuidador: usuario.id_cuidador,
+                cuidador: usuario.cuidador,
+                id_conexao: usuario.id_conexao,
+                // Cria um array para armazenar os dias do usuário
+                dias: [
+                    {
+                        id_dia_semana: usuario.id_dia_semana,
+                        dia: usuario.dia,
+                        turno_id: usuario.id,
+                        status: usuario.status === 1,
+                        cor: usuario.cor
+                    }
+                ]
+            };
+
+            // Adiciona o novo usuário ao array de usuários
+            turnos.push(novoUsuario);
+        }
+    });
+
+    return turnos
+}
+
 /************************** Selects ******************************/
 const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
 
@@ -122,75 +235,36 @@ const selectAllEventosByPacienteMonthly = async function (dadosCalendario) {
 	on tbl_dia_semana.id = tbl_dia_evento.id_dia_semana
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_dia_evento.status = 1;`
 
+    let sqlTurno = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_turno_dia_semana.status = 1`
+
     let rsEvento_unico = await prisma.$queryRawUnsafe(sqlEvento_unico)
     let rsEvento_semanal = await prisma.$queryRawUnsafe(sqlEvento_semanal)
+    let rsTurno = await prisma.$queryRawUnsafe(sqlTurno)
 
     //Valida se o BD retornou algum registro
-    if (rsEvento_unico && rsEvento_semanal) {
-        let calendarioJSON = {}
-        let eventosUnicos = []
-
-        rsEvento_unico.forEach(evento => {
-            let eventoJSON = {}
-
-            eventoJSON.id = evento.id_evento
-            eventoJSON.id_paciente = evento.id_paciente
-            eventoJSON.paciente = evento.paciente
-            eventoJSON.id_cuidador = evento.id_cuidador
-            eventoJSON.cuidador = evento.cuidador
-            eventoJSON.nome = evento.nome_evento_unico
-            eventoJSON.descricao = evento.descricao_evento_unico
-            eventoJSON.local = evento.local_evento_unico
-            eventoJSON.dia = evento.dia_evento_unico
-            eventoJSON.horario = evento.horario_evento_unico
-            eventoJSON.cor = evento.cor
-
-            eventosUnicos.push(eventoJSON)
-        });
-
-        let eventosSemanais = []
-
-        // Mapeia os eventos semanais por ID
-        let eventosSemanaisMap = new Map()
-        rsEvento_semanal.forEach(evento => {
-            if (!eventosSemanaisMap.has(evento.id_evento_semanal)) {
-                eventosSemanaisMap.set(evento.id_evento_semanal, {
-                    id: evento.id_evento_semanal,
-                    id_paciente: evento.id_paciente,
-                    paciente: evento.paciente,
-                    id_cuidador: evento.id_cuidador,
-                    cuidador: evento.cuidador,
-                    nome: evento.nome_evento_semanal,
-                    descricao: evento.descricao_evento_semanal,
-                    local: evento.local_evento_semanal,
-                    horario: evento.horario_evento_semanal,
-                    dias: []
-                });
-            }
-        });
-
-        // Preenche os dias correspondentes para cada evento semanal
-        rsEvento_semanal.forEach(repeticao => {
-            let evento = eventosSemanaisMap.get(repeticao.id_evento_semanal);
-            if (evento) {
-                let dia = {
-                    id: repeticao.dia_semana_id,
-                    status_id: repeticao.dia_evento_id,
-                    dia: repeticao.dia,
-		    id_dia_semana: repeticao.id_dia,
-                    cor_id: repeticao.id_cor,
-                    cor: repeticao.cor,
-                    status: repeticao.status_dia_status === 1 ? true : false
-                };
-                evento.dias.push(dia);
-            }
-        });
-
-        // Converte o mapa para uma matriz
-        eventosSemanais = Array.from(eventosSemanaisMap.values());
-
-        calendarioJSON.eventos_unicos = eventosUnicos
-        calendarioJSON.eventos_semanais = eventosSemanais
+    if (rsEvento_unico && rsEvento_semanal && rsTurno) {
+        let calendarioJSON = {
+            eventos_unicos: juncaoDeEventosUnicosMensal(rsEvento_unico),
+            eventos_semanais: juncaoDeEventosSemanaisMensal(rsEvento_semanal),
+            turnos: juncaoDeTurnosMensal(rsTurno)
+        }
 
         return calendarioJSON
     } else {
@@ -239,75 +313,36 @@ const selectAllEventosByCuidadorMonthly = async function (dadosCalendario) {
 	on tbl_dia_semana.id = tbl_dia_evento.id_dia_semana
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_cuidador.id = ${dadosCalendario.id_cuidador} and tbl_dia_evento.status = 1;`
 
+    let sqlTurno = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_cuidador.id = ${dadosCalendario.id_cuidador} and tbl_turno_dia_semana.status = 1`
+
     let rsEvento_unico = await prisma.$queryRawUnsafe(sqlEvento_unico)
     let rsEvento_semanal = await prisma.$queryRawUnsafe(sqlEvento_semanal)
+    let rsTurno = await prisma.$queryRawUnsafe(sqlTurno)
 
     //Valida se o BD retornou algum registro
-    if (rsEvento_unico && rsEvento_semanal) {
-        let calendarioJSON = {}
-        let eventosUnicos = []
-
-        rsEvento_unico.forEach(evento => {
-            let eventoJSON = {}
-
-            eventoJSON.id = evento.id_evento
-            eventoJSON.id_paciente = evento.id_paciente
-            eventoJSON.paciente = evento.paciente
-            eventoJSON.id_cuidador = evento.id_cuidador
-            eventoJSON.cuidador = evento.cuidador
-            eventoJSON.nome = evento.nome_evento_unico
-            eventoJSON.descricao = evento.descricao_evento_unico
-            eventoJSON.local = evento.local_evento_unico
-            eventoJSON.dia = evento.dia_evento_unico
-            eventoJSON.horario = evento.horario_evento_unico
-            eventoJSON.cor = evento.cor
-
-            eventosUnicos.push(eventoJSON)
-        });
-
-        let eventosSemanais = []
-
-        // Mapeia os eventos semanais por ID
-        let eventosSemanaisMap = new Map()
-        rsEvento_semanal.forEach(evento => {
-            if (!eventosSemanaisMap.has(evento.id_evento_semanal)) {
-                eventosSemanaisMap.set(evento.id_evento_semanal, {
-                    id: evento.id_evento_semanal,
-                    id_paciente: evento.id_paciente,
-                    paciente: evento.paciente,
-                    id_cuidador: evento.id_cuidador,
-                    cuidador: evento.cuidador,
-                    nome: evento.nome_evento_semanal,
-                    descricao: evento.descricao_evento_semanal,
-                    local: evento.local_evento_semanal,
-                    horario: evento.horario_evento_semanal,
-                    dias: []
-                });
-            }
-        });
-
-        // Preenche os dias correspondentes para cada evento semanal
-        rsEvento_semanal.forEach(repeticao => {
-            let evento = eventosSemanaisMap.get(repeticao.id_evento_semanal);
-            if (evento) {
-                let dia = {
-                    id: repeticao.dia_semana_id,
-                    status_id: repeticao.dia_evento_id,
-                    dia: repeticao.dia,
-		            id_dia_semana: repeticao.id_dia,
-                    cor_id: repeticao.id_cor,
-                    cor: repeticao.cor,
-                    status: repeticao.status_dia_status === 1 ? true : false
-                };
-                evento.dias.push(dia);
-            }
-        });
-
-        // Converte o mapa para uma matriz
-        eventosSemanais = Array.from(eventosSemanaisMap.values());
-
-        calendarioJSON.eventos_unicos = eventosUnicos
-        calendarioJSON.eventos_semanais = eventosSemanais
+    if (rsEvento_unico && rsEvento_semanal && rsTurno) {
+        let calendarioJSON = {
+            eventos_unicos: juncaoDeEventosUnicosMensal(rsEvento_unico),
+            eventos_semanais: juncaoDeEventosSemanaisMensal(rsEvento_semanal),
+            turnos: juncaoDeTurnosMensal(rsTurno)
+        }
 
         return calendarioJSON
     } else {
@@ -381,6 +416,25 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
 		)
 	);`
 
+    let sqlTurno = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_turno_dia_semana.status = 1;`
+
     let rsEvento_unico = await prisma.$queryRawUnsafe(sqlEvento_unico)
     let rsEvento_semanal = await prisma.$queryRawUnsafe(sqlEvento_semanal)
     let rsAlarme = await prisma.$queryRawUnsafe(sqlAlarme)
@@ -388,9 +442,9 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     //Valida se o BD retornou algum registro
     if (rsEvento_unico && rsEvento_semanal && rsAlarme) {
         let calendarioJSON = {}
-        let eventosUnicos = []
-        let eventosSemanais = []
         let alarmes = []
+
+        let eventosUnicos = []
 
         rsEvento_unico.forEach(evento => {
             let eventoJSON = {}
@@ -412,6 +466,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventosUnicos.push(eventoJSON)
         });
 
+        let eventosSemanais = []
+
         rsEvento_semanal.forEach(evento => {
             let eventoJSON = {}
 
@@ -425,8 +481,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
-	        eventoJSON.id_dia_semana = evento.id_dia
-	        eventoJSON.dia_semana = evento.dia
+            eventoJSON.id_dia_semana = evento.id_dia
+            eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)
         })
@@ -447,6 +503,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
 
             alarmes.push(alarmeJSON)
         })
+
+
         calendarioJSON.eventos_unicos = eventosUnicos
         calendarioJSON.eventos_semanais = eventosSemanais
         calendarioJSON.alarmes = alarmes
@@ -567,7 +625,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
             eventoJSON.local = evento.local_evento_semanal
             eventoJSON.horario = evento.horario_evento_semanal
             eventoJSON.cor = evento.cor
-	        eventoJSON.id_dia_semana = evento.id_dia
+            eventoJSON.id_dia_semana = evento.id_dia
             eventoJSON.dia_semana = evento.dia
 
             eventosSemanais.push(eventoJSON)

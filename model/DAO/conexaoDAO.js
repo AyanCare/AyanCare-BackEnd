@@ -17,7 +17,8 @@ const selectAllConexoes = async function () {
     //scriptSQL para buscar todos os itens do BD
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
@@ -41,7 +42,8 @@ const selectAllConexoes = async function () {
 const selectConexaoById = async function (idConexao) {
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
@@ -61,7 +63,8 @@ const selectConexaoById = async function (idConexao) {
 const selectConexaoByPaciente = async function (idPaciente) {
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
@@ -80,10 +83,34 @@ const selectConexaoByPaciente = async function (idPaciente) {
     }
 }
 
+const selectInactiveConexaoByPaciente = async function (idPaciente) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 0 and tbl_paciente.id = ${idPaciente}`
+
+    console.log(sql);
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao
+    } else {
+        return false
+    }
+}
+
 const selectConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCuidador) {
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
@@ -100,10 +127,32 @@ const selectConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeD
     }
 }
 
+const selectInactiveConexaoByPacienteAndNomeCuidador = async function (idPaciente, nomeDoCuidador) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 0 and tbl_paciente.id = ${idPaciente} and tbl_cuidador.nome like '%${nomeDoCuidador}%'`
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao
+    } else {
+        return false
+    }
+}
+
 const selectConexaoByCuidador = async function (idCuidador) {
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
@@ -120,16 +169,59 @@ const selectConexaoByCuidador = async function (idCuidador) {
     }
 }
 
+const selectInactiveConexaoByCuidador = async function (idCuidador) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 0 and tbl_cuidador.id = ${idCuidador}`
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao
+    } else {
+        return false
+    }
+}
+
 const selectConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPaciente) {
     let sql = `SELECT tbl_paciente_cuidador.id as id, 
     tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
-    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
     FROM tbl_paciente_cuidador
         inner join tbl_paciente
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
     where tbl_paciente_cuidador.status = 1 and tbl_cuidador.id = ${idCuidador} and tbl_paciente.nome like '%${nomeDoPaciente}%'`
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao
+    } else {
+        return false
+    }
+}
+
+const selectInactiveConexaoByCuidadorAndNomePaciente = async function (idCuidador, nomeDoPaciente) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 0 and tbl_cuidador.id = ${idCuidador} and tbl_paciente.nome like '%${nomeDoPaciente}%'`
 
     let rsConexao = await prisma.$queryRawUnsafe(sql)
 
@@ -182,6 +274,27 @@ const selectActiveConexaoByPacienteAndCuidador = async function (idPaciente, idC
     }
 }
 
+const selectInactiveConexaoByPacienteAndCuidador = async function (idPaciente, idCuidador) {
+    let sql = `SELECT tbl_paciente_cuidador.id as id, 
+    tbl_paciente.foto as foto_paciente, tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+    tbl_cuidador.foto as foto_cuidador, tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+    tbl_paciente_cuidador.status as status
+    FROM tbl_paciente_cuidador
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente_cuidador.status = 0 and tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
+
+    let rsConexao = await prisma.$queryRawUnsafe(sql)
+
+    if (rsConexao.length > 0) {
+        return rsConexao[0]
+    } else {
+        return false
+    }
+}
+
 const desativarConexao = async function (idPaciente, idCuidador) {
     let sql = `update tbl_paciente_cuidador set
             status = 0
@@ -222,5 +335,10 @@ module.exports = {
     desativarConexao,
     ativarConexao,
     selectConexaoByPacienteAndCuidador,
-    selectActiveConexaoByPacienteAndCuidador
+    selectActiveConexaoByPacienteAndCuidador,
+    selectInactiveConexaoByPacienteAndCuidador,
+    selectInactiveConexaoByCuidadorAndNomePaciente,
+    selectInactiveConexaoByCuidador,
+    selectInactiveConexaoByPacienteAndNomeCuidador,
+    selectInactiveConexaoByPaciente
 }

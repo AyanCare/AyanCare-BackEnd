@@ -216,7 +216,7 @@ const connectCuidadorAndPaciente = async function (idPaciente, idCuidador) {
                     if (connectionResult) {
                         let dadosNotificacao = {
                             "nome":"Alguém se conectou a sua conta",
-                            "descricao":"Um usuário se conectou a sua conta!",
+                            "descricao":`Um usuário se conectou a sua conta!`,
                             "id_cuidador":idCuidador,
                             "id_paciente":idPaciente
                         }
