@@ -2189,7 +2189,13 @@ app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
    let idCuidador = request.query.idCuidador;
    let horario = request.query.horario;
 
-   if (idPaciente != undefined && horario != undefined) {
+   if (idPaciente != undefined && idCuidador != undefined){
+      let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndCuidador(idCuidador, idPaciente);
+
+      //Valida se existe registro
+      response.json(dadosNotificacoes)
+      response.status(dadosNotificacoes.status)
+   } else if (idPaciente != undefined && horario != undefined) {
       //Recebe os dados do controller
       let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndHorario(idPaciente, horario);
 
