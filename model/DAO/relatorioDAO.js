@@ -228,7 +228,8 @@ const selectByIDPaciente = async function (idPaciente) {
     on tbl_questionario.id_relatorio = tbl_relatorio.id
         left join tbl_pergunta
     on tbl_pergunta.id = tbl_questionario.id_pergunta
-    where tbl_paciente.id = ${idPaciente}`
+    where tbl_paciente.id = ${idPaciente}
+    order by tbl_relatorio.id desc`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
@@ -324,7 +325,8 @@ const selectByIDCuidador = async function (idCuidador) {
     on tbl_questionario.id_relatorio = tbl_relatorio.id
         left join tbl_pergunta
     on tbl_pergunta.id = tbl_questionario.id_pergunta
-    where tbl_cuidador.id = ${idCuidador}`
+    where tbl_cuidador.id = ${idCuidador}
+    order by tbl_relatorio.id desc`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
@@ -419,7 +421,8 @@ const selectByIDCuidadorAndPaciente = async function (idCuidador, idPaciente) {
     on tbl_questionario.id_relatorio = tbl_relatorio.id
         left join tbl_pergunta
     on tbl_pergunta.id = tbl_questionario.id_pergunta
-    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
+    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}
+    order by tbl_relatorio.id desc`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
 
