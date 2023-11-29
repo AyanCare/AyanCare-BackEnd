@@ -35,7 +35,7 @@ const removerAcentos = function (string) {
     };
 
     stringConcertada = string.replace(/[áàâãéèêíìîóòôõúùûç]/g, equivalente => acentos[equivalente] || equivalente)
-    return (stringConcertada.toLowerCase()).replace(' ', '')
+    return (stringConcertada.toLowerCase()).replace('-feira', '')
 }
 
 const getTurnos = async function () {
