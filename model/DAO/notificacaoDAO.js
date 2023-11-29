@@ -82,7 +82,8 @@ const selectAllNotificacoesByCuidador = async function (idCuidador) {
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_cuidador
     on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
-    where tbl_cuidador.id = ${idCuidador}`
+    where tbl_cuidador.id = ${idCuidador}
+    order by tbl_notificacao.id desc`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
