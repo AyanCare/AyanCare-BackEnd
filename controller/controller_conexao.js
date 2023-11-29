@@ -214,6 +214,46 @@ const getConexaoInativaByPacienteAndNomeCuidador = async function (idPaciente, n
     }
 }
 
+const getConexaoByPacienteAndCuidador = async function (idPaciente, idCuidador) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)){
+        return messages.ERROR_INVALID_ID
+    } else if(idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectActiveConexaoByPacienteAndCuidador(idPaciente, idCuidador)
+
+        if (rsConexao ) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
+const getConexaoInativaByPacienteAndCuidador = async function (idPaciente, idCuidador) {
+    if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)){
+        return messages.ERROR_INVALID_ID
+    } else if(idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return messages.ERROR_INVALID_ID
+    } else {
+        let dadosConexaoJSON = {};
+
+        let rsConexao = await conexaoDAO.selectInactiveConexaoByPacienteAndCuidador(idPaciente, idCuidador)
+
+        if (rsConexao ) {
+            dadosConexaoJSON.status = messages.SUCCESS_REQUEST.status
+            dadosConexaoJSON.conexao = rsConexao
+            return dadosConexaoJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const deactivateConnection = async function (idPaciente, idCuidador) {
     if (idPaciente == null || idPaciente == undefined || isNaN(idPaciente)) {
         return messages.ERROR_INVALID_PACIENTE
@@ -292,5 +332,7 @@ module.exports = {
     getConexaoInativaByCuidador,
     getConexaoInativaByCuidadorAndNomePaciente,
     getConexaoInativaByPaciente,
-    getConexaoInativaByPacienteAndNomeCuidador
+    getConexaoInativaByPacienteAndNomeCuidador,
+    getConexaoByPacienteAndCuidador,
+    getConexaoInativaByPacienteAndCuidador
 }

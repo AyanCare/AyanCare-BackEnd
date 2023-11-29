@@ -1879,7 +1879,13 @@ app.get('/v1/ayan/conexoes', cors(), async (request, response) => {
    let nomePaciente = request.query.nomePaciente
    let nomeCuidador = request.query.nomeCuidador
 
-   if (idPaciente != undefined && nomeCuidador != undefined) {
+   if (idPaciente != undefined && idCuidador != undefined) {
+      let dadosConexao = await controllerConexao.getConexaoByPacienteAndCuidador(idPaciente, idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else if (idPaciente != undefined && nomeCuidador != undefined) {
       let dadosConexao = await controllerConexao.getConexaoByPacienteAndNomeCuidador(idPaciente, nomeCuidador);
 
       //Valida se existe registro
@@ -1919,7 +1925,13 @@ app.get('/v1/ayan/conexoes/inativas', cors(), async (request, response) => {
    let nomePaciente = request.query.nomePaciente
    let nomeCuidador = request.query.nomeCuidador
 
-   if (idPaciente != undefined && nomeCuidador != undefined) {
+   if (idPaciente != undefined && idCuidador != undefined) {
+      let dadosConexao = await controllerConexao.getConexaoInativaByPacienteAndCuidador(idPaciente, idCuidador);
+
+      //Valida se existe registro
+      response.json(dadosConexao)
+      response.status(dadosConexao.status)
+   } else if (idPaciente != undefined && nomeCuidador != undefined) {
       let dadosConexao = await controllerConexao.getConexaoInativaByPacienteAndNomeCuidador(idPaciente, nomeCuidador);
 
       //Valida se existe registro
