@@ -226,7 +226,7 @@ app.get('/v1/ayan/doencas', cors(), async (request, response) => {
 })
 
 //Get por ID
-app.get('/v1/ayan/doenca/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/doenca/:id', cors(), async (request, response) => {
    let idDoenca = request.params.id;
 
    //Recebe os dados do controller
@@ -255,7 +255,7 @@ app.post('/v1/ayan/doenca', cors(), bodyParserJSON, async (request, response) =>
 })
 
 //Update
-app.put('/v1/ayan/doenca/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/doenca/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -276,7 +276,7 @@ app.put('/v1/ayan/doenca/:id', validateJWT, cors(), bodyParserJSON, async (reque
 })
 
 //Delete
-app.delete('/v1/ayan/doenca/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/doenca/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnDoenca = await controllerDoenca.getDoencaByID(id)
@@ -300,7 +300,7 @@ app.delete('/v1/ayan/doenca/:id', validateJWT, cors(), async function (request, 
  * Versão: 1.0
  *************************************************************************************/
 //Get All (futuramente será um conjunto de GETs)
-app.get('/v1/ayan/comorbidades', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/comorbidades', cors(), async (request, response) => {
    let dadosComorbidade = await controllerComorbidade.getComorbidades();
 
    //Valida se existe registro
@@ -309,7 +309,7 @@ app.get('/v1/ayan/comorbidades', validateJWT, cors(), async (request, response) 
 })
 
 //Get por ID
-app.get('/v1/ayan/comorbidade/:id', validateJWT, cors(), async (request, response) => {
+app.get('/v1/ayan/comorbidade/:id', cors(), async (request, response) => {
    let idComorbidade = request.params.id;
 
    //Recebe os dados do controller
@@ -338,7 +338,7 @@ app.post('/v1/ayan/comorbidade', cors(), bodyParserJSON, async (request, respons
 })
 
 //Update Comorbidade
-app.put('/v1/ayan/comorbidade/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/comorbidade/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -359,7 +359,7 @@ app.put('/v1/ayan/comorbidade/:id', validateJWT, cors(), bodyParserJSON, async (
 })
 
 //Delete Comorbidade
-app.delete('/v1/ayan/comorbidade/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/comorbidade/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnComorbidade = await controllerComorbidade.getComorbidadeByID(id)
@@ -459,7 +459,7 @@ app.post('/v1/ayan/conectar', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Update Paciente
-app.put('/v1/ayan/paciente', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/paciente', cors(), bodyParserJSON, async (request, response) => {
 
    let contentType = request.headers['content-type']
 
@@ -478,7 +478,7 @@ app.put('/v1/ayan/paciente', validateJWT, cors(), bodyParserJSON, async (request
 })
 
 //Delete paciente (No momento, apenas um Delete simples, pode não funcionar quando a tabela pa
-app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/paciente/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnPaciente = await controllerPaciente.getPacienteByID(id)
@@ -550,7 +550,7 @@ app.put('/v1/ayan/paciente/endereco/:id', cors(), bodyParserJSON, async (request
    }
 })
 
-app.delete('/v1/ayan/paciente/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/paciente/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnPaciente = await controllerPaciente.getPacienteByID(id)
@@ -1293,7 +1293,7 @@ app.post('/v1/ayan/cuidador', cors(), bodyParserJSON, async (request, response) 
 })
 
 //Update Cuidador
-app.put('/v1/ayan/cuidador', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/cuidador', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
@@ -1312,7 +1312,7 @@ app.put('/v1/ayan/cuidador', validateJWT, cors(), bodyParserJSON, async (request
 })
 
 //Delete Cuidador (Delete simples, pode haver erro caso ele se conecte a outra tabela, sujeito a mudanças)
-app.delete('/v1/ayan/cuidador/:id', validateJWT, cors(), async function (request, response) {
+app.delete('/v1/ayan/cuidador/:id', cors(), async function (request, response) {
    let id = request.params.id;
 
    let returnCuidador = await controllerCuidador.getCuidadorByID(id)
@@ -1362,7 +1362,7 @@ app.get('/v1/ayan/cuidador/endereco/:id', cors(), async (request, response) => {
    response.status(dadosEndereco.status)
 })
 
-app.put('/v1/ayan/cuidador/endereco/:id', validateJWT, cors(), bodyParserJSON, async (request, response) => {
+app.put('/v1/ayan/cuidador/endereco/:id', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
