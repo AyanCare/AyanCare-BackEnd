@@ -38,7 +38,7 @@ const enviarSugestao = function (dadosUsuario) {
     to: `ayancarecorporation@gmail.com`,
     subject: `Sugestão de ${dadosUsuario.nome} - AyanCare`,
     template: '',
-    text: ` Email do usuário: ${dadosUsuario.emai} \n ${dadosUsuario.sugestao}`
+    text: ` Email do usuário: ${dadosUsuario.email} \n ${dadosUsuario.sugestao}`
   }
 
   transportador.sendMail(email)
