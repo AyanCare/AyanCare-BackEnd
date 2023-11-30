@@ -14,7 +14,7 @@ var prisma = new PrismaClient()
 /************************** Selects ******************************/
 const selectAllTestes = async function () {
     let sql = `SELECT tbl_data_horario_observacao_humor.id as id,
-    tbl_paciente.nome as paciente, tbl_paciente.foto as foto_paciente
+    tbl_paciente.nome as paciente, tbl_paciente.nome as paciente,
     DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
     tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
     tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
@@ -135,7 +135,7 @@ on tbl_exercicio_status.id_exercicio = tbl_exercicio.id`
 
 const selectTesteById = async function (idTeste) {
     let sql = `SELECT tbl_data_horario_observacao_humor.id as id,
-        tbl_paciente.nome as paciente, tbl_paciente.foto as foto_paciente
+        tbl_paciente.nome as paciente, tbl_paciente.nome as paciente,
         DATE_FORMAT(tbl_data_horario_observacao_humor.data,'%d/%m/%Y') as data, TIME_FORMAT(tbl_data_horario_observacao_humor.horario, '%H:%i') as horario, tbl_data_horario_observacao_humor.observacao as observacao,
         tbl_sintoma.sintoma as nome_sintoma, tbl_sintoma.imagem as imagem_sintoma, tbl_sintoma.id as id_sintoma,
         tbl_resposta.resposta as nome_humor, tbl_resposta.imagem as imagem_humor, tbl_resposta.id as id_humor,
