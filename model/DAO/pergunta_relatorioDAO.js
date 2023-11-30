@@ -123,11 +123,6 @@
         return false
     }
 }
-
-
-
-
-
  
  module.exports = {
      selectAllPerguntas,
