@@ -36,6 +36,7 @@ const SUCCESS_USERS_CONNECTED = { status: 201, message: 'Cuidador e Paciente con
 const SUCCESS_ACTIVATED_CONNECTION = { status: 200, message: 'Conexão ativada com sucesso.' }
 const SUCCESS_DEACTIVATED_CONNECTION = { status: 200, message: 'Conexão desativada com sucesso.' }
 const SUCCESS_VALID_TOKEN = { status: 202, message: 'O token enviado é válido.' }
+const SUCCESS_PDF_GENERATED = { status: 200, message: 'PDF foi gerado com sucesso.' }
 
 module.exports = {
     ERROR_INTERNAL_SERVER,
@@ -65,5 +66,6 @@ module.exports = {
     SUCCESS_VALID_TOKEN,
     ERROR_CONNECTION_ALREADY_EXISTS,
     ERROR_CONNECTION_DOESNT_EXISTS,
-    SUCCESS_EMAIL_SENT
+    SUCCESS_EMAIL_SENT,
+    SUCCESS_PDF_GENERATED
 }

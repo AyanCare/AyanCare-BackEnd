@@ -74,38 +74,37 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
 
    let relatorioJSON = await controllerRelatorio.getRelatorioByID(id)
 
+   console.log(relatorioJSON);
+
    const html = `
-   <html>
-      <head>
-      <style>
-         /* Adicione estilos CSS conforme necessário */
-         body {
-            font-family: Arial, sans-serif;
-         }
-      </style>
-      </head>
-      <body>
-      <h1>Relatório</h1>
-      <p>Data: ${relatorioJSON.data}</p>
-      <p>Horário: ${relatorioJSON.horario}</p>
-      
-      <h2>Cuidador</h2>
-      <p>Nome: ${relatorioJSON.cuidador.nome}</p>
-      <!-- Adicione mais detalhes do cuidador conforme necessário -->
-      
-      <h2>Paciente</h2>
-      <p>Nome: ${relatorioJSON.paciente.nome}</p>
-      <!-- Adicione mais detalhes do paciente conforme necessário -->
-      
-      <h2>Texto</h2>
-      <p>${relatorioJSON.texto}</p>
-      
-      <h2>Perguntas</h2>
-      <ul>
-         ${relatorioJSON.perguntas.map(pergunta => `<li>${pergunta.pergunta}: ${pergunta.resposta ? 'Sim' : 'Não'}</li>`).join('')}
-      </ul>
-      </body>
-   </html>
+      <html>
+         <head>
+         <style>
+            body {
+               font-family: Arial, sans-serif;
+            }
+         </style>
+         </head>
+         <body>
+            <h1>Relatório</h1>
+            <p>Data: ${relatorioJSON.relatorio.data}</p>
+            <p>Horário: ${relatorioJSON.relatorio.horario}</p>
+            
+            <h2>Cuidador</h2>
+            <p>Nome: ${relatorioJSON.relatorio.cuidador.nome}</p>
+            
+            <h2>Paciente</h2>
+            <p>Nome: ${relatorioJSON.relatorio.paciente.nome}</p>
+            
+            <h2>Texto</h2>
+            <p>${relatorioJSON.relatorio.texto}</p>
+            
+            <h2>Perguntas</h2>
+            <ul>
+               ${relatorioJSON.relatorio.perguntas.map(pergunta => `<li>${pergunta.pergunta}: ${pergunta.resposta ? 'Sim' : 'Não'}</li>`).join('')}
+            </ul>
+         </body>
+      </html>
   `;
 
    // Opções de configuração do PDF
@@ -117,14 +116,10 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
    pdf.create(html, options).toStream((err, stream) => {
       if (err) {
          console.error(err);
-         res.status(500).send('Erro ao gerar o PDF.');
+         response.status(messages.ERROR_INTERNAL_SERVER.status)
+         response.json(messages.ERROR_INTERNAL_SERVER)
       } else {
-         // Configurar os cabeçalhos para a resposta
-         res.setHeader('Content-Type', 'application/pdf');
-         res.setHeader('Content-Disposition', 'attachment; filename=relatorio.pdf');
-
-         // Enviar o PDF gerado como resposta para download
-         stream.pipe(res);
+         stream.pipe(response)
       }
    });
 })
