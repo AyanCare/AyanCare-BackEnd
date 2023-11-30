@@ -24,7 +24,8 @@ const selectAllConexoes = async function () {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.status = 1`
+    where tbl_paciente_cuidador.status = 1
+    order by tbl_paciente_cuidador.id asc`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw('SELECT * FROM tbl_aluno') - Executa diretamente o script dentro do método
@@ -70,7 +71,8 @@ const selectConexaoByPaciente = async function (idPaciente) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.status = 1 and tbl_paciente.id = ${idPaciente}`
+    where tbl_paciente_cuidador.status = 1 and tbl_paciente.id = ${idPaciente}
+    order by tbl_cuidador.id asc`
 
     console.log(sql);
 
@@ -93,7 +95,8 @@ const selectInactiveConexaoByPaciente = async function (idPaciente) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.status = 0 and tbl_paciente.id = ${idPaciente}`
+    where tbl_paciente_cuidador.status = 0 and tbl_paciente.id = ${idPaciente}
+    order by tbl_cuidador.id asc`
 
     console.log(sql);
 
@@ -158,7 +161,8 @@ const selectConexaoByCuidador = async function (idCuidador) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.status = 1 and tbl_cuidador.id = ${idCuidador}`
+    where tbl_paciente_cuidador.status = 1 and tbl_cuidador.id = ${idCuidador}
+    order by tbl_paciente.id asc`
 
     let rsConexao = await prisma.$queryRawUnsafe(sql)
 
@@ -179,7 +183,8 @@ const selectInactiveConexaoByCuidador = async function (idCuidador) {
     on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
         inner join tbl_cuidador
     on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
-    where tbl_paciente_cuidador.status = 0 and tbl_cuidador.id = ${idCuidador}`
+    where tbl_paciente_cuidador.status = 0 and tbl_cuidador.id = ${idCuidador}
+    order by tbl_paciente.id asc`
 
     let rsConexao = await prisma.$queryRawUnsafe(sql)
 

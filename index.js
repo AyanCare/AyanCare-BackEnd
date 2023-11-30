@@ -9,6 +9,7 @@ const express = require('express');
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
+const pdf = require('html-pdf');
 
 const messages = require('./controller/modules/config.js')
 const jwt = require('./middleware/middlewareJWT.js')
@@ -67,6 +68,66 @@ const validateJWT = async function (request, response, next) {
       return response.status(messages.ERROR_UNAUTHORIZED_USER.status).end();
    }
 }
+
+app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
+   let id = request.params.id
+
+   let relatorioJSON = await controllerRelatorio.getRelatorioByID(id)
+
+   const html = `
+   <html>
+      <head>
+      <style>
+         /* Adicione estilos CSS conforme necessário */
+         body {
+            font-family: Arial, sans-serif;
+         }
+      </style>
+      </head>
+      <body>
+      <h1>Relatório</h1>
+      <p>Data: ${relatorioJSON.data}</p>
+      <p>Horário: ${relatorioJSON.horario}</p>
+      
+      <h2>Cuidador</h2>
+      <p>Nome: ${relatorioJSON.cuidador.nome}</p>
+      <!-- Adicione mais detalhes do cuidador conforme necessário -->
+      
+      <h2>Paciente</h2>
+      <p>Nome: ${relatorioJSON.paciente.nome}</p>
+      <!-- Adicione mais detalhes do paciente conforme necessário -->
+      
+      <h2>Texto</h2>
+      <p>${relatorioJSON.texto}</p>
+      
+      <h2>Perguntas</h2>
+      <ul>
+         ${relatorioJSON.perguntas.map(pergunta => `<li>${pergunta.pergunta}: ${pergunta.resposta ? 'Sim' : 'Não'}</li>`).join('')}
+      </ul>
+      </body>
+   </html>
+  `;
+
+   // Opções de configuração do PDF
+   const options = {
+      format: 'Letter'
+   };
+
+   // Gerar o PDF a partir do HTML
+   pdf.create(html, options).toStream((err, stream) => {
+      if (err) {
+         console.error(err);
+         res.status(500).send('Erro ao gerar o PDF.');
+      } else {
+         // Configurar os cabeçalhos para a resposta
+         res.setHeader('Content-Type', 'application/pdf');
+         res.setHeader('Content-Disposition', 'attachment; filename=relatorio.pdf');
+
+         // Enviar o PDF gerado como resposta para download
+         stream.pipe(res);
+      }
+   });
+})
 
 app.post('/v1/ayan/sugestao', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
@@ -2189,7 +2250,7 @@ app.get('/v1/ayan/notificacoes', cors(), async (request, response) => {
    let idCuidador = request.query.idCuidador;
    let horario = request.query.horario;
 
-   if (idPaciente != undefined && idCuidador != undefined){
+   if (idPaciente != undefined && idCuidador != undefined) {
       let dadosNotificacoes = await controllerNotificacao.getNotificacoesByPacienteAndCuidador(idCuidador, idPaciente);
 
       //Valida se existe registro
