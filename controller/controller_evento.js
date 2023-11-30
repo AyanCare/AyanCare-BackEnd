@@ -206,7 +206,7 @@ const insertEvento = async function (dadosEvento) {
 
             let dadosNotificacao = {
                 "nome":"Evento inserido",
-                "descricao":`Um evento que envolve o Paciente ${eventoCriado.paciente} e o Cuidador ${eventoCriado.cuidador} foi criado!`,
+                "descricao": dadosEvento.idCuidador === undefined ? `Um evento que envolve o Paciente ${eventoCriado.paciente} foi criado!` : `Um evento que envolve o Paciente ${eventoCriado.paciente} e o Cuidador ${eventoCriado.cuidador} foi criado!`,
                 "id_cuidador":dadosEvento.idCuidador === undefined ? 0 : dadosEvento.idCuidador,
                 "id_paciente":dadosEvento.idPaciente
             }

@@ -30,7 +30,8 @@ const selectAllNotificacoes = async function () {
         left join tbl_paciente
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
         left join tbl_cuidador
-    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id`
+    on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
+    order by tbl_notificacao.id desc limit 1`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw(`SELECT * FROM tbl_aluno`) - Executa diretamente o script dentro do método
@@ -60,7 +61,8 @@ const selectNotificacoesByCuidadorAndPaciente = async function (idPaciente, idCu
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
         left join tbl_cuidador
     on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
-    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}`
+    where tbl_paciente.id = ${idPaciente} and tbl_cuidador.id = ${idCuidador}
+    order by tbl_notificacao.id desc limit 1`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw(`SELECT * FROM tbl_aluno`) - Executa diretamente o script dentro do método
@@ -87,7 +89,8 @@ const selectAllNotificacoesByPaciente = async function (idPaciente) {
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_paciente
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
-    where tbl_paciente.id = ${idPaciente}`
+    where tbl_paciente.id = ${idPaciente}
+    order by tbl_notificacao.id desc limit 1`
 
     //$queryRawUnsafe(sql) - Permite interpretar uma variável como sendo um scriptSQL
     //$queryRaw(`SELECT * FROM tbl_aluno`) - Executa diretamente o script dentro do método
@@ -134,7 +137,8 @@ const selectAllNotificacoesByCuidadorAndHorario = async function (idCuidador, ho
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_cuidador
     on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
-    where tbl_cuidador.id = ${idCuidador} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"`
+    where tbl_cuidador.id = ${idCuidador} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"
+    order by tbl_notificacao.id desc limit 1`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
@@ -155,7 +159,8 @@ const selectAllNotificacoesByPacienteAndHorario = async function (idPaciente, ho
     on tbl_cuidador_notificacao.id_notificacao = tbl_notificacao.id
         left join tbl_paciente
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
-    where tbl_paciente.id = ${idPaciente} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"`
+    where tbl_paciente.id = ${idPaciente} and time_format(tbl_notificacao.hora_criacao, '%H:%i') = "${horario}"
+    order by tbl_notificacao.id desc limit 1`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
@@ -208,7 +213,8 @@ const selectNotificacaoById = async function (idNotificacao) {
     on tbl_paciente_notificacao.id_paciente = tbl_paciente.id
         left join tbl_cuidador
     on tbl_cuidador_notificacao.id_cuidador = tbl_cuidador.id
-    where tbl_notificacao.id = ${idNotificacao}`
+    where tbl_notificacao.id = ${idNotificacao}
+    order by tbl_notificacao.id desc limit 1`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
@@ -222,7 +228,7 @@ const selectNotificacaoById = async function (idNotificacao) {
 const selectLastId = async function () {
     let sql = `SELECT tbl_notificacao.id as id, tbl_notificacao.nome as nome, tbl_notificacao.descricao, date_format(tbl_notificacao.data_criacao, '%d/%m/%Y') as data_criacao, time_format(tbl_notificacao.hora_criacao, '%H:%i') as hora_criacao
     FROM tbl_notificacao
-    order by id desc limit 1`
+    order by tbl_notificacao.id desc limit 1`
 
     let rsNotificacao = await prisma.$queryRawUnsafe(sql)
 
