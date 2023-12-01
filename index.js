@@ -2229,7 +2229,7 @@ app.get('/v1/ayan/calendario', cors(), async (request, response) => {
       response.status(dadosCalendario.status)
    } else {
       response.json(messages.ERROR_NOT_FOUND)
-      response.json(messages.ERROR_NOT_FOUND.status)
+      response.status(messages.ERROR_NOT_FOUND.status)
    }
 })
 
