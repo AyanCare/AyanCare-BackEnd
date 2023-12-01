@@ -175,9 +175,9 @@ const getEventoByCuidador = async function (idCuidador) {
 
 const insertEvento = async function (dadosEvento) {
     if (
-        dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome > 200 ||
-        dadosEvento.descricao == '' || dadosEvento.descricao == undefined ||
-        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local > 255 ||
+        dadosEvento.nome == '' || dadosEvento.nome == undefined || dadosEvento.nome.length > 45 ||
+        dadosEvento.descricao == '' || dadosEvento.descricao == undefined || dadosEvento.local.length > 255 ||
+        dadosEvento.local == '' || dadosEvento.local == undefined || dadosEvento.local.length > 255 ||
         dadosEvento.hora == '' || dadosEvento.hora == undefined ||
         dadosEvento.dia == '' || dadosEvento.dia == undefined ||
         dadosEvento.idPaciente == '' || dadosEvento.idPaciente == undefined || isNaN(dadosEvento.idPaciente)
