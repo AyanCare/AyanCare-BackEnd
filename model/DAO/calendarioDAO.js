@@ -393,7 +393,7 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_dia_evento.status = 1;`
 
     let sqlAlarme = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
-		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, concat(tbl_alarme_unico.quantidade, ' ', tbl_medida.sigla) as quantidade,
+		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, tbl_alarme_unico.quantidade as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
 		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
@@ -558,7 +558,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
     where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_cuidador.id = ${dadosCalendario.id_cuidador} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_dia_evento.status = 1;`
 
     let sqlAlarme = `select tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente, 
-		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, concat(tbl_alarme_unico.quantidade, ' ', tbl_medida.sigla) as quantidade,
+		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, tbl_alarme_unico.quantidade as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
 		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
