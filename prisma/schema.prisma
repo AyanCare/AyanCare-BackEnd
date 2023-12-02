@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://tux:Mud@r123@banco-ayan-care.mysql.database.azure.com:3306/db_ayancare_v1"
 }
 
 model User {
