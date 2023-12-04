@@ -22,6 +22,8 @@ function converterData(ano) {
 }
 
 const getEventosAndAlarmesByPaciente = async function (dadosCalendario) {
+    console.log('oi');
+
     if (
         dadosCalendario.dia == '' || dadosCalendario.dia == undefined ||
         dadosCalendario.dia_semana == '' || dadosCalendario.dia_semana == undefined

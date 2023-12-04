@@ -270,7 +270,7 @@ const juncaoDeTurnosDiario = function (arraySQL) {
     arraySQL.forEach(turno => {
         let turnoJSON = {}
 
-        turnoJSON.id = evento.id
+        turnoJSON.id = turno.id
         turnoJSON.id_paciente = turno.id_paciente
         turnoJSON.paciente = turno.paciente
         turnoJSON.id_cuidador = turno.id_cuidador
