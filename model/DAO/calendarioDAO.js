@@ -255,6 +255,8 @@ const juncaoDeAlarmesDiario = function (arraySQL) {
         alarmeJSON.horario = alarme.horario_alarme_unitario
         alarmeJSON.intervalo = conversaoDeMilissegundos(alarme.intervalo_alarme)
         alarmeJSON.quantidade = alarme.quantidade
+        alarmeJSON.medida = alarme.medida
+        alarmeJSON.medida_sigla = alarme.medida_sigla
         alarmeJSON.id_status = alarme.id_status_alarme
         alarmeJSON.status = alarme.status_alarme
 
