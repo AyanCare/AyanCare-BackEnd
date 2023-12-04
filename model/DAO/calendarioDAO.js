@@ -596,7 +596,8 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
                         tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, tbl_alarme_unico.quantidade as quantidade,
                         tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
                         tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
-                        tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
+                        tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento,
+           tbl_medida.tipo as medida, tbl_medida.sigla as medida_sigla
                     from tbl_paciente
                         left join tbl_medicamento
                     on tbl_paciente.id = tbl_medicamento.id_paciente
@@ -693,7 +694,8 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
 		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, tbl_alarme_unico.quantidade as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
-		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
+		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento,
+           tbl_medida.tipo as medida, tbl_medida.sigla as medida_sigla
 	from tbl_paciente
 		left join tbl_medicamento
 	on tbl_paciente.id = tbl_medicamento.id_paciente
@@ -798,7 +800,8 @@ const selectAllEventosAndAlarmesByCuidadorAndPacienteDiary = async function (dad
 		   tbl_alarme_unico.id as id_alarme_unitario, TIME_FORMAT(tbl_alarme_unico.horario, '%H:%i') as horario_alarme_unitario, tbl_alarme_unico.dia as dia_criacao_alarme_unico, tbl_alarme_unico.quantidade as quantidade,
 		   tbl_status_alarme.id as id_status_alarme, tbl_status_alarme.nome as status_alarme,
 		   tbl_alarme_medicamento.id as id_alarme, tbl_alarme_medicamento.intervalo as intervalo_alarme,
-		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento
+		   tbl_medicamento.id as id_medicamento, tbl_medicamento.nome as medicamento,
+           tbl_medida.tipo as medida, tbl_medida.sigla as medida_sigla
 	from tbl_paciente
 		left join tbl_medicamento
 	on tbl_paciente.id = tbl_medicamento.id_paciente

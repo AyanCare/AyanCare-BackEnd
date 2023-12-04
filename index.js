@@ -77,34 +77,32 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
    console.log(relatorioJSON);
 
    const html = `
-      <html>
-         <head>
-         <style>
-            body {
-               font-family: Arial, sans-serif;
-            }
-         </style>
-         </head>
-         <body>
-            <h1>Relatório</h1>
-            <p>Data: ${relatorioJSON.relatorio.data}</p>
-            <p>Horário: ${relatorioJSON.relatorio.horario}</p>
-            
-            <h2>Cuidador</h2>
-            <p>Nome: ${relatorioJSON.relatorio.cuidador.nome}</p>
-            
-            <h2>Paciente</h2>
-            <p>Nome: ${relatorioJSON.relatorio.paciente.nome}</p>
-            
-            <h2>Texto</h2>
-            <p>${relatorioJSON.relatorio.texto}</p>
-            
-            <h2>Perguntas</h2>
-            <ul>
-               ${relatorioJSON.relatorio.perguntas.map(pergunta => `<li>${pergunta.pergunta}: ${pergunta.resposta ? 'Sim' : 'Não'}</li>`).join('')}
-            </ul>
-         </body>
-      </html>
+      <head>
+      <style>
+         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+         body {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Manrope', sans-serif;
+         }
+
+         header img{
+            height: 92px;
+         }
+      </style>
+   </head>
+
+   <body>
+
+      <header>
+         <img src="./img/logo.png" alt="">
+         <img src="./img/app.svg" alt="">
+      </header>
+   </body>
+
+   </html>
   `;
 
    // Opções de configuração do PDF
