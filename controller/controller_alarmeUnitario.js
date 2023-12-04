@@ -32,7 +32,6 @@ const getAlarmeById = async function (idAlarme) {
 
     let dadosAlarmes = await alarmeDAO.selectAlarmeById(idAlarme)
 
-
     if (dadosAlarmes) {
 
         dadosAlarmeJSON.status = messages.SUCCESS_REQUEST.status

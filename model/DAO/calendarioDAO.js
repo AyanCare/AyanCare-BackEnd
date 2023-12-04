@@ -438,12 +438,12 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
     let rsEvento_unico = await prisma.$queryRawUnsafe(sqlEvento_unico)
     let rsEvento_semanal = await prisma.$queryRawUnsafe(sqlEvento_semanal)
     let rsAlarme = await prisma.$queryRawUnsafe(sqlAlarme)
-
+    let rsTurno = await prisma.$queryRawUnsafe(sqlTurno)
+    
     //Valida se o BD retornou algum registro
     if (rsEvento_unico && rsEvento_semanal && rsAlarme) {
         let calendarioJSON = {}
         let alarmes = []
-
         let eventosUnicos = []
 
         rsEvento_unico.forEach(evento => {
@@ -502,12 +502,32 @@ const selectAllEventosAndAlarmesByPacienteDiary = async function (dadosCalendari
             alarmeJSON.status = alarme.status_alarme
 
             alarmes.push(alarmeJSON)
+
+            let turnos = []
+
+            rsTurno.forEach(turno => {
+                let turnoJSON = {}
+    
+                turnoJSON.id = evento.id
+                turnoJSON.id_paciente = turno.id_paciente
+                turnoJSON.paciente = turno.paciente
+                turnoJSON.id_cuidador = turno.id_cuidador
+                turnoJSON.cuidador = turno.cuidador
+                turnoJSON.id_dia_semana = turno.id_dia_semana
+                turnoJSON.dia_semana = turno.dia
+                turnoJSON.horario_inicio = turno.inicio
+                turnoJSON.horario_fim = turno.fim
+                turnoJSON.cor = turno.cor
+    
+                turnos.push(turnoJSON)
+            });
         })
 
 
         calendarioJSON.eventos_unicos = eventosUnicos
         calendarioJSON.eventos_semanais = eventosSemanais
         calendarioJSON.alarmes = alarmes
+        calendarioJSON.turnos = turnos
 
         return calendarioJSON
     } else {
@@ -581,9 +601,29 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
 		)
 	);`
 
+    let sqlTurno = `SELECT tbl_paciente.id as id_paciente, tbl_paciente.nome as paciente,
+        tbl_cuidador.id as id_cuidador, tbl_cuidador.nome as cuidador,
+        tbl_turno_dia_semana.id as id, tbl_turno_dia_semana.status as status,TIME_FORMAT(tbl_turno_dia_semana.horario_inicio, '%H:%i:%s') as inicio, TIME_FORMAT(tbl_turno_dia_semana.horario_fim, '%H:%i:%s') as fim,
+        tbl_dia_semana.dia as dia, tbl_dia_semana.id as id_dia_semana,
+        tbl_cor.hex as cor,
+        tbl_paciente_cuidador.id as id_conexao
+    FROM tbl_paciente_cuidador
+        inner join tbl_turno_dia_semana
+    on tbl_turno_dia_semana.id_paciente_cuidador = tbl_paciente_cuidador.id
+        inner join tbl_dia_semana
+    on tbl_dia_semana.id = tbl_turno_dia_semana.id_dia_semana
+        inner join tbl_cor
+    on tbl_cor.id = tbl_turno_dia_semana.id_cor
+        inner join tbl_paciente
+    on tbl_paciente.id = tbl_paciente_cuidador.id_paciente
+        inner join tbl_cuidador
+    on tbl_cuidador.id = tbl_paciente_cuidador.id_cuidador
+    where tbl_paciente.id = ${dadosCalendario.id_paciente} and tbl_cuidador.id = ${dadosCalendario.id_cuidador} and tbl_dia_semana.dia = '${dadosCalendario.dia_semana}' and tbl_turno_dia_semana.status = 1;`
+
     let rsEvento_unico = await prisma.$queryRawUnsafe(sqlEvento_unico)
     let rsEvento_semanal = await prisma.$queryRawUnsafe(sqlEvento_semanal)
     let rsAlarme = await prisma.$queryRawUnsafe(sqlAlarme)
+    let rsTurno = await prisma.$queryRawUnsafe(sqlTurno)
 
     //Valida se o BD retornou algum registro
     if (rsEvento_unico && rsEvento_semanal && rsAlarme) {
@@ -591,6 +631,7 @@ const selectAllEventosAndAlarmesByCuidadorDiary = async function (dadosCalendari
         let eventosUnicos = []
         let eventosSemanais = []
         let alarmes = []
+        let turnos = []
 
         rsEvento_unico.forEach(evento => {
             let eventoJSON = {}

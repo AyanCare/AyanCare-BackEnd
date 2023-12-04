@@ -181,7 +181,7 @@ const insertAlarme = async function (dadosAlarme) {
         id_alarme_medicamento
     ) values(
         CURRENT_DATE,
-        CURRENT_TIME,
+        '${dadosAlarme.horario}',
         3,
         '${dadosAlarme.quantidade}',
         ${dadosAlarme.id_alarme_medicamento}
