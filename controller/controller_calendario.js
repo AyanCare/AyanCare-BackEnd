@@ -47,6 +47,32 @@ const getEventosAndAlarmesByPaciente = async function (dadosCalendario) {
     }
 }
 
+const getEventosAndAlarmesByCuidador = async function (dadosCalendario) {
+    if (
+        dadosCalendario.dia == '' || dadosCalendario.dia == undefined ||
+        dadosCalendario.dia_semana == '' || dadosCalendario.dia_semana == undefined
+    ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else if (
+        dadosCalendario.id_cuidador == '' || dadosCalendario.id_cuidador == undefined || isNaN(dadosCalendario.id_cuidador)
+    ) {
+        return messages.ERROR_INVALID_CUIDADOR
+    } else {
+        dadosCalendario.dia = converterData(dadosCalendario.dia)
+
+        let dadosCalendarioJSON = {};
+
+        let resultCalendario = await calendarioDAO.selectAllEventosAndAlarmesByCuidadorDiary(dadosCalendario)
+        if (resultCalendario) {
+            dadosCalendarioJSON.status = messages.SUCCESS_REQUEST.status
+            dadosCalendarioJSON.calendario = resultCalendario
+            return dadosCalendarioJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const getEventosAndAlarmesByCuidadorAndPaciente = async function (dadosCalendario) {
     if (
         dadosCalendario.dia == '' || dadosCalendario.dia == undefined ||
@@ -66,7 +92,7 @@ const getEventosAndAlarmesByCuidadorAndPaciente = async function (dadosCalendari
 
         let dadosCalendarioJSON = {};
 
-        let resultCalendario = await calendarioDAO.selectAllEventosAndAlarmesByCuidadorDiary(dadosCalendario)
+        let resultCalendario = await calendarioDAO.selectAllEventosAndAlarmesByCuidadorAndPacienteDiary(dadosCalendario)
 
         if (resultCalendario) {
             dadosCalendarioJSON.status = messages.SUCCESS_REQUEST.status
@@ -109,10 +135,6 @@ const getEventosByCuidador = async function (dadosCalendario) {
     ) {
         return messages.ERROR_REQUIRED_FIELDS
     } else if (
-        dadosCalendario.id_paciente == '' || dadosCalendario.id_paciente == undefined || isNaN(dadosCalendario.id_paciente)
-    ) {
-        return messages.ERROR_INVALID_PACIENTE
-    } else if (
         dadosCalendario.id_cuidador == '' || dadosCalendario.id_cuidador == undefined || isNaN(dadosCalendario.id_cuidador)
     ) {
         return messages.ERROR_INVALID_CUIDADOR
@@ -132,9 +154,40 @@ const getEventosByCuidador = async function (dadosCalendario) {
     }
 }
 
+const getEventosByCuidadorAndPaciente = async function (dadosCalendario) {
+    if (
+        dadosCalendario.mes == '' || dadosCalendario.mes == undefined
+    ) {
+        return messages.ERROR_REQUIRED_FIELDS
+    } else if (
+        dadosCalendario.id_paciente == '' || dadosCalendario.id_paciente == undefined || isNaN(dadosCalendario.id_paciente)
+    ) {
+        return messages.ERROR_INVALID_PACIENTE
+    } else if (
+        dadosCalendario.id_cuidador == '' || dadosCalendario.id_cuidador == undefined || isNaN(dadosCalendario.id_cuidador)
+    ) {
+        return messages.ERROR_INVALID_CUIDADOR
+    } else {
+        dadosCalendario.mes = formatarMesAno(dadosCalendario.mes)
+
+        let dadosCalendarioJSON = {};
+
+        let resultCalendario = await calendarioDAO.selectAllEventosByCuidadorAndPacienteMonthly(dadosCalendario)
+        if (resultCalendario) {
+            dadosCalendarioJSON.status = messages.SUCCESS_REQUEST.status
+            dadosCalendarioJSON.calendario = resultCalendario
+            return dadosCalendarioJSON
+        } else {
+            return messages.ERROR_NOT_FOUND
+        }
+    }
+}
+
 module.exports = {
     getEventosAndAlarmesByPaciente,
     getEventosAndAlarmesByCuidadorAndPaciente,
     getEventosByPaciente,
+    getEventosByCuidadorAndPaciente,
+    getEventosAndAlarmesByCuidador,
     getEventosByCuidador
 }

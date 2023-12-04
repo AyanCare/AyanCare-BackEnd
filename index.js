@@ -2204,6 +2204,17 @@ app.get('/v1/ayan/calendario', cors(), async (request, response) => {
       //Valida se existe registro
       response.json(dadosCalendario)
       response.status(dadosCalendario.status)
+   } else if (idCuidador != undefined && dia != undefined && diaSemana != undefined) {
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_cuidador = idCuidador
+      dadosCalendarioJSON.dia = dia
+      dadosCalendarioJSON.dia_semana = diaSemana
+
+      let dadosCalendario = await controllerCalendario.getEventosAndAlarmesByCuidador(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
    } else if (idPaciente != undefined && idCuidador != undefined && mes != undefined) {
 
       let dadosCalendarioJSON = {}
@@ -2211,7 +2222,7 @@ app.get('/v1/ayan/calendario', cors(), async (request, response) => {
       dadosCalendarioJSON.id_cuidador = idCuidador
       dadosCalendarioJSON.mes = mes
 
-      let dadosCalendario = await controllerCalendario.getEventosByCuidador(dadosCalendarioJSON);
+      let dadosCalendario = await controllerCalendario.getEventosByCuidadorAndPaciente(dadosCalendarioJSON);
 
       //Valida se existe registro
       response.json(dadosCalendario)
@@ -2223,6 +2234,17 @@ app.get('/v1/ayan/calendario', cors(), async (request, response) => {
       dadosCalendarioJSON.mes = mes
 
       let dadosCalendario = await controllerCalendario.getEventosByPaciente(dadosCalendarioJSON);
+
+      //Valida se existe registro
+      response.json(dadosCalendario)
+      response.status(dadosCalendario.status)
+   } else if (idCuidador != undefined && mes != undefined) {
+
+      let dadosCalendarioJSON = {}
+      dadosCalendarioJSON.id_cuidador = idCuidador
+      dadosCalendarioJSON.mes = mes
+
+      let dadosCalendario = await controllerCalendario.getEventosByCuidador(dadosCalendarioJSON);
 
       //Valida se existe registro
       response.json(dadosCalendario)
