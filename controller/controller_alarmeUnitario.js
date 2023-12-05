@@ -121,19 +121,18 @@ const insertAlarme = async function (dadosAlarme) {
 
 /******************UpdateAlarme**************************** */
 
-const updateAlarme = async function (dadosAlarme, id) {
+const updateAlarme = async function (dadosAlarme) {
 
     if (
         dadosAlarme.id_status_alarme == undefined || dadosAlarme.id_status_alarme == '' || isNaN(dadosAlarme.id_status_alarme)
     ) {
         return messages.ERROR_REQUIRED_FIELDS
-    } else if (id == null || id == undefined || isNaN(id)) {
+    } else if (dadosAlarme.id == null || dadosAlarme.id == undefined || isNaN(dadosAlarme.id)) {
         return messages.ERROR_INVALID_ID
     } else {
-        let atualizacaoAlarme = await alarmeDAO.selectAlarmeById(id)
+        let atualizacaoAlarme = await alarmeDAO.selectAlarmeById(dadosAlarme.id)
 
         if (atualizacaoAlarme) {
-            dadosAlarme.id = id
 
             let resultDadosAlarme = await alarmeDAO.updateAlarme(dadosAlarme)
 

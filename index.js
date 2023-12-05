@@ -10,6 +10,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const bodyParserJSON = bodyParser.json()
 const pdf = require('html-pdf');
+const base64Img = require('base64-img');
 
 const messages = require('./controller/modules/config.js')
 const jwt = require('./middleware/middlewareJWT.js')
@@ -44,6 +45,7 @@ const controllerQuestionario_Relatorio = require('./controller/controller_questi
 const controllerEventoSemanal = require('./controller/controller_eventoSemanal.js');
 const { request } = require('express');
 const { response } = require('express');
+const res = require('express/lib/response');
 
 const app = express()
 
@@ -72,42 +74,72 @@ const validateJWT = async function (request, response, next) {
 app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
    let id = request.params.id
 
+   async function getImageBase64(path) {
+      return new Promise((resolve, reject) => {
+         base64Img.base64(path, (err, data) => {
+            if (err) {
+               reject(err);
+            } else {
+               resolve(data);
+            }
+         });
+      });
+   }
+
    let relatorioJSON = await controllerRelatorio.getRelatorioByID(id)
 
    console.log(relatorioJSON);
 
    const html = `
+   <!DOCTYPE html>
+      <html lang="en">
       <head>
-      <style>
-         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+         <meta charset="UTF-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <title>Relatório PDF</title>
+         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 
-         body {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-            font-family: 'Manrope', sans-serif;
-         }
+            body {
+               padding: 0;
+               margin: 0;
+               box-sizing: border-box;
+               font-family: 'Manrope', sans-serif;
+            }
 
-         header img{
-            height: 92px;
-         }
-      </style>
-   </head>
+            .container {
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               justify-content: space-between;
+               width: 100vw;
+               height: 100px; /* Adicione uma altura explícita */
+               gap: 500px;
+               background-color:red;
+            }
 
-   <body>
+            .logo {
+               height: 92px;
+            }
 
-      <header>
-         <img src="./img/logo.png" alt="">
-         <img src="./img/app.svg" alt="">
-      </header>
-   </body>
+            .app {
+               height: 80px;
+            }
+         </style>
+      </head>
 
-   </html>
+      <body>
+         <div class="container">
+            <img src="${await getImageBase64('./img/logo.png')}" alt="" class="logo">
+            <img src="${await getImageBase64('./img/app.svg')}" alt="" class="app">
+         </div>
+      </body>
+      </html>
   `;
 
    // Opções de configuração do PDF
    const options = {
-      format: 'Letter'
+      format: 'A4'
    };
 
    // Gerar o PDF a partir do HTML
@@ -117,6 +149,7 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
          response.status(messages.ERROR_INTERNAL_SERVER.status)
          response.json(messages.ERROR_INTERNAL_SERVER)
       } else {
+         response.set('Content-type', 'application/pdf')
          stream.pipe(response)
       }
    });
@@ -2143,15 +2176,14 @@ app.post('/v1/ayan/alarme/unitario', cors(), bodyParserJSON, async (request, res
 })
 
 //Update 
-app.put('/v2/ayan/alarme/unitario/:id', cors(), bodyParserJSON, async (request, response) => {
+app.put('/v2/ayan/alarme/unitario', cors(), bodyParserJSON, async (request, response) => {
    let contentType = request.headers['content-type']
 
    //Validação para receber dados apenas no formato JSON
    if (String(contentType).toLowerCase() == 'application/json') {
-      let id = request.params.id;
       let dadosBody = request.body
 
-      let resultDadosAlarme = await controllerAlarme_Unitario.updateAlarme(dadosBody, id)
+      let resultDadosAlarme = await controllerAlarme_Unitario.updateAlarme(dadosBody)
 
       response.status(resultDadosAlarme.status)
       response.json(resultDadosAlarme)
