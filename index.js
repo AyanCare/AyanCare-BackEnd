@@ -86,74 +86,100 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
       });
    }
 
-   let relatorioJSON = await controllerRelatorio.getRelatorioByID(id)
+   let relatorio = await controllerRelatorio.getRelatorioByID(id)
 
-   console.log(relatorioJSON);
+   console.log(relatorio);
 
    const html = `
    <html>
       <head>
          <style>
             body {
-               font-family: Arial, sans-serif;
+               font-family: 'Arial', sans-serif;
             }
             .header {
                text-align: center;
+               background-color: #390574;
+               color: #fff;
+               padding: 10px;
             }
             .logo {
-               max-height: 100px;
-            }
-            .logoapp {
-               height: 80px;
-               margin-bottom: 18px;
+               max-width: 100px;
             }
             table {
                width: 100%;
+               margin-top: 20px;
+               border-collapse: collapse;
+            }
+            td {
+               padding: 10px;
+               border: 1px solid #ddd;
             }
             .info {
                width: 50%;
             }
-            li{
-               font-size: 1.2rem;
+            .text-container {
+               margin-top: 20px;
+            }
+            .text {
+               background-color: #f4f4f4;
+               padding: 20px;
+               border-radius: 8px;
+            }
+            .questions {
+               margin-top: 20px;
+            }
+            .app{
+               height: 50px;
+               margin-bottom: 13px;
+            }
+            .ayan{
+               height: 65px;
             }
          </style>
       </head>
       <body>
          <div class="header">
-            <img src="${await getImageBase64('./img/logo.png')}" alt="Logo Empresa" class="logo">
-            <img src="${await getImageBase64('./img/app.svg')}" alt="Logo Aplicativo" class="logoapp">
-            <h1>Relatório</h1>
+            <img src="${await getImageBase64('./img/logo.png')}" alt="Logo Empresa" class="ayan">
+            <img src="${await getImageBase64('./img/app.svg')}" alt="Logo Aplicativo" class="logo app">
+            <h1 style="margin: 0;">Relatório</h1>
          </div>
-         <table>
-         <tr class="info">
-            <td>
-               <p>Data: ${relatorioJSON.relatorio.data}</p>
-               <p>Horário: ${relatorioJSON.relatorio.horario}</p>
-            </td>
-         </tr>
-         </table>
          <table>
             <tr>
                <td class="info">
+                  <h2>Data e Horário</h2>
+                  <p>${relatorio.relatorio.data} - ${relatorio.relatorio.horario}</p>
+               </td>
+               <td class="info">
                   <h2>Cuidador</h2>
-                  <p>Nome: ${relatorioJSON.relatorio.cuidador.nome}</p>
-                  <p>Idade: ${relatorioJSON.relatorio.cuidador.idade}</p>
+                  <p>Nome: ${relatorio.relatorio.cuidador.nome}</p>
+                  <p>Idade: ${relatorio.relatorio.cuidador.idade}</p>
+                  <!-- Adicione mais informações conforme necessário -->
                </td>
                <td class="info">
                   <h2>Paciente</h2>
-                  <p>Nome: ${relatorioJSON.relatorio.paciente.nome}</p>
-                  <p>Idade: ${relatorioJSON.relatorio.paciente.idade}</p>
+                  <p>Nome: ${relatorio.relatorio.paciente.nome}</p>
+                  <p>Idade: ${relatorio.relatorio.paciente.idade}</p>
+                  <!-- Adicione mais informações conforme necessário -->
                </td>
             </tr>
          </table>
-         <p>${relatorioJSON.relatorio.texto}</p>
-         <ul>
-                        ${relatorioJSON.relatorio.perguntas.map(pergunta => `
-                           <li>
-                              <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
-                           </li>
-                        `).join('')}
-         </ul>
+         <div class="text-container">
+            <div class="text">
+               <h2>Texto</h2>
+               <p>${relatorio.relatorio.texto}</p>
+            </div>
+         </div>
+         <div class="questions">
+            <h2>Perguntas</h2>
+            <ul>
+               ${relatorio.relatorio.perguntas.map(pergunta => `
+                  <li>
+                     <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
+                  </li>
+               `).join('')}
+            </ul>
+         </div>
       </body>
    </html>
 `;
