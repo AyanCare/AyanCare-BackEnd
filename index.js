@@ -116,7 +116,7 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
                border: 1px solid #ddd;
             }
             .info {
-               width: 50%;
+               width: 33%;
             }
             .text-container {
                margin-top: 20px;
@@ -127,7 +127,8 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
                border-radius: 8px;
             }
             .questions {
-               margin-top: 20px;
+               page-break-before: always;
+               top: -20px;
             }
             .app{
                height: 50px;
@@ -136,12 +137,28 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
             .ayan{
                height: 65px;
             }
+            .titulo{
+               margin-left: 20px;
+            }
+            .perguntas{
+               margin-top: 20px;
+            }
+            .spacer{
+               height: 10px;
+               width: 100%;
+            }
+            .sim{
+               color: green;
+            }
+            .nao{
+               color: red;
+            }
          </style>
       </head>
       <body>
          <div class="header">
             <img src="${await getImageBase64('./img/logo.png')}" alt="Logo Empresa" class="ayan">
-            <img src="${await getImageBase64('./img/app.svg')}" alt="Logo Aplicativo" class="logo app">
+            <img src="${await getImageBase64('./img/app.png')}" alt="Logo Aplicativo" class="logo app">
             <h1 style="margin: 0;">Relatório</h1>
          </div>
          <table>
@@ -172,14 +189,23 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
          </div>
          ${relatorio.relatorio.perguntas[0].id != null ? `
             <div class="questions">
-               <h2>Perguntas</h2>
-               <ul>
-                  ${relatorio.relatorio.perguntas.map(pergunta => `
-                     <li>
-                        <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
-                     </li>
-                  `).join('')}
-               </ul>
+               <div class="spacer"></div>
+               <div class="header">
+                  <img src="${await getImageBase64('./img/logo.png')}" alt="Logo Empresa" class="ayan">
+                  <img src="${await getImageBase64('./img/app.png')}" alt="Logo Aplicativo" class="logo app">
+                  <h1 style="margin: 0;">Relatório</h1>
+               </div>
+               <div class="text perguntas">
+                  <h2 class="titulo">Perguntas</h2>
+                  <ul>
+                     ${relatorio.relatorio.perguntas.map(pergunta => `
+                        <li>
+                           <strong>${pergunta.pergunta}</strong>: 
+                           ${pergunta.resposta ? '<p class="sim">Sim</p>' : '<p class="nao">Não</p>'}
+                        </li>
+                     `).join('')}
+                  </ul>
+               </div>
             </div>` : ''}
       </body>
    </html>

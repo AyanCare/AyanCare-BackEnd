@@ -631,25 +631,9 @@ const selectLastId = async function () {
 
 
 const insertRelatorio = async function (dadosRelatorio) {
-    let sql = `insert into tbl_relatorio(
-        data,
-        horario,
-        texto_relatorio,
-        validacao,
-        id_paciente,
-        id_cuidador 
-    ) values (
-        CURDATE(),
-        CURTIME(),
-        '${dadosRelatorio.texto_relatorio}',
-        ${dadosRelatorio.validacao},
-        ${dadosRelatorio.id_paciente},
-        ${dadosRelatorio.id_cuidador}
-    )`
+    let sql = `call procInsertRelatorio(${dadosRelatorio.texto_relatorio}, ${dadosRelatorio.id_cuidador}, ${dadosRelatorio.id_paciente});`
     
     let resultRelatorio = await prisma.$executeRawUnsafe(sql)
-
-
 
     if (resultRelatorio) {
         return true
