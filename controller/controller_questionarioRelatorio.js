@@ -104,10 +104,37 @@ const insertQuestionario = async function(dadosQuestionario){
 
 }
 
-module.exports ={
+const updateResposta = async function (dadosQuestionario) {
+    if (
+        dadosQuestionario.resposta !== false && dadosQuestionario.resposta !== true
+    ) {
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+        let verifyQuestionario = await questionarioDAO.selectQuestionarioByID(dadosQuestionario.id)
 
+        if (verifyQuestionario) {
+            let resultDadosQuestionario = await questionarioDAO.updateQuestionario(dadosQuestionario)
+
+            if (resultDadosQuestionario) {
+                let dadosQuestionarioJSON = {}
+                dadosQuestionarioJSON.status = message.SUCCESS_UPDATED_ITEM.status
+                dadosQuestionarioJSON.message = message.SUCCESS_UPDATED_ITEM.message
+
+                return dadosQuestionarioJSON
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER
+            }
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+    }
+}
+
+module.exports ={
     getAllQuestionarios,
     getQuestionarioByID,
     insertQuestionario,
-    getQuestionarioByRelatorio
+    getQuestionarioByRelatorio,
+    updateResposta
 }

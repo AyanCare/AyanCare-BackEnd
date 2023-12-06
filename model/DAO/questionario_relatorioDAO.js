@@ -173,12 +173,26 @@ const insertQuestionario = async function (dadosQuestionario) {
     }
 }
 
+const updateQuestionario = async function (dadosQuestionario) {
+    let sql = `update tbl_questionario set
+        resposta = ${dadosQuestionario.resposta}
+    where id = ${dadosQuestionario.id}`
 
+
+    let resultQuestionario = await prisma.$executeRawUnsafe(sql)
+
+    if (resultQuestionario) {
+        return true
+    } else {
+        return false
+    }
+}
 
 module.exports = {
     selectAllQuestionario,
     selectQuestionarioByID,
     selectLastId,
     insertQuestionario,
-    selectQuestionarioByRelatorio
+    selectQuestionarioByRelatorio,
+    updateQuestionario
 }

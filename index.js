@@ -1858,6 +1858,23 @@ app.post('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, respon
 
 })
 
+app.put('/v1/ayan/questionario', cors(), bodyParserJSON, async (request, response) => {
+   let contentType = request.headers['content-type']
+
+   //Validação para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+      let dadosBody = request.body
+
+      let resultDados = await controllerQuestionario_Relatorio.updateResposta(dadosBody)
+
+      response.status(resultDados.status)
+      response.json(resultDados)
+   } else {
+      response.status(messages.ERROR_INVALID_CONTENT_TYPE.status)
+      response.json(messages.ERROR_INVALID_CONTENT_TYPE.message)
+   }
+})
+
 
 /*************************************************************************************
    * Objetibo: API de controle de Perguntas do Relatório.
@@ -1889,7 +1906,7 @@ app.get('/v1/ayan/pergunta/:id', cors(), async (request, response) => {
 })
 
 /********************POST************************** */
-app.post('/v1/ayan/Pergunta', cors(), bodyParserJSON, async (request, response) => {
+app.post('/v1/ayan/pergunta', cors(), bodyParserJSON, async (request, response) => {
 
    let contentType = request.headers['content-type']
 
