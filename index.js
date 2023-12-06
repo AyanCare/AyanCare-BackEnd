@@ -91,51 +91,72 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
    console.log(relatorioJSON);
 
    const html = `
-   <!DOCTYPE html>
-      <html lang="en">
+   <html>
       <head>
-         <meta charset="UTF-8">
-         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-         <title>Relatório PDF</title>
          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
-
             body {
-               padding: 0;
-               margin: 0;
-               box-sizing: border-box;
-               font-family: 'Manrope', sans-serif;
+               font-family: Arial, sans-serif;
             }
-
-            .container {
-               display: flex;
-               flex-direction: column;
-               align-items: center;
-               justify-content: space-between;
-               width: 100vw;
-               height: 100px; /* Adicione uma altura explícita */
-               gap: 500px;
-               background-color:red;
+            .header {
+               text-align: center;
             }
-
             .logo {
-               height: 92px;
+               max-height: 100px;
             }
-
-            .app {
+            .logoapp {
                height: 80px;
+               margin-bottom: 18px;
+            }
+            table {
+               width: 100%;
+            }
+            .info {
+               width: 50%;
+            }
+            li{
+               font-size: 1.2rem;
             }
          </style>
       </head>
-
       <body>
-         <div class="container">
-            <img src="${await getImageBase64('./img/logo.png')}" alt="" class="logo">
-            <img src="${await getImageBase64('./img/app.svg')}" alt="" class="app">
+         <div class="header">
+            <img src="${await getImageBase64('./img/logo.png')}" alt="Logo Empresa" class="logo">
+            <img src="${await getImageBase64('./img/app.svg')}" alt="Logo Aplicativo" class="logoapp">
+            <h1>Relatório</h1>
          </div>
+         <table>
+         <tr class="info">
+            <td>
+               <p>Data: ${relatorioJSON.relatorio.data}</p>
+               <p>Horário: ${relatorioJSON.relatorio.horario}</p>
+            </td>
+         </tr>
+         </table>
+         <table>
+            <tr>
+               <td class="info">
+                  <h2>Cuidador</h2>
+                  <p>Nome: ${relatorioJSON.relatorio.cuidador.nome}</p>
+                  <p>Idade: ${relatorioJSON.relatorio.cuidador.idade}</p>
+               </td>
+               <td class="info">
+                  <h2>Paciente</h2>
+                  <p>Nome: ${relatorioJSON.relatorio.paciente.nome}</p>
+                  <p>Idade: ${relatorioJSON.relatorio.paciente.idade}</p>
+               </td>
+            </tr>
+         </table>
+         <p>${relatorioJSON.relatorio.texto}</p>
+         <ul>
+                        ${relatorioJSON.relatorio.perguntas.map(pergunta => `
+                           <li>
+                              <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
+                           </li>
+                        `).join('')}
+         </ul>
       </body>
-      </html>
-  `;
+   </html>
+`;
 
    // Opções de configuração do PDF
    const options = {
