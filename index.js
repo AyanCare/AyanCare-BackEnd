@@ -197,6 +197,7 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
          response.status(messages.ERROR_INTERNAL_SERVER.status)
          response.json(messages.ERROR_INTERNAL_SERVER)
       } else {
+         response.setHeader('Content-Disposition', 'attachment; filename=relatorio.pdf');
          response.set('Content-type', 'application/pdf')
          stream.pipe(response)
       }
