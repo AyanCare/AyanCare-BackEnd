@@ -170,16 +170,17 @@ app.get('/v1/ayan/relatorio/pdf/:id', cors(), async (request, response) => {
                <p>${relatorio.relatorio.texto}</p>
             </div>
          </div>
-         <div class="questions">
-            <h2>Perguntas</h2>
-            <ul>
-               ${relatorio.relatorio.perguntas.map(pergunta => `
-                  <li>
-                     <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
-                  </li>
-               `).join('')}
-            </ul>
-         </div>
+         ${relatorio.relatorio.perguntas[0].id != null ? `
+            <div class="questions">
+               <h2>Perguntas</h2>
+               <ul>
+                  ${relatorio.relatorio.perguntas.map(pergunta => `
+                     <li>
+                        <strong>${pergunta.pergunta}</strong>: ${pergunta.resposta ? 'Sim' : 'Não'}
+                     </li>
+                  `).join('')}
+               </ul>
+            </div>` : ''}
       </body>
    </html>
 `;
