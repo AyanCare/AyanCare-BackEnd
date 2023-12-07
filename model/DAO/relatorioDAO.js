@@ -420,7 +420,7 @@ const selectByNomePaciente = async function (paciente) {
     on tbl_questionario.id_relatorio = tbl_relatorio.id
         left join tbl_pergunta
     on tbl_pergunta.id = tbl_questionario.id_pergunta
-    where tbl_paciente.nome = ${paciente}
+    where tbl_paciente.nome like %${paciente}%
     order by tbl_relatorio.id desc`
 
     let rsRelatorio = await prisma.$queryRawUnsafe(sql)
