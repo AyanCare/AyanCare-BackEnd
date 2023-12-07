@@ -1731,7 +1731,9 @@ app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
       response.json(dadosRelatorio)
       response.status(dadosRelatorio.status)
    } else if (nomePaciente != undefined && idCuidador != undefined) {
-      let dadosRelatorio = await controllerRelatorio.getRelatorioByNomePaciente(nomePaciente, idCuidador);
+      let nome = nomePaciente.replace('-', ' ')
+
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByNomePaciente(nome, idCuidador);
 
       response.json(dadosRelatorio)
       response.status(dadosRelatorio.status)
