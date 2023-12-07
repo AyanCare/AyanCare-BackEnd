@@ -1716,6 +1716,7 @@ app.delete('/v1/ayan/alarme/:id', cors(), async (request, response) => {
 //Get all Relatório 
 app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
    let idPaciente = request.query.idPaciente;
+   let nomePaciente = request.query.nomePaciente;
    let idCuidador = request.query.idCuidador;
    let data = request.query.data;
 
@@ -1736,6 +1737,11 @@ app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
       response.status(dadosRelatorio.status)
    } else if (idCuidador != undefined) {
       let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidador(idCuidador);
+
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
+   } else if (nomePaciente != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByNomePaciente(nomePaciente);
 
       response.json(dadosRelatorio)
       response.status(dadosRelatorio.status)

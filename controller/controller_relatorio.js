@@ -80,6 +80,30 @@ const getRelatorioByIDPaciente = async function (idPaciente) {
     }
 }
 
+const getRelatorioByNomePaciente = async function (paciente) {
+
+    if (paciente == '' || paciente == undefined) {
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+
+        let dadosRelatorioJSON = {}
+
+        let dadosRelatorio = await relatorioDAO.selectByNomePaciente(paciente)
+
+        if (dadosRelatorio) {
+            dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status
+            dadosRelatorioJSON.relatorio = dadosRelatorio
+            return dadosRelatorioJSON
+        } else {
+
+            return message.ERROR_NOT_FOUND
+
+        }
+
+
+    }
+}
+
 
 const getRelatorioByIDCuidador = async function (idCuidador) {
 
@@ -292,5 +316,6 @@ module.exports = {
     deleteRelatorio,
     getAllDatas,
     getRelatorioByIDCuidadorAndPaciente,
-    getRelatorioByIDCuidadorAndPacienteAndData
+    getRelatorioByIDCuidadorAndPacienteAndData,
+    getRelatorioByNomePaciente
 }
