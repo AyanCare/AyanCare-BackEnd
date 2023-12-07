@@ -80,15 +80,17 @@ const getRelatorioByIDPaciente = async function (idPaciente) {
     }
 }
 
-const getRelatorioByNomePaciente = async function (paciente) {
+const getRelatorioByNomePaciente = async function (paciente, idCuidador) {
 
-    if (paciente == '' || paciente == undefined) {
+    if (idCuidador == '' || idCuidador == undefined || isNaN(idCuidador)) {
+        return message.ERROR_INVALID_ID
+    } else if (paciente == '' || paciente == undefined) {
         return message.ERROR_REQUIRED_FIELDS
     } else {
 
         let dadosRelatorioJSON = {}
 
-        let dadosRelatorio = await relatorioDAO.selectByNomePaciente(paciente)
+        let dadosRelatorio = await relatorioDAO.selectByNomePaciente(paciente, idCuidador)
 
         if (dadosRelatorio) {
             dadosRelatorioJSON.status = message.SUCCESS_REQUEST.status

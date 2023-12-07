@@ -1730,6 +1730,11 @@ app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
 
       response.json(dadosRelatorio)
       response.status(dadosRelatorio.status)
+   } else if (nomePaciente != undefined && idCuidador != undefined) {
+      let dadosRelatorio = await controllerRelatorio.getRelatorioByNomePaciente(nomePaciente, idCuidador);
+
+      response.json(dadosRelatorio)
+      response.status(dadosRelatorio.status)
    } else if (idPaciente != undefined) {
       let dadosRelatorio = await controllerRelatorio.getRelatorioByIDPaciente(idPaciente);
 
@@ -1737,11 +1742,6 @@ app.get('/v1/ayan/relatorios', cors(), async (request, response) => {
       response.status(dadosRelatorio.status)
    } else if (idCuidador != undefined) {
       let dadosRelatorio = await controllerRelatorio.getRelatorioByIDCuidador(idCuidador);
-
-      response.json(dadosRelatorio)
-      response.status(dadosRelatorio.status)
-   } else if (nomePaciente != undefined) {
-      let dadosRelatorio = await controllerRelatorio.getRelatorioByNomePaciente(nomePaciente);
 
       response.json(dadosRelatorio)
       response.status(dadosRelatorio.status)
