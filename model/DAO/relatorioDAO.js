@@ -726,7 +726,7 @@ const selectLastId = async function () {
 
 
 const insertRelatorio = async function (dadosRelatorio) {
-    let sql = `call procInsertRelatorio("${dadosRelatorio.texto_relatorio}", ${dadosRelatorio.id_cuidador}, ${dadosRelatorio.id_paciente});`
+    let sql = `call procInsertRelatorio('${dadosRelatorio.texto_relatorio}', ${dadosRelatorio.id_cuidador}, ${dadosRelatorio.id_paciente});`
 
     console.log(sql)
     
